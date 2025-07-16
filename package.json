@@ -1,0 +1,87 @@
+{
+  "name": "blocraft",
+  "version": "0.1.0",
+  "private": true,
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "dependencies": {
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.1",
+    "@mui/icons-material": "^7.2.0",
+    "@mui/material": "^7.2.0",
+    "@mui/x-date-pickers": "^8.7.0",
+    "@playwright/test": "^1.53.2",
+    "@testing-library/dom": "^10.4.0",
+    "@testing-library/jest-dom": "^6.6.3",
+    "@testing-library/react": "^16.3.0",
+    "@testing-library/user-event": "^14.6.1",
+    "@types/jest": "^30.0.0",
+    "@types/node": "^24.0.10",
+    "@types/react": "^19.1.8",
+    "@types/react-dom": "^19.1.6",
+    "@types/react-i18next": "^7.8.3",
+    "ajv": "^8.17.1",
+    "date-fns": "^4.1.0",
+    "i18next": "^25.3.1",
+    "jest-axe": "^10.0.0",
+    "react": "^19.1.0",
+    "react-dom": "^19.1.0",
+    "react-hook-form": "^7.60.0",
+    "react-i18next": "^15.6.0",
+    "typescript": "^5.8.3",
+    "web-vitals": "^3.3.1"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "rimraf dist && tsc && copyfiles -u 1 \"src/**/*.{css,svg,json,html}\" dist/",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject",
+    "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest",
+      "plugin:storybook/recommended"
+    ],
+    "rules": {
+      "storybook/no-renderer-packages": "off"
+    }
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "@storybook/addon-a11y": "^9.0.17",
+    "@storybook/addon-docs": "^8.6.14",
+    "@storybook/addon-essentials": "^8.6.14",
+    "@storybook/addon-interactions": "^8.6.14",
+    "@storybook/addon-onboarding": "^8.6.14",
+    "@storybook/blocks": "^8.6.14",
+    "@storybook/preset-create-react-app": "^8.6.14",
+    "@storybook/react": "^8.6.14",
+    "@storybook/react-webpack5": "^8.6.14",
+    "@storybook/test": "^8.6.14",
+    "@storybook/types": "^8.6.14",
+    "@types/date-fns": "^2.5.3",
+    "@types/jest-axe": "^3.5.9",
+    "copyfiles": "^2.4.1",
+    "eslint-plugin-storybook": "^9.0.15",
+    "prop-types": "^15.8.1",
+    "react-refresh": "^0.17.0",
+    "react-scripts": "^5.0.1",
+    "rimraf": "^6.0.1",
+    "storybook": "^8.6.14",
+    "webpack": "^5.99.9"
+  }
+}
