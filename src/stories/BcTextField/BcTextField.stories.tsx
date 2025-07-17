@@ -1,10 +1,32 @@
 import { Search } from "@mui/icons-material";
 import { Box, Stack, ThemeProvider, createTheme, CssBaseline } from "@mui/material";
-import type { Meta, StoryObj} from "@storybook/react";
 import React from "react";
 import type { BcTextFieldProps } from "./BcTextField";
 import { BcTextField } from "./BcTextField";
-import { useForm, Controller, type ControllerRenderProps } from 'react-hook-form';
+import { useForm, Controller } from 'react-hook-form';
+import { Meta, StoryObj } from "@storybook/react/*";
+import enTexts from '../i18n/i18n/en.json';
+// @ts-ignore
+import trTexts from '../i18n/i18n/tr.json';
+
+const TEXTS: Record<string, Record<string, string>> = { en: enTexts, tr: trTexts };
+type Locale = keyof typeof TEXTS;
+type TextKey = keyof typeof enTexts;
+
+const getText = (locale: Locale | undefined, key: string): string => {
+  const safeLocale = locale || 'en';
+  return TEXTS[safeLocale]?.[key] || TEXTS.en[key] || key;
+};
+
+// Storybook global locale decorator
+const withLocale = (Story: any, context: any) => {
+  const locale = context.locale || context.globals.locale;
+  const storyProps = context.args || {};
+  const hasLocale = storyProps.locale !== undefined;
+  return <Story {...context} args={hasLocale ? storyProps : { ...storyProps, locale }} />;
+};
+// Get default locale from Storybook globals if available, else 'en'
+const defaultLocale = (window as any)?.__STORYBOOK_ADDONS_CHANNEL__?.store?.globals?.locale || 'en';
 
 const meta: Meta<BcTextFieldProps> = {
   title: "Components/BcTextField",
@@ -20,7 +42,7 @@ const meta: Meta<BcTextFieldProps> = {
   },
   argTypes: {
     appearance: {
-      description: "Görünüm stili",
+      description: getText(defaultLocale, 'appearanceDescription'),
       control: "select",
       options: [
         "premium",
@@ -35,166 +57,167 @@ const meta: Meta<BcTextFieldProps> = {
       ],
     },
     size: {
-      description: "Boyut",
+      description: getText(defaultLocale, 'sizeDescription'),
       control: "select",
       options: ["small", "medium", "normal", "large", undefined],
     },
     status: {
-      description: "Durum göstergesi",
+      description: getText(defaultLocale, 'statusDescription'),
       control: "select",
       options: ["error", "warning", "success", "info", undefined],
     },
     color: {
-      description: "Renk teması",
+      description: getText(defaultLocale, 'colorDescription'),
       control: "select",
       options: ["primary", "secondary", "success", "error", "info", "warning"],
     },
     responsiveWidth: {
-      description: "Responsive genişlik",
+      description: getText(defaultLocale, 'responsiveWidthDescription'),
       control: "boolean",
     },
     showClearButton: {
-      description: "Temizleme butonu göster",
+      description: getText(defaultLocale, 'showClearButtonDescription'),
       control: "boolean",
     },
     loading: {
-      description: "Yükleme durumu",
+      description: getText(defaultLocale, 'loadingDescription'),
       control: "boolean",
     },
     disabled: {
-      description: "Devre dışı",
+      description: getText(defaultLocale, 'disabledDescription'),
       control: "boolean",
     },
     type: {
-      description: "Input tipi",
+      description: getText(defaultLocale, 'typeDescription'),
       control: "select",
       options: ["text", "password", "email", "number", "tel", "url"],
     },
     label: {
-      description: "Etiket",
+      description: getText(defaultLocale, 'labelDescription'),
       control: "text",
     },
     placeholder: {
-      description: "Placeholder",
+      description: getText(defaultLocale, 'placeholderDescription'),
       control: "text",
     },
     helperText: {
-      description: "Yardım metni",
+      description: getText(defaultLocale, 'helperTextDescription'),
       control: "text",
     },
     error: {
-      description: "Hata durumu",
+      description: getText(defaultLocale, 'errorDescription'),
       control: "boolean",
     },
     statusMessage: {
-      description: "Durum mesajı",
+      description: getText(defaultLocale, 'statusMessageDescription'),
       control: "text",
     },
     onClear: {
-      description: "Temizleme butonuna tıklandığında çağrılır",
+      description: getText(defaultLocale, 'onClearDescription'),
       action: "cleared",
     },
     onChange: {
-      description: "Değer değiştiğinde çağrılır",
+      description: getText(defaultLocale, 'onChangeDescription'),
       action: "changed",
     },
     translations: {
-      description: "Çoklu dil/i18n çevirileri",
+      description: getText(defaultLocale, 'translationsDescription'),
       control: "object",
     },
     locale: {
-      description: "Dil kodu (ör: 'tr', 'en')",
+      description: getText(defaultLocale, 'localeDescription'),
       control: "text",
     },
     fallbackLocale: {
-      description: "Yedek dil kodu",
+      description: getText(defaultLocale, 'fallbackLocaleDescription'),
       control: "text",
     },
     enableAsyncValidation: {
-      description: "Asenkron doğrulama aktif",
+      description: getText(defaultLocale, 'enableAsyncValidationDescription'),
       control: "boolean",
     },
     validateInput: {
-      description: "Asenkron doğrulama fonksiyonu",
+      description: getText(defaultLocale, 'validateInputDescription'),
       control: false,
     },
     showValidationStatus: {
-      description: "Doğrulama durumunu göster",
+      description: getText(defaultLocale, 'showValidationStatusDescription'),
       control: "boolean",
     },
     validationDebounceMs: {
-      description: "Doğrulama debounce süresi (ms)",
+      description: getText(defaultLocale, 'validationDebounceMsDescription'),
       control: "number",
     },
     monitoring: {
-      description: "Monitoring callback objesi",
+      description: getText(defaultLocale, 'monitoringDescription'),
       control: false,
     },
     renderCustomIcon: {
-      description: "Durum ikonunu özelleştir",
+      description: getText(defaultLocale, 'renderCustomIconDescription'),
       control: false,
     },
     renderHelperText: {
-      description: "helperText'i özelleştir",
+      description: getText(defaultLocale, 'renderHelperTextDescription'),
       control: false,
     },
     enableHighContrast: {
-      description: "Yüksek kontrast modu",
+      description: getText(defaultLocale, 'enableHighContrastDescription'),
       control: "boolean",
     },
     enableReducedMotion: {
-      description: "Hareket azaltma modu",
+      description: getText(defaultLocale, 'enableReducedMotionDescription'),
       control: "boolean",
     },
     enableRTL: {
-      description: "Sağdan sola yazım desteği",
+      description: getText(defaultLocale, 'enableRTLDescription'),
       control: "boolean",
     },
     fontSize: {
-      description: "Yazı tipi boyutu",
+      description: getText(defaultLocale, 'fontSizeDescription'),
       control: "number",
     },
     autoFocus: {
-      description: "Otomatik odaklanma (autoFocus)",
+      description: getText(defaultLocale, 'autoFocusDescription'),
       control: "boolean",
     },
     autoComplete: {
-      description: "Tarayıcı otomatik tamamlama (autoComplete)",
+      description: getText(defaultLocale, 'autoCompleteDescription'),
       control: "text",
     },
     inputMode: {
-      description: "Input mode (örn. numeric, text, email)",
+      description: getText(defaultLocale, 'inputModeDescription'),
       control: "text",
     },
     pattern: {
-      description: "Regex pattern (örn. [0-9]{6})",
+      description: getText(defaultLocale, 'patternDescription'),
       control: "text",
     },
     maxLength: {
-      description: "Maksimum karakter sayısı",
+      description: getText(defaultLocale, 'maxLengthDescription'),
       control: "number",
     },
     minLength: {
-      description: "Minimum karakter sayısı",
+      description: getText(defaultLocale, 'minLengthDescription'),
       control: "number",
     },
     spellCheck: {
-      description: "Yazım denetimi (spellCheck)",
+      description: getText(defaultLocale, 'spellCheckDescription'),
       control: "boolean",
     },
     inputComponent: {
-      description: "Özel input bileşeni (örn. react-number-format)",
+      description: getText(defaultLocale, 'inputComponentDescription'),
       control: false,
     },
     inputPrefix: {
-      description: "Input başına özel içerik",
+      description: getText(defaultLocale, 'inputPrefixDescription'),
       control: "text",
     },
     inputSuffix: {
-      description: "Input sonuna özel içerik",
+      description: getText(defaultLocale, 'inputSuffixDescription'),
       control: "text",
     },
   },
+  decorators: [withLocale],
 };
 
 export default meta;
@@ -206,6 +229,13 @@ export const Default: Story = {
     label: "Ad Soyad",
     placeholder: "Adınızı girin",
   },
+  render: (args, context: any) => (
+    <BcTextField
+      {...args}
+      label={args.label ?? getText(context.globals?.locale ?? context.locale, 'label')}
+      helperText={args.helperText ?? getText(context.globals?.locale ?? context.locale, 'helperText')}
+    />
+  ),
 };
 
 // Tüm görünümler
@@ -657,7 +687,7 @@ export const FormIntegration: Story = {
           name="fullName"
           control={control}
           defaultValue=""
-          render={({ field }: { field: ControllerRenderProps<any, string> }) => (
+          render={({ field }) => (
             <BcTextField
               {...field}
               label="Ad Soyad"

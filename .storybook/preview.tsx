@@ -1,8 +1,8 @@
 import type { Preview } from '@storybook/react'
-import { DocsContainer } from '@storybook/addon-docs';
 import React from 'react';
-import enTexts from '../src/components/BcAutoSuggestInput/i18n/en.json';
-import trTexts from '../src/components/BcAutoSuggestInput/i18n/tr.json';
+import enTexts from '../src/stories/i18n/i18n/en.json';
+import trTexts from '../src/stories/i18n/i18n/tr.json';
+import { DocsContainer } from "@storybook/addon-docs/blocks";
 
 export const globalTypes = {
   locale: {
@@ -20,7 +20,6 @@ export const globalTypes = {
 };
 
 const I18N_MAP = {
-  BcAutoSuggestInput: { en: enTexts, tr: trTexts },
   BcTextField: { en: enTexts, tr: trTexts },
   // Diğer componentler için buraya ekleme yapılacak
 };
@@ -36,9 +35,8 @@ const preview: Preview = {
     docs: {
       container: (props: any) => {
         const locale = props?.context?.globals?.locale || props?.context?.store?.userGlobals?.globals?.locale || 'en';
-        // Aktif componentin adını alın (örn. 'BcAutoSuggestInput')
         const kind = props?.context?.kind || '';
-        const componentName = kind.split('/').pop() || 'BcAutoSuggestInput';
+        const componentName = kind.split('/').pop();
         const texts = I18N_MAP[componentName]?.[locale] || I18N_MAP[componentName]?.en || {};
         return (
           <DocsContainer context={props.context}>
