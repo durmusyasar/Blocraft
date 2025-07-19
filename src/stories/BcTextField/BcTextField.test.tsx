@@ -226,6 +226,59 @@ describe('BcTextField edge-cases', () => {
     fireEvent.change(input, { target: { value: 'b' } });
     expect(onError).toHaveBeenCalled();
   });
+
+  it('renders with loading, error, clear button, prefix and suffix together', () => {
+    render(
+      <BcTextField
+        label="Combo"
+        loading
+        status="error"
+        statusMessage="Error!"
+        showClearButton
+        inputPrefix={<span data-testid="prefix">P</span>}
+        inputSuffix={<span data-testid="suffix">S</span>}
+        defaultValue="abc"
+      />
+    );
+    expect(screen.getByTestId('prefix')).toBeInTheDocument();
+    expect(screen.getByTestId('suffix')).toBeInTheDocument();
+    expect(screen.getByLabelText(/clear|temizle/i)).toBeInTheDocument();
+    expect(screen.getByLabelText(/loading|yükleniyor/i)).toBeInTheDocument();
+    expect(screen.getByText(/error!/i)).toBeInTheDocument();
+  });
+
+  it('renders with different locale and shows translated label', () => {
+    render(
+      <BcTextField
+        label="Etiket"
+        placeholder="Yer tutucu"
+        helperText="Yardım metni"
+        locale="tr"
+      />
+    );
+    expect(screen.getByLabelText("Etiket")).toBeInTheDocument();
+    expect(screen.getByPlaceholderText("Yer tutucu")).toBeInTheDocument();
+    expect(screen.getByText("Yardım metni")).toBeInTheDocument();
+  });
+
+  it('renders with native input props', () => {
+    render(
+      <BcTextField
+        label="Native"
+        inputMode="tel"
+        pattern="[0-9]{10,11}"
+        minLength={10}
+        maxLength={11}
+        spellCheck={false}
+      />
+    );
+    const input = screen.getByLabelText('Native') as HTMLInputElement;
+    expect(input).toHaveAttribute('inputmode', 'tel');
+    expect(input).toHaveAttribute('pattern', '[0-9]{10,11}');
+    expect(input).toHaveAttribute('minlength', '10');
+    expect(input).toHaveAttribute('maxlength', '11');
+    expect(input).toHaveAttribute('spellcheck', 'false');
+  });
 });
 
 describe('BcTextField accessibility', () => {

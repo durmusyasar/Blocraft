@@ -25,7 +25,6 @@ export const labelBaseStyle = (theme: Theme) => ({
   padding: "0 6px",
   zIndex: 2,
   letterSpacing: 0.2,
-  backdropFilter: "blur(2px)",
   transition: "color 0.3s, background 0.3s, backdrop-filter 0.3s",
   "&.Mui-focused": { color: "#7c4dff" },
   "&.Mui-disabled": { color: "#666" },

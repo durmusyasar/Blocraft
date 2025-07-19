@@ -44,3 +44,23 @@ You don’t have to ever use `eject`. The curated feature set is suitable for sm
 You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
 
 To learn React, check out the [React documentation](https://reactjs.org/).
+
+# Visual Regression Testing with Chromatic
+
+This project uses [Chromatic](https://www.chromatic.com/) for automated visual regression testing of Storybook components.
+
+## Setup
+1. Make sure you have a Chromatic account and project. Get your unique `project-token` from the Chromatic dashboard.
+2. In `package.json`, replace `<your-project-token>` in the `chromatic` script with your actual token.
+
+## Usage
+- To run visual regression tests and publish your Storybook to Chromatic:
+
+```sh
+npm run chromatic
+```
+
+- This will build your Storybook, upload it to Chromatic, and run visual/screenshot tests for all stories.
+- Review results and approve or reject changes on the Chromatic dashboard.
+
+For more details, see the [Chromatic documentation](https://www.chromatic.com/docs/).

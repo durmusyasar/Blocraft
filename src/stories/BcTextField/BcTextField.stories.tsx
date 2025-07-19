@@ -879,3 +879,149 @@ export const Performance: Story = {
     }
   }
 };
+
+export const OnlyStatus: Story = {
+  args: {
+    status: 'warning',
+    statusMessage: getText(defaultLocale, 'statusWarning') + ': ' + getText(defaultLocale, 'statusMessage'),
+    locale: defaultLocale,
+  },
+};
+
+export const LoadingAndError: Story = {
+  args: {
+    label: getText(defaultLocale, 'label'),
+    loading: true,
+    status: 'error',
+    statusMessage: getText(defaultLocale, 'statusError'),
+    locale: defaultLocale,
+  },
+};
+
+export const ClearHelperStatus: Story = {
+  args: {
+    label: getText(defaultLocale, 'label'),
+    showClearButton: true,
+    helperText: getText(defaultLocale, 'helperText'),
+    status: 'info',
+    statusMessage: getText(defaultLocale, 'statusInfo'),
+    locale: defaultLocale,
+  },
+};
+
+export const RTLHighContrastDisabled: Story = {
+  args: {
+    label: getText(defaultLocale, 'label'),
+    enableRTL: true,
+    enableHighContrast: true,
+    disabled: true,
+    locale: defaultLocale,
+  },
+};
+
+export const LongLabelPlaceholder: Story = {
+  args: {
+    label: 'Çok uzun bir label örneği: ' + 'A'.repeat(50),
+    placeholder: 'Çok uzun bir placeholder örneği: ' + 'B'.repeat(50),
+    locale: defaultLocale,
+  },
+};
+
+export const OnlyHelperText: Story = {
+  args: {
+    helperText: getText(defaultLocale, 'helperText'),
+    locale: defaultLocale,
+  },
+};
+
+export const CustomThemeVariants: Story = {
+  render: () => {
+    const highContrastTheme = createTheme({
+      palette: {
+        mode: 'light',
+        primary: { main: '#000', contrastText: '#fff' },
+        background: { default: '#fff', paper: '#fff' },
+        text: { primary: '#000', secondary: '#333' },
+      },
+    });
+    const customPaletteTheme = createTheme({
+      palette: {
+        mode: 'light',
+        primary: { main: '#ff9800' },
+        secondary: { main: '#00bcd4' },
+        background: { default: '#f5f5f5', paper: '#fff' },
+      },
+    });
+    return (
+      <Stack spacing={4}>
+        <ThemeProvider theme={highContrastTheme}>
+          <Box sx={{ p: 2, border: '1px solid #000' }}>
+            <b>High Contrast Theme</b>
+            <BcTextField
+              appearance="premium"
+              label="High Contrast"
+              placeholder="High Contrast"
+              helperText="High contrast custom theme"
+              locale={defaultLocale}
+            />
+          </Box>
+        </ThemeProvider>
+        <ThemeProvider theme={customPaletteTheme}>
+          <Box sx={{ p: 2, border: '1px solid #ff9800' }}>
+            <b>Custom Palette Theme</b>
+            <BcTextField
+              appearance="soft"
+              color="secondary"
+              label="Custom Palette"
+              placeholder="Custom Palette"
+              helperText="Custom palette theme"
+              locale={defaultLocale}
+            />
+          </Box>
+        </ThemeProvider>
+      </Stack>
+    );
+  },
+};
+
+export const AllAppearancesSideBySide: Story = {
+  render: () => {
+    const lightTheme = createTheme({ palette: { mode: 'light' } });
+    const darkTheme = createTheme({ palette: { mode: 'dark' } });
+    const appearances = [
+      'premium', 'soft', 'glass', 'minimal', 'neumorph', 'underline', 'dark', 'borderless'
+    ];
+    return (
+      <Stack direction="row" spacing={4}>
+        <ThemeProvider theme={lightTheme}>
+          <Stack spacing={2}>
+            <b>Light Mode</b>
+            {appearances.map((appearance) => (
+              <BcTextField
+                key={appearance + '-light'}
+                appearance={appearance as any}
+                label={appearance.charAt(0).toUpperCase() + appearance.slice(1)}
+                placeholder={appearance}
+                locale={defaultLocale}
+              />
+            ))}
+          </Stack>
+        </ThemeProvider>
+        <ThemeProvider theme={darkTheme}>
+          <Stack spacing={2}>
+            <b>Dark Mode</b>
+            {appearances.map((appearance) => (
+              <BcTextField
+                key={appearance + '-dark'}
+                appearance={appearance as any}
+                label={appearance.charAt(0).toUpperCase() + appearance.slice(1)}
+                placeholder={appearance}
+                locale={defaultLocale}
+              />
+            ))}
+          </Stack>
+        </ThemeProvider>
+      </Stack>
+    );
+  },
+};
