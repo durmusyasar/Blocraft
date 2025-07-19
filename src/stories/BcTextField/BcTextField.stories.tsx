@@ -9,9 +9,8 @@ import enTexts from '../i18n/i18n/en.json';
 // @ts-ignore
 import trTexts from '../i18n/i18n/tr.json';
 
-const TEXTS: Record<string, Record<string, string>> = { en: enTexts, tr: trTexts };
+const TEXTS: Record<string, Record<string, string>> = { en: enTexts.BcTextField, tr: trTexts.BcTextField };
 type Locale = keyof typeof TEXTS;
-type TextKey = keyof typeof enTexts;
 
 const getText = (locale: Locale | undefined, key: string): string => {
   const safeLocale = locale || 'en';
@@ -225,17 +224,18 @@ type Story = StoryObj<BcTextFieldProps>;
 
 // Temel kullanım
 export const Default: Story = {
-  args: {
-    label: "Ad Soyad",
-    placeholder: "Adınızı girin",
+  render: (args, context: any) => {
+    const locale = context.globals?.locale ?? context.locale;
+    return (
+      <BcTextField
+        {...args}
+        label={getText(locale, 'label')}
+        placeholder={getText(locale, 'placeholder')}
+        helperText={getText(locale, 'helperText')}
+        locale={locale}
+      />
+    );
   },
-  render: (args, context: any) => (
-    <BcTextField
-      {...args}
-      label={args.label ?? getText(context.globals?.locale ?? context.locale, 'label')}
-      helperText={args.helperText ?? getText(context.globals?.locale ?? context.locale, 'helperText')}
-    />
-  ),
 };
 
 // Tüm görünümler

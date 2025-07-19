@@ -1,18 +1,10 @@
-import {
-  CheckCircle,
-  ErrorOutline,
-  InfoOutlined,
-  WarningAmber,
-} from "@mui/icons-material";
 import type { TextFieldProps } from "@mui/material";
 import {
   CircularProgress,
-  InputAdornment,
   TextField,
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
-import React, { ReactElement, forwardRef, isValidElement, useCallback, useId, useState, useMemo, useRef, useEffect } from "react";
-import { ClearButton } from "./ClearButton";
+import React, { forwardRef, useCallback, useId, useState, useMemo } from "react";
 import {
   borderlessStyles,
   getDynamicDarkStyles,
@@ -32,6 +24,12 @@ import useReducedMotion from "./hooks/useReducedMotion";
 import { getTranslation } from "../i18n/i18nHelpers";
 import useTextFieldValidation from "./hooks/useTextValidation";
 import { ValidationResult } from "../interface";
+import { getTranslationsObject } from './hooks/useTranslationsObject';
+import { usePaletteColor } from './hooks/usePaletteColor';
+import { getStatusIconAndColor } from './hooks/useStatusIcon';
+import { getAppearanceSx } from './hooks/useAppearanceSx';
+import { useInputAdornments } from './hooks/useInputAdornments';
+import { useLiveRegion } from './hooks/useLiveRegion';
 
 
 export interface BcTextFieldProps
@@ -211,10 +209,12 @@ const BcTextFieldInner = forwardRef<HTMLInputElement, BcTextFieldProps>(
     }
     const hasStartAdornment = Boolean(startAdornment);
 
-    // i18n ile metinleri al
-    const i18nLabel = label || getTranslation('label', locale, translations, fallbackLocale);
-    const i18nStatusMessage = statusMessage || getTranslation('statusMessage', locale, translations, fallbackLocale);
-    const i18nClearButton = clearButtonLabel || getTranslation('clearButtonLabel', locale, translations, fallbackLocale) || 'Temizle';
+    // Helper to ensure translations is a Record<string, string>
+    const translationsCandidate = translations && typeof translations === 'object' && 'BcTextField' in translations ? translations.BcTextField : translations;
+    const translationsObj = getTranslationsObject(translationsCandidate);
+    const i18nLabel = label || getTranslation('label', locale, translationsObj, fallbackLocale);
+    const i18nStatusMessage = statusMessage || getTranslation('statusMessage', locale, translationsObj, fallbackLocale);
+    const i18nClearButton = clearButtonLabel || getTranslation('clearButtonLabel', locale, translationsObj, fallbackLocale) || 'Temizle';
 
     // Clear button
     const showClear = showClearButton && value && !disabled;
@@ -254,59 +254,9 @@ const BcTextFieldInner = forwardRef<HTMLInputElement, BcTextFieldProps>(
 
     // Status ikonunu ve helperText rengini ayarla
     const theme = useTheme();
-    const isPaletteColor = useCallback((
-      c: string | undefined
-    ): c is ("primary" | "secondary" | "success" | "error" | "info" | "warning") =>
-      ["primary", "secondary", "success", "error", "info", "warning"].includes(c || ""),
-      []);
-    let statusIcon: React.ReactNode = null;
-    let statusColor:
-      | "error"
-      | "warning"
-      | "success"
-      | "info"
-      | "primary"
-      | "secondary"
-      | undefined = undefined;
-    if (finalStatus === "error") {
-      statusIcon = <ErrorOutline color="error" fontSize="small" />;
-      statusColor = "error";
-    } else if (finalStatus === "warning") {
-      statusIcon = <WarningAmber color="warning" fontSize="small" />;
-      statusColor = "warning";
-    } else if (finalStatus === "success") {
-      statusIcon = <CheckCircle color="success" fontSize="small" />;
-      statusColor = "success";
-    } else if (finalStatus === "info") {
-      statusIcon = <InfoOutlined color="info" fontSize="small" />;
-      statusColor = "info";
-    } else if (isPaletteColor(color)) {
-      // Status yoksa color'a göre ikon ve renk ata
-      if (color === "primary") {
-        statusIcon = <InfoOutlined color="primary" fontSize="small" />;
-        statusColor = "primary";
-      } else if (color === "secondary") {
-        statusIcon = <InfoOutlined color="secondary" fontSize="small" />;
-        statusColor = "secondary";
-      } else if (color === "success") {
-        statusIcon = <CheckCircle color="success" fontSize="small" />;
-        statusColor = "success";
-      } else if (color === "warning") {
-        statusIcon = <WarningAmber color="warning" fontSize="small" />;
-        statusColor = "warning";
-      } else if (color === "error") {
-        statusIcon = <ErrorOutline color="error" fontSize="small" />;
-        statusColor = "error";
-      } else if (color === "info") {
-        statusIcon = <InfoOutlined color="info" fontSize="small" />;
-        statusColor = "info";
-      }
-    } else {
-      // Fallback: primary
-      statusIcon = <InfoOutlined color="primary" fontSize="small" />;
-      statusColor = "primary";
-    }
-
+    const { isPaletteColor, getColor } = usePaletteColor();
+    const { statusIcon: defaultStatusIcon, statusColor } = getStatusIconAndColor(finalStatus, color);
+    let statusIcon = defaultStatusIcon;
     if (renderCustomIcon) {
       const customIcon = renderCustomIcon(finalStatus || '');
       if (customIcon) statusIcon = customIcon;
@@ -320,75 +270,17 @@ const BcTextFieldInner = forwardRef<HTMLInputElement, BcTextFieldProps>(
     const isHighContrast = useHighContrast(enableHighContrast);
     const reducedMotion = useReducedMotion(enableReducedMotion);
 
-    // Compose adornments (memoize)
-    const adornments = useMemo(() => {
-      const arr: React.ReactNode[] = [];
-      if (endAdornment) arr.push(endAdornment);
-      if (showClear)
-        arr.push(
-          <span key="clear-btn-span" title={i18nClearButton}>
-            <ClearButton
-              onClick={handleClear}
-              disabled={disabled}
-              aria-label={i18nClearButton}
-            />
-          </span>
-        );
-      return arr;
-    }, [endAdornment, showClear, i18nClearButton, handleClear, disabled]);
-
-    // Loading spinner'ı endAdornment'ın başına ekle (memoize)
-    const adornmentsWithLoading = useMemo(() => {
-      const arr = [...adornments];
-      if (loading) {
-        arr.unshift(
-          <CircularProgress
-            size={20}
-            color="inherit"
-            key="loading-spinner"
-            aria-label="Yükleniyor"
-          />
-        );
-      }
-      return arr;
-    }, [adornments, loading]);
-
-    // Status varsa endAdornment'a ekle (memoize)
-    const adornmentsWithStatus = useMemo(() => {
-      const arr = [...adornmentsWithLoading];
-      if (statusIcon) {
-        arr.unshift(statusIcon);
-      }
-      return arr;
-    }, [adornmentsWithLoading, statusIcon]);
-
-    // Compose endAdornment
-    let combinedEndAdornment: React.ReactNode = undefined;
-    if (adornmentsWithStatus.length > 0) {
-      combinedEndAdornment = (
-        <InputAdornment position="end">
-          {adornmentsWithStatus.map((ad, i) => (
-            <span
-              key={i}
-              style={{ display: "inline-flex", alignItems: "center" }}
-            >
-              {ad}
-            </span>
-          ))}
-        </InputAdornment>
-      );
-    }
-
-    // Render prop ile endAdornment özelleştirme (memoize)
-    const finalEndAdornment: ReactElement | undefined = useMemo(() => {
-      if (combinedEndAdornment && isValidElement(combinedEndAdornment))
-        return combinedEndAdornment;
-      if (renderEndAdornment) {
-        const rendered = renderEndAdornment(combinedEndAdornment);
-        if (isValidElement(rendered)) return rendered;
-      }
-      return undefined;
-    }, [combinedEndAdornment, renderEndAdornment]);
+    // Compose endAdornment using custom hook
+    const finalEndAdornment = useInputAdornments({
+      endAdornment,
+      showClear: !!showClear,
+      i18nClearButton,
+      handleClear,
+      disabled: !!disabled,
+      loading: !!finalLoading,
+      statusIcon,
+      renderEndAdornment,
+    });
 
     // Status varsa helperText'i override et (memoize)
     const finalHelperText = useMemo(() => {
@@ -440,90 +332,46 @@ const BcTextFieldInner = forwardRef<HTMLInputElement, BcTextFieldProps>(
       }
       // Appearance stillerinde border ve label color'ı color veya statusColor'a göre ayarla
       const colorKey = statusColor || (isPaletteColor(color) ? color : "primary");
-      const getColor = (key: string) => {
-        const paletteValue = theme.palette[key as keyof typeof theme.palette];
-        if (
-          paletteValue &&
-          typeof paletteValue === "object" &&
-          "main" in paletteValue
-        ) {
-          return (paletteValue as { main: string }).main;
-        }
-        if (typeof paletteValue === "string") {
-          return paletteValue;
-        }
-        return theme.palette.primary.main;
-      };
-      const getAppearanceSx = (base: any) => ({
-        ...base,
-        "& .MuiOutlinedInput-root": {
-          ...base["& .MuiOutlinedInput-root"],
-          borderColor: getColor(colorKey),
-          "&.Mui-focused": {
-            ...base["& .MuiOutlinedInput-root"]?.["&.Mui-focused"],
-            borderColor: getColor(colorKey),
-          },
-          "&.Mui-error": {
-            ...base["& .MuiOutlinedInput-root"]?.["&.Mui-error"],
-            borderColor: getColor(colorKey),
-          },
-        },
-        "& .MuiInputLabel-root": {
-          ...base["& .MuiInputLabel-root"],
-          color: getColor(colorKey),
-          "&.Mui-focused": {
-            ...base["& .MuiInputLabel-root"]?.["&.Mui-focused"],
-            color: getColor(colorKey),
-          },
-          "&.Mui-error": {
-            ...base["& .MuiInputLabel-root"]?.["&.Mui-error"],
-            color: getColor(colorKey),
-          },
-        },
-      });
+      const getSxForAppearance = (baseStyles: any) => getAppearanceSx(baseStyles(theme), colorKey, getColor);
       if (appearance === "premium")
         sx = {
           ...sx,
-          ...getAppearanceSx((premiumStyles as any)(theme)),
+          ...getSxForAppearance(premiumStyles),
         };
       else if (appearance === "soft")
         sx = {
           ...sx,
-          ...getAppearanceSx((softStyles as any)(theme)),
+          ...getSxForAppearance(softStyles),
         };
       else if (appearance === "glass")
         sx = {
           ...sx,
-          ...getAppearanceSx((glassStyles as any)(theme)),
+          ...getSxForAppearance(glassStyles),
         };
       else if (appearance === "minimal")
         sx = {
           ...sx,
-          ...getAppearanceSx((minimalStyles as any)(theme)),
+          ...getSxForAppearance(minimalStyles),
         };
       else if (appearance === "neumorph")
         sx = {
           ...sx,
-          ...getAppearanceSx((neumorphStyles as any)(theme)),
+          ...getSxForAppearance(neumorphStyles),
         };
       else if (appearance === "underline")
         sx = {
           ...sx,
-          ...getAppearanceSx((underlineStyles as any)(theme)),
+          ...getSxForAppearance(underlineStyles),
         };
       else if (appearance === "dark") {
         sx = {
           ...sx,
-          ...getAppearanceSx(
-            theme.palette.mode === "dark"
-              ? getDynamicDarkStyles(theme)
-              : getDynamicLightStyles(theme)
-          ),
+          ...getSxForAppearance(theme.palette.mode === "dark" ? getDynamicDarkStyles : getDynamicLightStyles),
         };
       } else if (appearance === "borderless")
         sx = {
           ...sx,
-          ...getAppearanceSx((borderlessStyles as any)(theme)),
+          ...getSxForAppearance(borderlessStyles),
         };
       if (sx) sx = { ...sx, ...props.sx };
       if (direction) {
@@ -532,22 +380,12 @@ const BcTextFieldInner = forwardRef<HTMLInputElement, BcTextFieldProps>(
       return sx;
     }, [responsiveWidth, size, isHighContrast, statusColor, isPaletteColor, color, appearance, theme, props.sx, direction, fontSize, reducedMotion]);
 
-    // Live region ref for screen reader
-    const liveRegionRef = useRef<HTMLDivElement | null>(null);
-    const [liveRegionMessage, setLiveRegionMessage] = useState("");
-
-    // Validation sonucu değiştiğinde live region'a mesaj yaz
-    useEffect(() => {
-      if (showValidationStatus && enableAsyncValidation && validationResult && validationResult.message) {
-        setLiveRegionMessage(validationResult.message);
-        if (liveRegionRef.current) {
-          liveRegionRef.current.textContent = validationResult.message;
-          setTimeout(() => {
-            if (liveRegionRef.current) liveRegionRef.current.textContent = '';
-          }, 1000);
-        }
-      }
-    }, [validationResult, showValidationStatus, enableAsyncValidation]);
+    // Live region for screen reader
+    const { liveRegionRef, liveRegionMessage } = useLiveRegion({
+      showValidationStatus: !!showValidationStatus,
+      enableAsyncValidation: !!enableAsyncValidation,
+      validationResult,
+    });
 
     // slotProps.input'a ekle
     let inputSlotProps = {

@@ -18,6 +18,23 @@ export const responsiveWidthStyles: SxProps<Theme> = {
   },
 };
 
+// Ortak label stili
+export const labelBaseStyle = (theme: Theme) => ({
+  fontWeight: 700,
+  fontSize: 16,
+  padding: "0 6px",
+  zIndex: 2,
+  letterSpacing: 0.2,
+  backdropFilter: "blur(2px)",
+  transition: "color 0.3s, background 0.3s, backdrop-filter 0.3s",
+  "&.Mui-focused": { color: "#7c4dff" },
+  "&.Mui-disabled": { color: "#666" },
+  "&.Mui-error": { color: "#ef5350" },
+  "&.MuiInputLabel-shrink, &.MuiInputLabel-shrunk": {
+    transform: "translate(14px, -8px) scale(0.75)",
+  },
+});
+
 // Tüm varyantlar için modern, tema uyumlu ve dark mode destekli stiller
 export const premiumStyles = (theme: Theme) => ({
   '& .MuiOutlinedInput-root': {
@@ -33,6 +50,7 @@ export const premiumStyles = (theme: Theme) => ({
     },
   },
   '& .MuiInputLabel-root': {
+    ...labelBaseStyle(theme),
     color: theme.palette.text.secondary,
   },
 });
@@ -52,6 +70,7 @@ export const softStyles = (theme: Theme) => ({
     },
   },
   '& .MuiInputLabel-root': {
+    ...labelBaseStyle(theme),
     color: theme.palette.text.secondary,
   },
 });
@@ -72,6 +91,7 @@ export const glassStyles = (theme: Theme) => ({
     },
   },
   '& .MuiInputLabel-root': {
+    ...labelBaseStyle(theme),
     color: theme.palette.text.secondary,
   },
 });
@@ -90,6 +110,7 @@ export const minimalStyles = (theme: Theme) => ({
     },
   },
   '& .MuiInputLabel-root': {
+    ...labelBaseStyle(theme),
     color: theme.palette.text.secondary,
   },
 });
@@ -111,6 +132,7 @@ export const neumorphStyles = (theme: Theme) => ({
     },
   },
   '& .MuiInputLabel-root': {
+    ...labelBaseStyle(theme),
     color: theme.palette.text.secondary,
   },
 });
@@ -130,6 +152,7 @@ export const underlineStyles = (theme: Theme) => ({
     },
   },
   '& .MuiInputLabel-root': {
+    ...labelBaseStyle(theme),
     color: theme.palette.text.secondary,
   },
 });
@@ -148,6 +171,7 @@ export const darkStyles = (theme: Theme) => ({
     },
   },
   '& .MuiInputLabel-root': {
+    ...labelBaseStyle(theme),
     color: theme.palette.text.primary,
   },
 });
@@ -166,6 +190,7 @@ export const borderlessStyles = (theme: Theme) => ({
     },
   },
   '& .MuiInputLabel-root': {
+    ...labelBaseStyle(theme),
     color: theme.palette.text.secondary,
   },
 });
