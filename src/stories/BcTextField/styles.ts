@@ -25,6 +25,10 @@ export const labelBaseStyle = (theme: Theme) => ({
   padding: "0 6px",
   zIndex: 2,
   letterSpacing: 0.2,
+  // Label arka planı: hem light hem dark modda border üstünde net görünür
+  background: theme.palette.mode === 'dark'
+    ? 'rgba(35,39,47,0.85)'
+    : 'rgba(255,255,255,0.85)',
   transition: "color 0.3s, background 0.3s, backdrop-filter 0.3s",
   "&.Mui-focused": { color: "#7c4dff" },
   "&.Mui-disabled": { color: "#666" },
@@ -57,20 +61,22 @@ export const premiumStyles = (theme: Theme) => ({
 export const softStyles = (theme: Theme) => ({
   '& .MuiOutlinedInput-root': {
     borderRadius: Number(theme.shape.borderRadius) * 1.5,
-    background: theme.palette.action.hover,
+    background: theme.palette.mode === 'dark' ? 'rgba(30,32,38,0.92)' : theme.palette.action.hover,
     boxShadow: 'none',
-    border: `1px solid ${theme.palette.divider}`,
+    border: `1px solid ${theme.palette.mode === 'dark' ? '#90caf9' : theme.palette.divider}`,
     '&:hover': {
-      background: theme.palette.action.selected,
+      background: theme.palette.mode === 'dark' ? 'rgba(40,44,54,0.98)' : theme.palette.action.selected,
+      borderColor: theme.palette.mode === 'dark' ? '#90caf9' : theme.palette.primary.main,
     },
     '&.Mui-focused': {
-      background: theme.palette.background.paper,
-      borderColor: theme.palette.primary.main,
+      background: theme.palette.mode === 'dark' ? 'rgba(40,44,54,1)' : theme.palette.background.paper,
+      borderColor: theme.palette.mode === 'dark' ? '#42a5f5' : theme.palette.primary.main,
     },
   },
   '& .MuiInputLabel-root': {
     ...labelBaseStyle(theme),
-    color: theme.palette.text.secondary,
+    color: theme.palette.mode === 'dark' ? '#90caf9' : theme.palette.text.secondary,
+    background: theme.palette.mode === 'dark' ? 'rgba(35,39,47,0.98)' : 'rgba(255,255,255,0.85)',
   },
 });
 
@@ -98,19 +104,20 @@ export const glassStyles = (theme: Theme) => ({
 export const minimalStyles = (theme: Theme) => ({
   '& .MuiOutlinedInput-root': {
     borderRadius: Number(theme.shape.borderRadius),
-    background: 'none',
-    border: `1px solid ${theme.palette.divider}`,
+    background: theme.palette.mode === 'dark' ? 'rgba(30,32,38,0.92)' : 'none',
+    border: `1px solid ${theme.palette.mode === 'dark' ? '#90caf9' : theme.palette.divider}`,
     boxShadow: 'none',
     '&:hover': {
-      borderColor: theme.palette.text.primary,
+      borderColor: theme.palette.mode === 'dark' ? '#90caf9' : theme.palette.text.primary,
     },
     '&.Mui-focused': {
-      borderColor: theme.palette.primary.main,
+      borderColor: theme.palette.mode === 'dark' ? '#42a5f5' : theme.palette.primary.main,
     },
   },
   '& .MuiInputLabel-root': {
     ...labelBaseStyle(theme),
-    color: theme.palette.text.secondary,
+    color: theme.palette.mode === 'dark' ? '#90caf9' : theme.palette.text.secondary,
+    background: theme.palette.mode === 'dark' ? 'rgba(35,39,47,0.98)' : 'rgba(255,255,255,0.85)',
   },
 });
 
@@ -139,20 +146,21 @@ export const neumorphStyles = (theme: Theme) => ({
 export const underlineStyles = (theme: Theme) => ({
   '& .MuiOutlinedInput-root': {
     borderRadius: Number(theme.shape.borderRadius),
-    background: 'none',
+    background: theme.palette.mode === 'dark' ? 'rgba(30,32,38,0.92)' : 'none',
     border: 'none',
-    borderBottom: `2px solid ${theme.palette.divider}`,
+    borderBottom: `2px solid ${theme.palette.mode === 'dark' ? '#90caf9' : theme.palette.divider}`,
     boxShadow: 'none',
     '&:hover': {
-      borderBottomColor: theme.palette.text.primary,
+      borderBottomColor: theme.palette.mode === 'dark' ? '#90caf9' : theme.palette.text.primary,
     },
     '&.Mui-focused': {
-      borderBottomColor: theme.palette.primary.main,
+      borderBottomColor: theme.palette.mode === 'dark' ? '#42a5f5' : theme.palette.primary.main,
     },
   },
   '& .MuiInputLabel-root': {
     ...labelBaseStyle(theme),
-    color: theme.palette.text.secondary,
+    color: theme.palette.mode === 'dark' ? '#90caf9' : theme.palette.text.secondary,
+    background: theme.palette.mode === 'dark' ? 'rgba(35,39,47,0.98)' : 'rgba(255,255,255,0.85)',
   },
 });
 
