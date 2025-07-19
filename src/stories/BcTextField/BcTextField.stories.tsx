@@ -25,7 +25,7 @@ const withLocale = (Story: any, context: any) => {
   return <Story {...context} args={hasLocale ? storyProps : { ...storyProps, locale }} />;
 };
 // Get default locale from Storybook globals if available, else 'en'
-const defaultLocale = (window as any)?.__STORYBOOK_ADDONS_CHANNEL__?.store?.globals?.locale || 'en';
+const defaultLocale = (window as any)?.__STORYBOOK_ADDONS_CHANNEL__?.data?.globalsUpdated?.[0]?.globals?.locale || 'en';
 
 const meta: Meta<BcTextFieldProps> = {
   title: "Components/BcTextField",
@@ -34,8 +34,7 @@ const meta: Meta<BcTextFieldProps> = {
   parameters: {
     docs: {
       description: {
-        component:
-          "Framework-level, highly customizable Material-UI TextField replacement.\nSupports appearance, size, status, loading, clear, password, email, responsive, and more.",
+        component: getText(defaultLocale, 'componentDocsDescription'),
       },
     },
   },
@@ -284,26 +283,30 @@ export const Sizes: Story = {
 
 // Durumlar
 export const Statuses: Story = {
-  render: (args: any) => (
-    <Stack spacing={2}>
-      {[
-        { status: "error", statusMessage: "Hata: Zorunlu alan" },
-        { status: "warning", statusMessage: "Uyarı: Zayıf şifre" },
-        { status: "success", statusMessage: "Başarılı!" },
-        { status: "info", statusMessage: "Bilgi: E-posta opsiyonel" },
-      ].map((s: { status: string; statusMessage: string }) => (
-        <BcTextField
-          key={s.status}
-          {...args}
-          label={s.status.charAt(0).toUpperCase() + s.status.slice(1)}
-          status={s.status as BcTextFieldProps["status"]}
-          statusMessage={s.statusMessage}
-          placeholder={s.status}
-          style={{ height: "auto" }}
-        />
-      ))}
-    </Stack>
-  ),
+  render: (args: any, context: any) => {
+    const locale = context.globals?.locale ?? context.locale ?? 'en';
+    return (
+      <Stack spacing={2}>
+        {[
+          { status: "error", statusMessage: getText(locale, 'statusError') + ': ' + getText(locale, 'statusMessage') },
+          { status: "warning", statusMessage: getText(locale, 'statusWarning') + ': ' + getText(locale, 'statusMessage') },
+          { status: "success", statusMessage: getText(locale, 'statusSuccess') + '!' },
+          { status: "info", statusMessage: getText(locale, 'statusInfo') + ': ' + getText(locale, 'statusMessage') },
+        ].map((s: { status: string; statusMessage: string }) => (
+          <BcTextField
+            key={s.status}
+            {...args}
+            label={s.status.charAt(0).toUpperCase() + s.status.slice(1)}
+            status={s.status as BcTextFieldProps["status"]}
+            statusMessage={s.statusMessage}
+            placeholder={s.status}
+            style={{ height: "auto" }}
+            locale={locale}
+          />
+        ))}
+      </Stack>
+    );
+  },
 };
 
 // Renkler
@@ -332,154 +335,206 @@ export const Colors: Story = {
 
 // Yükleme durumu
 export const Loading: Story = {
-  args: {
-    label: "Yükleniyor...",
-    loading: true,
-    placeholder: "Veri bekleniyor",
+  render: (args, context) => {
+    const locale = context?.globals?.locale ?? context?.locale ?? 'en';
+    return (
+      <BcTextField
+        {...args}
+        label={getText(locale, 'loading')}
+        placeholder={getText(locale, 'loading')}
+        helperText={getText(locale, 'helperText')}
+        locale={locale}
+      />
+    );
   },
 };
 
 // Şifre alanı
 export const Password: Story = {
-  args: {
-    label: "Şifre",
-    type: "password",
-    placeholder: "Şifrenizi girin",
-    showClearButton: true,
+  render: (args, context) => {
+    const locale = context?.globals?.locale ?? context?.locale ?? 'en';
+    return (
+      <BcTextField
+        {...args}
+        label={getText(locale, 'password')}
+        placeholder={getText(locale, 'password')}
+        helperText={getText(locale, 'helperText')}
+        locale={locale}
+      />
+    );
   },
 };
 
 // E-posta alanı
 export const Email: Story = {
-  args: {
-    label: "E-posta",
-    type: "email",
-    placeholder: "E-posta adresi",
-    showClearButton: true,
+  render: (args, context) => {
+    const locale = context?.globals?.locale ?? context?.locale ?? 'en';
+    return (
+      <BcTextField
+        {...args}
+        label={getText(locale, 'emailValidation')}
+        placeholder={getText(locale, 'emailValidation')}
+        helperText={getText(locale, 'helperText')}
+        locale={locale}
+      />
+    );
   },
 };
 
 // Temizleme butonu ile
 export const WithClearButton: Story = {
-  args: {
-    label: "Arama",
-    placeholder: "Bir şeyler yazın...",
-    showClearButton: true,
+  render: (args, context) => {
+    const locale = context?.globals?.locale ?? context?.locale ?? 'en';
+    return (
+      <BcTextField
+        {...args}
+        label={getText(locale, 'label')}
+        placeholder={getText(locale, 'placeholder')}
+        helperText={getText(locale, 'helperText')}
+        showClearButton
+        locale={locale}
+      />
+    );
   },
 };
 
 // Responsive genişlik
 export const Responsive: Story = {
-  args: {
-    label: "Responsive",
-    responsiveWidth: true,
-    placeholder: "Ekrana göre genişlik",
+  render: (args, context) => {
+    const locale = context?.globals?.locale ?? context?.locale ?? 'en';
+    return (
+      <BcTextField
+        {...args}
+        label={getText(locale, 'responsive')}
+        placeholder={getText(locale, 'responsive')}
+        helperText={getText(locale, 'helperText')}
+        responsiveWidth
+        locale={locale}
+      />
+    );
   },
-  parameters: {
-    layout: "fullscreen",
-  },
-  render: (args: any) => (
-    <Box sx={{ display: "flex", justifyContent: "center", width: "100%", py: 4 }}>
-      <BcTextField {...args} sx={{ maxWidth: 600, width: "100%" }} />
-    </Box>
-  ),
 };
 
 // Devre dışı durumu
 export const Disabled: Story = {
-  args: {
-    label: "Devre Dışı",
-    disabled: true,
-    placeholder: "Bu alan devre dışı",
-    defaultValue: "Devre dışı değer",
+  render: (args, context) => {
+    const locale = context?.globals?.locale ?? context?.locale ?? 'en';
+    return (
+      <BcTextField
+        {...args}
+        label={getText(locale, 'disabled')}
+        placeholder={getText(locale, 'disabled')}
+        helperText={getText(locale, 'helperText')}
+        disabled
+        locale={locale}
+      />
+    );
   },
 };
 
 // Hata durumu
 export const WithError: Story = {
-  args: {
-    label: "Hatalı Giriş",
-    error: true,
-    helperText: "Bu alan zorunludur",
-    placeholder: "Hatalı giriş",
+  render: (args, context) => {
+    const locale = context?.globals?.locale ?? context?.locale ?? 'en';
+    return (
+      <BcTextField
+        {...args}
+        label={getText(locale, 'statusError')}
+        placeholder={getText(locale, 'statusError')}
+        helperText={getText(locale, 'statusMessage')}
+        error
+        locale={locale}
+      />
+    );
   },
 };
 
 // Yardım metni ile
 export const WithHelperText: Story = {
-  args: {
-    label: "Kullanıcı Adı",
-    helperText: "En az 3 karakter olmalıdır",
-    placeholder: "Kullanıcı adınızı girin",
+  render: (args, context) => {
+    const locale = context?.globals?.locale ?? context?.locale ?? 'en';
+    return (
+      <BcTextField
+        {...args}
+        label={getText(locale, 'usernameValidation')}
+        placeholder={getText(locale, 'usernameValidation')}
+        helperText={getText(locale, 'minInput')}
+        locale={locale}
+      />
+    );
   },
 };
 
 // Başlangıç adornment ile
 export const WithStartAdornment: Story = {
   args: {
-    label: "Arama",
-    placeholder: "Kelime...",
+    label: getText(defaultLocale, 'label'),
+    placeholder: getText(defaultLocale, 'placeholder'),
+    helperText: getText(defaultLocale, 'helperText'),
     slotProps: {
       input: {
         startAdornment: <Search fontSize="small" />,
       },
     },
+    locale: defaultLocale,
   },
 };
 
 // Özel end adornment
 export const CustomEndAdornment: Story = {
   args: {
-    label: "Özel End Adornment",
-    placeholder: "Özel ikon...",
+    label: getText(defaultLocale, 'customExport'),
+    placeholder: getText(defaultLocale, 'customExport'),
+    helperText: getText(defaultLocale, 'helperText'),
     renderEndAdornment: (defaultAdornment: React.ReactNode) => (
-      <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-        <span style={{ color: "#1976d2" }}>Özel</span>
-        {defaultAdornment}
-      </Box>
+      <span style={{ color: '#1976d2' }}>Custom</span>
     ),
+    locale: defaultLocale,
   },
 };
 
 // Çok satırlı
 export const Multiline: Story = {
   args: {
-    label: "Açıklama",
+    label: getText(defaultLocale, 'playgroundDocsDescription'),
+    placeholder: getText(defaultLocale, 'playgroundDocsDescription'),
+    helperText: getText(defaultLocale, 'helperText'),
     multiline: true,
     rows: 4,
-    placeholder: "Açıklamanızı yazın...",
-    showClearButton: true,
-    sx: { minHeight: 120 },
+    locale: defaultLocale,
   },
 };
 
 // Sayısal input
 export const Number: Story = {
   args: {
-    label: "Yaş",
-    type: "number",
-    placeholder: "Yaşınızı girin",
-    helperText: "0-120 arası bir değer girin",
+    label: getText(defaultLocale, 'number'),
+    placeholder: getText(defaultLocale, 'number'),
+    helperText: getText(defaultLocale, 'minInput'),
+    type: 'number',
+    locale: defaultLocale,
   },
 };
 
 // URL input
 export const URL: Story = {
   args: {
-    label: "Website",
-    type: "url",
-    placeholder: "https://example.com",
-    helperText: "Geçerli bir URL girin",
+    label: getText(defaultLocale, 'url'),
+    placeholder: 'https://example.com',
+    helperText: getText(defaultLocale, 'helperText'),
+    type: 'url',
+    locale: defaultLocale,
   },
 };
 
 // Telefon input
 export const Phone: Story = {
   args: {
-    label: "Telefon",
-    type: "tel",
-    placeholder: "+90 555 123 4567",
-    helperText: "Uluslararası format kullanın",
+    label: getText(defaultLocale, 'phone'),
+    placeholder: '+90 555 123 4567',
+    helperText: getText(defaultLocale, 'helperText'),
+    type: 'tel',
+    locale: defaultLocale,
   },
 };
 
@@ -489,50 +544,54 @@ export const AdvancedExamples: Story = {
     <Stack spacing={3}>
       {/* Premium görünüm ile e-posta */}
       <BcTextField
-        label="Premium E-posta"
+        label={getText(defaultLocale, 'premium')}
         type="email"
         appearance="premium"
         color="primary"
         showClearButton
-        placeholder="premium@email.com"
-        helperText="Premium görünüm ile e-posta validasyonu"
+        placeholder={getText(defaultLocale, 'emailValidation')}
+        helperText={getText(defaultLocale, 'playgroundHelperText')}
+        locale={defaultLocale}
       />
 
       {/* Glass görünüm ile şifre */}
       <BcTextField
-        label="Glass Şifre"
+        label={getText(defaultLocale, 'glass')}
         type="password"
         appearance="glass"
         color="secondary"
         showClearButton
-        placeholder="Şifrenizi girin"
-        helperText="Glass görünüm ile şifre alanı"
+        placeholder={getText(defaultLocale, 'password')}
+        helperText={getText(defaultLocale, 'playgroundHelperText')}
+        locale={defaultLocale}
       />
 
       {/* Neumorph görünüm ile arama */}
       <BcTextField
-        label="Neumorph Arama"
+        label={getText(defaultLocale, 'neumorph')}
         appearance="neumorph"
         color="info"
         showClearButton
-        placeholder="Arama yapın..."
+        placeholder={getText(defaultLocale, 'label')}
         slotProps={{
           input: {
-            startAdornment: <Search fontSize="small" />,
+            startAdornment: <span>🔍</span>,
           },
         }}
-        helperText="Neumorph görünüm ile arama alanı"
+        helperText={getText(defaultLocale, 'playgroundHelperText')}
+        locale={defaultLocale}
       />
 
       {/* Dark görünüm ile çok satırlı */}
       <BcTextField
-        label="Dark Açıklama"
+        label={getText(defaultLocale, 'dark')}
         appearance="dark"
         color="warning"
         multiline
         rows={3}
-        placeholder="Açıklamanızı yazın..."
-        helperText="Dark görünüm ile çok satırlı alan"
+        placeholder={getText(defaultLocale, 'playgroundDocsDescription')}
+        helperText={getText(defaultLocale, 'playgroundHelperText')}
+        locale={defaultLocale}
       />
     </Stack>
   ),
@@ -556,44 +615,48 @@ export const FormExample: Story = {
       <Box sx={{ maxWidth: 400, p: 2 }}>
         <Stack spacing={2}>
           <BcTextField
-            label="Ad Soyad"
+            label={getText(defaultLocale, 'label')}
             value={formData.name}
             onChange={handleChange("name")}
-            placeholder="Adınızı ve soyadınızı girin"
+            placeholder={getText(defaultLocale, 'label')}
             appearance="premium"
             showClearButton
+            locale={defaultLocale}
           />
           
           <BcTextField
-            label="E-posta"
+            label={getText(defaultLocale, 'emailValidation')}
             type="email"
             value={formData.email}
             onChange={handleChange("email")}
-            placeholder="E-posta adresinizi girin"
+            placeholder={getText(defaultLocale, 'emailValidation')}
             appearance="soft"
             showClearButton
+            locale={defaultLocale}
           />
           
           <BcTextField
-            label="Şifre"
+            label={getText(defaultLocale, 'password')}
             type="password"
             value={formData.password}
             onChange={handleChange("password")}
-            placeholder="Şifrenizi girin"
+            placeholder={getText(defaultLocale, 'password')}
             appearance="glass"
             showClearButton
+            locale={defaultLocale}
           />
           
           <BcTextField
-            label="Şifre Tekrar"
+            label={getText(defaultLocale, 'password') + ' ' + getText(defaultLocale, 'again')}
             type="password"
             value={formData.confirmPassword}
             onChange={handleChange("confirmPassword")}
-            placeholder="Şifrenizi tekrar girin"
+            placeholder={getText(defaultLocale, 'password') + ' ' + getText(defaultLocale, 'again')}
             appearance="glass"
             showClearButton
             status={formData.password !== formData.confirmPassword && formData.confirmPassword ? "error" : undefined}
-            statusMessage={formData.password !== formData.confirmPassword && formData.confirmPassword ? "Şifreler eşleşmiyor" : undefined}
+            statusMessage={formData.password !== formData.confirmPassword && formData.confirmPassword ? getText(defaultLocale, 'statusError') : undefined}
+            locale={defaultLocale}
           />
         </Stack>
       </Box>
@@ -604,48 +667,51 @@ export const FormExample: Story = {
 // --- Gelişmiş örnekler ---
 export const I18nExample: Story = {
   args: {
-    label: "İsim",
-    placeholder: "Adınızı girin",
-    translations: { clearButtonLabel: "Temizle", helperText: "Zorunlu alan." },
-    locale: "tr",
+    label: getText(defaultLocale, 'label'),
+    placeholder: getText(defaultLocale, 'placeholder'),
+    translations: { clearButtonLabel: getText(defaultLocale, 'clearButtonLabel'), helperText: getText(defaultLocale, 'helperText') },
+    locale: defaultLocale,
     showClearButton: true,
-    helperText: "Zorunlu alan.",
+    helperText: getText(defaultLocale, 'helperText'),
   },
 };
 
 export const AsyncValidationExample: Story = {
   args: {
-    label: "Kullanıcı Adı",
-    placeholder: "En az 3 karakter",
+    label: getText(defaultLocale, 'usernameValidation'),
+    placeholder: getText(defaultLocale, 'minInput'),
     enableAsyncValidation: true,
-    validateInput: async (v: string) => v.length > 2 ? { isValid: true, type: 'success', message: 'Geçerli' } : { isValid: false, type: 'error', message: 'En az 3 karakter' },
+    validateInput: async (v: string) => v.length > 2 ? { isValid: true, type: 'success', message: getText(defaultLocale, 'statusSuccess') } : { isValid: false, type: 'error', message: getText(defaultLocale, 'minInput') },
     showValidationStatus: true,
     validationDebounceMs: 300,
-    helperText: "En az 3 karakter olmalı",
+    helperText: getText(defaultLocale, 'minInput'),
+    locale: defaultLocale,
   },
 };
 
 export const MonitoringExample: Story = {
   args: {
-    label: "Loglanan Alan",
-    placeholder: "Değişiklikler console'a loglanır",
+    label: getText(defaultLocale, 'monitoringDescription'),
+    placeholder: getText(defaultLocale, 'monitoringDescription'),
     monitoring: {
-      onChange: (v: string) => { console.log('Değişti:', v); },
-      onError: (e: Error) => { console.error('Hata:', e); },
+      onChange: (v: string) => { console.log('Changed:', v); },
+      onError: (e: Error) => { console.error('Error:', e); },
     },
     showClearButton: true,
+    locale: defaultLocale,
   },
 };
 
 export const CustomRenderExample: Story = {
   args: {
-    label: "Özel İkon ve Yardım",
-    placeholder: "Duruma göre ikon ve yardım metni",
-    status: "success",
-    statusMessage: "Başarılı!",
+    label: getText(defaultLocale, 'customExport'),
+    placeholder: getText(defaultLocale, 'customExport'),
+    status: 'success',
+    statusMessage: getText(defaultLocale, 'statusSuccess'),
     renderCustomIcon: (status: string) => status === 'success' ? <span role="img" aria-label="success">🎉</span> : undefined,
     renderHelperText: (helper: React.ReactNode) => <span style={{ color: 'purple' }}>{helper}</span>,
-    helperText: "Custom helperText",
+    helperText: 'Custom helperText',
+    locale: defaultLocale,
   },
 };
 
@@ -664,15 +730,16 @@ export const AccessibilityExample: Story = {
 // Native input özellikleri örneği
 export const NativeInputFeatures: Story = {
   args: {
-    label: "Telefon",
-    placeholder: "5xx xxx xx xx",
+    label: getText(defaultLocale, 'phone'),
+    placeholder: '5xx xxx xx xx',
     autoFocus: false,
-    autoComplete: "tel",
-    inputMode: "tel",
-    pattern: "[0-9]{10,11}",
+    autoComplete: 'tel',
+    inputMode: 'tel',
+    pattern: '[0-9]{10,11}',
     maxLength: 11,
     minLength: 10,
     spellCheck: false,
+    locale: defaultLocale,
   },
 };
 
@@ -690,20 +757,21 @@ export const FormIntegration: Story = {
           render={({ field }) => (
             <BcTextField
               {...field}
-              label="Ad Soyad"
-              placeholder="Adınızı girin"
+              label={getText(defaultLocale, 'label')}
+              placeholder={getText(defaultLocale, 'placeholder')}
               showClearButton
+              locale={defaultLocale}
             />
           )}
         />
-        <button type="submit" style={{ marginTop: 16 }}>Gönder</button>
+        <button type="submit" style={{ marginTop: 16 }}>Submit</button>
       </form>
     );
   },
   parameters: {
     docs: {
       description: {
-        story: 'React Hook Form ile BcTextField entegrasyonu örneği.'
+        story: 'React Hook Form integration example with BcTextField.'
       }
     }
   }
@@ -711,15 +779,16 @@ export const FormIntegration: Story = {
 
 export const PrefixSuffix: Story = {
   args: {
-    label: "Telefon",
-    placeholder: "5xx xxx xx xx",
+    label: getText(defaultLocale, 'phone'),
+    placeholder: '5xx xxx xx xx',
     inputPrefix: <span style={{ color: '#888', marginRight: 4 }}>+90</span>,
     inputSuffix: <span style={{ color: '#888', marginLeft: 4 }}>.tr</span>,
+    locale: defaultLocale,
   },
   parameters: {
     docs: {
       description: {
-        story: 'inputPrefix ve inputSuffix ile input başına ve sonuna özel içerik eklenebilir.'
+        story: 'inputPrefix and inputSuffix allow custom content at the start and end of the input.'
       }
     }
   }
@@ -745,6 +814,7 @@ export const ThemeModes: Story = {
               label={appearance.charAt(0).toUpperCase() + appearance.slice(1)}
               placeholder={appearance}
               helperText={mode === 'dark' ? 'Dark mode' : 'Light mode'}
+              locale={defaultLocale}
             />
           ))}
         </Stack>
@@ -754,7 +824,7 @@ export const ThemeModes: Story = {
   parameters: {
     docs: {
       description: {
-        story: 'Light ve dark modda tüm appearance varyasyonları. Üstteki buton ile tema değiştirilebilir.'
+        story: 'All appearance variations in light and dark mode. You can switch theme with the button above.'
       }
     }
   }
@@ -781,19 +851,20 @@ export const Performance: Story = {
     return (
       <Box>
         <Box sx={{ mb: 2 }}>
-          <b>Toplam input sayısı:</b> 100<br />
-          <b>Render süresi:</b> {renderTime !== null ? renderTime.toFixed(2) + ' ms' : 'Hesaplanıyor...'}
+          <b>{getText(defaultLocale, 'performanceTotalInputs')}:</b> 100<br />
+          <b>{getText(defaultLocale, 'performanceRenderTime')}:</b> {renderTime !== null ? renderTime.toFixed(2) + ' ms' : getText(defaultLocale, 'performanceCalculating')}
         </Box>
         <Stack spacing={1}>
           {values.map((val, i) => (
             <BcTextField
               key={i}
-              label={`Alan ${i + 1}`}
+              label={getText(defaultLocale, 'label') + ' ' + (i + 1)}
               value={val}
               onChange={handleChange(i)}
               appearance={i % 8 === 0 ? 'premium' : i % 8 === 1 ? 'soft' : i % 8 === 2 ? 'glass' : i % 8 === 3 ? 'minimal' : i % 8 === 4 ? 'neumorph' : i % 8 === 5 ? 'underline' : i % 8 === 6 ? 'dark' : 'borderless'}
               size={i % 4 === 0 ? 'small' : i % 4 === 1 ? 'medium' : i % 4 === 2 ? 'normal' : 'large'}
-              helperText={`Yardım metni ${i + 1}`}
+              helperText={getText(defaultLocale, 'helperText') + ' ' + (i + 1)}
+              locale={defaultLocale}
             />
           ))}
         </Stack>
@@ -803,7 +874,7 @@ export const Performance: Story = {
   parameters: {
     docs: {
       description: {
-        story: '100 adet BcTextField ile büyük formda render performansı ölçümü. Render süresi üstte gösterilir.'
+        story: getText(defaultLocale, 'performanceStory')
       }
     }
   }

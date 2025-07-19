@@ -1,6 +1,7 @@
 {
   "BcTextField": {
     "clearButtonLabel": "Clear",
+    "clearButtonLabelDescription": "Label for the clear button",
     "helperText": "Helper text",
     "statusMessage": "Status message",
     "statusError": "Error!",
@@ -163,8 +164,10 @@
     "isOptionEqualToValueDescription": "Function to compare option and value for equality",
     "componentTitle": "BcTextField",
     "componentDescription": "Material-UI based, highly customizable TextField. Appearance, status, loading, clear, i18n, async validation, monitoring, accessibility and more.",
+    "componentDocsDescription": "Framework-level, highly customizable Material-UI TextField replacement. Supports appearance, size, status, loading, clear, password, email, responsive, and more.",
     "sizeDescription": "Size of the input",
     "typeDescription": "Type of the input (text, password, email, etc.)",
+    "placeholder": "Placeholder",
     "placeholderDescription": "Placeholder text for the input",
     "errorDescription": "Show error state",
     "onClearDescription": "Callback when the clear button is clicked",
@@ -172,6 +175,23 @@
     "inputComponentDescription": "Custom input component",
     "inputPrefixDescription": "Custom content at the start of the input",
     "inputSuffixDescription": "Custom content at the end of the input",
-    "loadingDescription": "Show loading spinner"
+    "loadingDescription": "Show loading spinner",
+    "performanceStory": "Performance measurement with 100 BcTextField components in a large form. Render time is shown above.",
+    "performanceTotalInputs": "Total input count",
+    "performanceRenderTime": "Render time",
+    "performanceCalculating": "Calculating...",
+    "name": "Name",
+    "nameDescription": "Name attribute for the input",
+    "enableRTLDescription": "Enable right-to-left layout",
+    "renderCustomIconDescription": "Custom render function for status icon",
+    "renderHelperTextDescription": "Custom render function for helper text",
+    "autoFocusDescription": "Auto focus the input on mount",
+    "autoCompleteDescription": "Autocomplete attribute for the input",
+    "inputModeDescription": "Input mode for the input (e.g., 'tel', 'email')",
+    "patternDescription": "Pattern attribute for the input",
+    "maxLengthDescription": "Maximum length of the input value",
+    "minLengthDescription": "Minimum length of the input value",
+    "spellCheckDescription": "Enable spell checking",
+    "loadingReadonlyDescription": "Make input readonly while loading"
   }
 } 

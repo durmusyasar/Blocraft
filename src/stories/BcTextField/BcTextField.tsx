@@ -1,6 +1,5 @@
 import type { TextFieldProps } from "@mui/material";
 import {
-  CircularProgress,
   TextField,
 } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
@@ -378,7 +377,7 @@ const BcTextFieldInner = forwardRef<HTMLInputElement, BcTextFieldProps>(
         sx = { ...sx, direction };
       }
       return sx;
-    }, [responsiveWidth, size, isHighContrast, statusColor, isPaletteColor, color, appearance, theme, props.sx, direction, fontSize, reducedMotion]);
+    }, [responsiveWidth, size, isHighContrast, statusColor, isPaletteColor, color, appearance, props.sx, direction, fontSize, reducedMotion, theme, getColor]);
 
     // Live region for screen reader
     const { liveRegionRef, liveRegionMessage } = useLiveRegion({
