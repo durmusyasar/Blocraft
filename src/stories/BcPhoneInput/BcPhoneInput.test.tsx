@@ -1,9 +1,6 @@
 import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
 import { BcPhoneInput } from "./BcPhoneInput";
-import { CountryCode } from './types';
-// import { axe, toHaveNoViolations } from 'jest-axe';
-// expect.extend(toHaveNoViolations);
 
 describe("BcPhoneInput", () => {
   it("renders with label", () => {
@@ -23,7 +20,7 @@ describe("BcPhoneInput", () => {
 
   it("calls onCountryChange (controlled)", () => {
     const Wrapper = () => {
-      const [country, setCountry] = React.useState<CountryCode>("TR");
+      const [country, setCountry] = React.useState<string>("TR");
       return <BcPhoneInput label="Telefon" country={country} onCountryChange={setCountry} />;
     };
     render(<Wrapper />);
@@ -109,10 +106,10 @@ describe("BcPhoneInput", () => {
 
 describe('BcPhoneInput advanced features', () => {
   it('shows favorite countries at the top', () => {
-    render(<BcPhoneInput favoriteCountries={['TR' as CountryCode, 'US' as CountryCode]} countryList={[
-      { id: 1, code: 'TR' as CountryCode, name: { tr: 'Türkiye', en: 'Turkey' }, flag: '🇹🇷', dial: 90, mask: '(999) 999-9999' },
-      { id: 2, code: 'US' as CountryCode, name: { tr: 'Amerika', en: 'United States' }, flag: '🇺🇸', dial: 1, mask: '(999) 999-9999' },
-      { id: 3, code: 'DE' as CountryCode, name: { tr: 'Almanya', en: 'Germany' }, flag: '🇩🇪', dial: 49, mask: '9999 9999999' },
+    render(<BcPhoneInput favoriteCountries={['TR', 'US']} countryList={[
+      { code: 'TR', name: 'Türkiye', flag: '🇹🇷', dial: 90, mask: '(999) 999-9999' },
+      { code: 'US', name: 'Amerika', flag: '🇺🇸', dial: 1, mask: '(999) 999-9999' },
+      { code: 'DE', name: 'Almanya', flag: '🇩🇪', dial: 49, mask: '9999 9999999' },
     ]} />);
     fireEvent.mouseDown(screen.getByRole('button', { name: /ülke|country/i }));
     expect(screen.getByText(/Favorites|Favoriler/)).toBeInTheDocument();
@@ -121,10 +118,10 @@ describe('BcPhoneInput advanced features', () => {
   });
 
   it('updates recents when country changes', () => {
-    const [country, setCountry] = React.useState<CountryCode>('TR');
-    render(<BcPhoneInput favoriteCountries={['TR' as CountryCode]} countryList={[
-      { id: 1, code: 'TR' as CountryCode, name: { tr: 'Türkiye', en: 'Turkey' }, flag: '🇹🇷', dial: 90, mask: '(999) 999-9999' },
-      { id: 2, code: 'US' as CountryCode, name: { tr: 'Amerika', en: 'United States' }, flag: '🇺🇸', dial: 1, mask: '(999) 999-9999' },
+    const [country, setCountry] = React.useState<string>('TR');
+    render(<BcPhoneInput favoriteCountries={['TR']} countryList={[
+      { code: 'TR', name: 'Türkiye', flag: '🇹🇷', dial: 90, mask: '(999) 999-9999' },
+      { code: 'US', name: 'Amerika', flag: '🇺🇸', dial: 1, mask: '(999) 999-9999' },
     ]} country={country} onCountryChange={setCountry} />);
     fireEvent.mouseDown(screen.getByRole('button', { name: /ülke|country/i }));
     fireEvent.click(screen.getByText(/United States|Amerika/));
@@ -134,8 +131,8 @@ describe('BcPhoneInput advanced features', () => {
   });
 
   it('renders readonly country code when showCountrySelect is readonly', () => {
-    render(<BcPhoneInput showCountrySelect="readonly" country={'TR' as CountryCode} countryList={[
-      { id: 1, code: 'TR' as CountryCode, name: { tr: 'Türkiye', en: 'Turkey' }, flag: '🇹🇷', dial: 90, mask: '(999) 999-9999' },
+    render(<BcPhoneInput showCountrySelect="readonly" country={'TR'} countryList={[
+      { code: 'TR', name: 'Türkiye', flag: '🇹🇷', dial: 90, mask: '(999) 999-9999' },
     ]} />);
     expect(screen.getByText(/Türkiye|Turkey/)).toBeInTheDocument();
     expect(screen.queryByRole('button', { name: /ülke|country/i })).not.toBeInTheDocument();
@@ -143,31 +140,30 @@ describe('BcPhoneInput advanced features', () => {
 
   it('renders quickly with a large country list', async () => {
     const bigList = Array.from({ length: 1000 }, (_, i) => ({
-      id: i + 1,
-      code: 'TR' as CountryCode,
-      name: { tr: `Ülke ${i + 1}`, en: `Country ${i + 1}` },
+      code: 'TR',
+      name: `Ülke ${i + 1}`,
       flag: '🏳️',
       dial: 1000 + i,
       mask: '(999) 999-9999'
     }));
-    render(<BcPhoneInput countryList={bigList} country={'TR' as CountryCode} />);
+    render(<BcPhoneInput countryList={bigList} country={'TR'} />);
     expect(screen.getByRole('textbox')).toBeInTheDocument();
   });
 
   it('shows i18n headers for favorites and recents', () => {
-    render(<BcPhoneInput favoriteCountries={['TR' as CountryCode]} countryList={[
-      { id: 1, code: 'TR' as CountryCode, name: { tr: 'Türkiye', en: 'Turkey' }, flag: '🇹🇷', dial: 90, mask: '(999) 999-9999' },
-      { id: 2, code: 'US' as CountryCode, name: { tr: 'Amerika', en: 'United States' }, flag: '🇺🇸', dial: 1, mask: '(999) 999-9999' },
-    ]} locale="tr" country={'TR' as CountryCode} />);
+    render(<BcPhoneInput favoriteCountries={['TR']} countryList={[
+      { code: 'TR', name: 'Türkiye', flag: '🇹🇷', dial: 90, mask: '(999) 999-9999' },
+      { code: 'US', name: 'Amerika', flag: '🇺🇸', dial: 1, mask: '(999) 999-9999' },
+    ]} locale="tr" country={'TR'} />);
     fireEvent.mouseDown(screen.getByRole('button', { name: /ülke|country/i }));
     expect(screen.getByText(/Favoriler/)).toBeInTheDocument();
   });
 
   it('shows loading state with async fetch', async () => {
     const fetchCountries = () => new Promise<any[]>(resolve => setTimeout(() => resolve([
-      { id: 1, code: 'TR' as CountryCode, name: { tr: 'Türkiye', en: 'Turkey' }, flag: '🇹🇷', dial: 90, mask: '(999) 999-9999' },
+      { code: 'TR', name: 'Türkiye', flag: '🇹🇷', dial: 90, mask: '(999) 999-9999' },
     ]), 500));
-    render(<BcPhoneInput fetchCountries={fetchCountries} country={'TR' as CountryCode} />);
+    render(<BcPhoneInput fetchCountries={fetchCountries} country={'TR'} />);
     fireEvent.mouseDown(screen.getByRole('button', { name: /ülke|country/i }));
     expect(screen.getByText(/Yükleniyor|Loading/)).toBeInTheDocument();
     expect(await screen.findByText(/Türkiye|Turkey/)).toBeInTheDocument();
@@ -175,8 +171,67 @@ describe('BcPhoneInput advanced features', () => {
 
   // Erişilebilirlik testi (jest-axe ile)
   // it('is accessible', async () => {
-  //   const { container } = render(<BcPhoneInput country={'TR' as CountryCode} />);
+  //   const { container } = render(<BcPhoneInput country={'TR'} />);
   //   const results = await axe(container);
   //   expect(results).toHaveNoViolations();
   // });
+});
+
+describe('BcPhoneInput yeni özellik testleri', () => {
+  it('placeholder ülke kodu ve maskeyi içerir', () => {
+    render(<BcPhoneInput country="TR" countryList={[{ code: 'TR', name: 'Türkiye', flag: '', dial: 90, mask: '(999) 999-9999' }]} />);
+    const input = screen.getByRole('textbox');
+    expect(input).toHaveAttribute('placeholder', expect.stringMatching(/\+90.*999/));
+  });
+
+  it('favori ülkelerde yıldız ikonu görünür', () => {
+    render(<BcPhoneInput favoriteCountries={['TR']} countryList={[
+      { code: 'TR', name: 'Türkiye', flag: '', dial: 90, mask: '(999) 999-9999' },
+      { code: 'US', name: 'Amerika', flag: '', dial: 1, mask: '(999) 999-9999' },
+    ]} />);
+    fireEvent.mouseDown(screen.getByRole('button', { name: /ülke|country/i }));
+    // Favori ülke satırında yıldız ikonu olmalı
+    expect(screen.getByTestId('StarIcon')).toBeInTheDocument();
+  });
+
+  it('son kullanılanlar başlığı/ayraç görünür', () => {
+    // Son kullanılan ülke için localStorage simüle et
+    window.localStorage.setItem('bc-phoneinput-recent-countries', JSON.stringify(['US']));
+    render(<BcPhoneInput countryList={[
+      { code: 'TR', name: 'Türkiye', flag: '', dial: 90, mask: '(999) 999-9999' },
+      { code: 'US', name: 'Amerika', flag: '', dial: 1, mask: '(999) 999-9999' },
+    ]} country="TR" />);
+    fireEvent.mouseDown(screen.getByRole('button', { name: /ülke|country/i }));
+    expect(screen.getByText(/Recently Used|Son Kullanılanlar/)).toBeInTheDocument();
+  });
+
+  it('input ve select erişilebilirlik özellikleri doğru atanır', () => {
+    render(<BcPhoneInput label="Telefon" country="TR" />);
+    const input = screen.getByLabelText('Telefon');
+    expect(input).toHaveAttribute('aria-describedby');
+    expect(input).toHaveAttribute('aria-label', 'Telefon');
+    // Hata mesajı id'si input'un aria-describedby'sinde olmalı (hatalı değer girilirse)
+    fireEvent.change(input, { target: { value: '123' } });
+    expect(input.getAttribute('aria-describedby')).toMatch(/bc-phoneinput-error-message/);
+    // Select için aria-label
+    fireEvent.mouseDown(screen.getByRole('button', { name: /ülke|country/i }));
+    const select = screen.getByRole('button', { name: /ülke|country/i });
+    expect(select).toHaveAttribute('aria-label', expect.stringMatching(/Select country/));
+  });
+
+  it('büyük listede sanal render ile başlıklar ve ülkeler doğru görünür', () => {
+    const bigList = Array.from({ length: 1000 }, (_, i) => ({
+      code: `C${i}`,
+      name: `Ülke ${i}`,
+      flag: '',
+      dial: 1000 + i,
+      mask: '(999) 999-9999'
+    }));
+    render(<BcPhoneInput countryList={bigList} country={'C0'} favoriteCountries={['C0', 'C1']} />);
+    fireEvent.mouseDown(screen.getByRole('button', { name: /ülke|country/i }));
+    // Favoriler başlığı ve ilk ülke görünmeli
+    expect(screen.getByText(/Favorites|Favoriler/)).toBeInTheDocument();
+    expect(screen.getByText(/Ülke 0/)).toBeInTheDocument();
+    // Sanal render ile listedeki bir ülke (örn. Ülke 999) DOM'da olmayabilir, ama başlıklar ve favoriler görünmeli
+  });
 }); 

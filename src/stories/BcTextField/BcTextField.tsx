@@ -30,7 +30,48 @@ import { getAppearanceSx } from './hooks/useAppearanceSx';
 import { useInputAdornments } from './hooks/useInputAdornments';
 import { useLiveRegion } from './hooks/useLiveRegion';
 
-
+/**
+ * BcTextFieldProps
+ * @property responsiveWidth - Genişlik otomatik ayarlansın mı / Should width be responsive
+ * @property showClearButton - Temizle butonu gösterilsin mi / Show clear button
+ * @property onClear - Temizle butonuna tıklanınca çağrılır / Called when clear button is clicked
+ * @property size - Büyüklük (normal, small, large) / Size (normal, small, large)
+ * @property appearance - Görünüm stili / Appearance style
+ * @property renderEndAdornment - Sağ ikona özel render / Custom render for end adornment
+ * @property name - Input adı / Input name
+ * @property helperText - Yardım metni / Helper text
+ * @property error - Hata durumu / Error state
+ * @property status - Durum (error, warning, success, info) / Status (error, warning, success, info)
+ * @property statusMessage - Durum mesajı / Status message
+ * @property loading - Yükleniyor göstergesi / Loading indicator
+ * @property clearButtonLabel - Temizle butonu etiketi / Clear button label
+ * @property translations - Çeviri nesnesi / Translations object
+ * @property enableRTL - RTL desteği / Enable RTL
+ * @property enableHighContrast - Yüksek kontrast modu / High contrast mode
+ * @property enableReducedMotion - Azaltılmış animasyon / Reduced motion
+ * @property fontSize - Yazı boyutu / Font size
+ * @property enableAsyncValidation - Asenkron validasyon / Enable async validation
+ * @property validateInput - Asenkron validasyon fonksiyonu / Async validation function
+ * @property showValidationStatus - Validasyon durumu gösterilsin mi / Show validation status
+ * @property validationDebounceMs - Validasyon debounce süresi / Validation debounce ms
+ * @property monitoring - İzleme fonksiyonları / Monitoring callbacks
+ * @property renderCustomIcon - Özel ikon render fonksiyonu / Custom icon render function
+ * @property renderHelperText - Yardım metni render fonksiyonu / Custom helper text render function
+ * @property locale - Dil kodu / Locale code
+ * @property fallbackLocale - Yedek dil kodu / Fallback locale
+ * @property autoFocus - Otomatik odaklanma / Auto focus
+ * @property autoComplete - Otomatik tamamlama / Auto complete
+ * @property inputMode - inputMode (örn. 'tel') / inputMode (e.g. 'tel')
+ * @property pattern - Regex pattern / Regex pattern
+ * @property maxLength - Maksimum karakter / Max length
+ * @property minLength - Minimum karakter / Min length
+ * @property spellCheck - Yazım denetimi / Spell check
+ * @property inputComponent - Özel input bileşeni / Custom input component
+ * @property loadingReadonly - Yüklenirken sadece readonly / Readonly while loading
+ * @property inputPrefix - Input başına özel node/ikon / Custom node/icon at input start
+ * @property inputSuffix - Input sonuna özel node/ikon / Custom node/icon at input end
+ * @property ...rest - Diğer TextFieldProps / Other TextFieldProps
+ */
 export interface BcTextFieldProps
   extends Omit<TextFieldProps, "variant" | "size"> {
   responsiveWidth?: boolean;

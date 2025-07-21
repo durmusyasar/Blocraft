@@ -1,12 +1,14 @@
 import React, { useState, useMemo, useEffect, forwardRef } from "react";
 import { BcTextField } from "../BcTextField/BcTextField";
 import type { BcTextFieldProps } from "../BcTextField/BcTextField";
-import { countryList as defaultCountryList, getPhoneMask, isPhoneValid, getCountryName } from "./utils";
+import { countryList as defaultCountryList, getPhoneMask, isPhoneValid } from "./utils";
 import { countrySelectStyle, countrySelectAppearances } from "./styles";
 import { Select, MenuItem, FormControl, Box, CircularProgress, SelectChangeEvent } from "@mui/material";
+import StarIcon from '@mui/icons-material/Star';
+import { FixedSizeList } from 'react-window';
 import enTexts from '../i18n/i18n/en.json';
 import trTexts from '../i18n/i18n/tr.json';
-import type { CountryType, CountryCode } from "./types";
+import type { CountryType } from "./types";
 
 const TEXTS: Record<string, Record<string, string>> = { en: enTexts.BcPhoneInput, tr: trTexts.BcPhoneInput };
 type Locale = keyof typeof TEXTS;
@@ -33,9 +35,9 @@ const getText = (locale: Locale | undefined, key: string, fallbackLocale?: Local
  */
 export interface BcPhoneInputProps extends Omit<BcTextFieldProps, "type"> {
   /** Seçili ülke kodu (ISO 3166-1 alpha-2) */
-  country?: CountryCode;
+  country?: string;
   /** Ülke değiştiğinde çağrılır */
-  onCountryChange?: (country: CountryCode) => void;
+  onCountryChange?: (country: string) => void;
   /** Dil kodu */
   locale?: Locale;
   /** Yedek dil kodu */
@@ -47,9 +49,9 @@ export interface BcPhoneInputProps extends Omit<BcTextFieldProps, "type"> {
   /** Select gösterilsin mi / 'readonly' */
   showCountrySelect?: boolean | 'readonly';
   /** Telefon doğrulama fonksiyonu */
-  validatePhone?: (phone: string, country: CountryCode) => boolean;
+  validatePhone?: (phone: string, country: string) => boolean;
   /** Mask fonksiyonu */
-  getMask?: (country: CountryCode) => string;
+  getMask?: (country: string) => string;
   /** Mask placeholderda gösterilsin mi */
   showMaskInPlaceholder?: boolean;
   /** inputMode (örn. 'tel') */
@@ -57,13 +59,51 @@ export interface BcPhoneInputProps extends Omit<BcTextFieldProps, "type"> {
   /** Otomatik odaklanma */
   autoFocus?: boolean;
   /** Favori ülke kodları */
-  favoriteCountries?: CountryCode[];
+  favoriteCountries?: string[];
+}
+
+// Ülke kodunu emoji bayrağa çeviren yardımcı fonksiyon
+function countryCodeToFlagEmoji(code: string): string {
+  if (!code) return '';
+  // ISO 3166-1 alpha-2 kodunu Unicode flag'e çevir
+  return code
+    .toUpperCase()
+    .replace(/./g, char =>
+      String.fromCodePoint(127397 + char.charCodeAt(0))
+    );
+}
+
+// Virtualized Menu List for large country lists
+function VirtualizedMenuList({ items, getItemLabel, getItemKey, renderItem, height = 300, itemSize = 44, ...props }: {
+  items: any[];
+  getItemLabel: (item: any, index: number) => string;
+  getItemKey: (item: any, index: number) => string | number;
+  renderItem: (item: any, index: number) => React.ReactNode;
+  height?: number;
+  itemSize?: number;
+}) {
+  return (
+    <FixedSizeList
+      height={height}
+      itemCount={items.length}
+      itemSize={itemSize}
+      width="100%"
+      overscanCount={6}
+      style={{ maxWidth: 320 }}
+    >
+      {({ index, style }) => (
+        <div style={style} key={getItemKey(items[index], index)}>
+          {renderItem(items[index], index)}
+        </div>
+      )}
+    </FixedSizeList>
+  );
 }
 
 export const BcPhoneInput = forwardRef<HTMLInputElement, BcPhoneInputProps>(
   (
     {
-      country = "TR" as CountryCode,
+      country = "TR",
       onCountryChange,
       appearance,
       disabled,
@@ -145,8 +185,8 @@ export const BcPhoneInput = forwardRef<HTMLInputElement, BcPhoneInputProps>(
         .map(code => all.find(c => c.code === code))
         .filter(Boolean) as CountryType[];
       const recents = recentCountries
-        .filter(code => !favoriteCountries.includes(code as CountryCode))
-        .map(code => all.find(c => c.code === (code as CountryCode)))
+        .filter((code: string) => !favoriteCountries.includes(code))
+        .map((code: string) => all.find(c => c.code === code))
         .filter(Boolean) as CountryType[];
       const others = all.filter(
         c => !favs.some(f => f.code === c.code) && !recents.some(r => r.code === c.code)
@@ -164,13 +204,17 @@ export const BcPhoneInput = forwardRef<HTMLInputElement, BcPhoneInputProps>(
 
     const [value, setValue] = useState(rest.defaultValue ?? "");
     const isControlled = rest.value !== undefined;
-    const phone = isControlled ? (rest.value as string) : value as string;
+    const phone: string = isControlled ? (rest.value as string) : value as string;
 
     // Mask ve validasyon özelleştirilebilir
     const mask = useMemo(() => {
       if (getMask) return getMask(country);
       return getPhoneMask(country, usedCountryList);
     }, [country, usedCountryList, getMask]);
+
+    // Seçili ülkenin dial kodunu bul
+    const selectedCountry = usedCountryList.find(c => c.code === country);
+    const dialCode = selectedCountry ? `+${selectedCountry.dial}` : '';
 
     const isValid = useMemo(() => {
       if (validatePhone) return validatePhone(phone, country);
@@ -182,14 +226,14 @@ export const BcPhoneInput = forwardRef<HTMLInputElement, BcPhoneInputProps>(
       if (rest.onChange) rest.onChange(e);
     };
 
-    const handleCountryChange = (event: SelectChangeEvent<CountryCode>) => {
-      const value = event.target.value as CountryCode;
+    const handleCountryChange = (event: SelectChangeEvent<string>) => {
+      const value = event.target.value as string;
       if (onCountryChange) {
         onCountryChange(value);
         // Ekran okuyucuya ülke kodu değişti mesajı gönder
         const selected = usedCountryList.find(c => c.code === value);
         if (selected) {
-          setScreenReaderMessage(`Ülke kodu değişti: ${getCountryName(selected.name, locale)}`);
+          setScreenReaderMessage(`Ülke kodu değişti: ${selected.name}`);
         }
       }
     };
@@ -235,24 +279,41 @@ export const BcPhoneInput = forwardRef<HTMLInputElement, BcPhoneInputProps>(
 
     // i18n label, placeholder, statusMessage
     const i18nLabel = label || getText(locale, 'label', fallbackLocale);
-    const i18nPlaceholder = showMaskInPlaceholder ? (mask || placeholder) : (placeholder || mask);
+    // Placeholder'da ülke kodu ve maskeyi birleştir
+    const i18nPlaceholder = showMaskInPlaceholder ? (`${dialCode} ${mask}`.trim() || placeholder) : (placeholder || `${dialCode} ${mask}`.trim());
     const i18nStatusMessage = statusMessage || getText(locale, 'invalidPhoneMessage', fallbackLocale) || 'Geçersiz telefon numarası';
     const i18nCountryLabel = getText(locale, 'countryLabel', fallbackLocale) || 'Ülke';
 
+    // Benzersiz id'ler
+    const errorId = `bc-phoneinput-error-message`;
+    const liveRegionId = `bc-phoneinput-live-region`;
+
     // i18n başlıklar
     const i18nFavorites = getText(locale, 'favorites', fallbackLocale) || 'Favorites';
-    const i18nRecents = getText(locale, 'recents', fallbackLocale) || 'Recent';
+    const i18nRecents = getText(locale, 'recents', fallbackLocale) || 'Recently Used';
 
     // Select node as inputPrefix (only if showCountrySelect)
-    let selectNode: React.ReactNode = undefined;
+    let selectNode: React.ReactNode;
     if (showCountrySelect === 'readonly') {
       const selected = usedCountryList.find(c => c.code === country);
       selectNode = (
         <Box sx={{ display: 'flex', alignItems: 'center', fontWeight: 600, fontSize: 14, mr: 1, ml: 0, color: '#222', userSelect: 'none', minWidth: 60 }}>
-          {selected ? `${getCountryName(selected.name, locale)} +${selected.dial}` : ''}
+          {selected ? `${selected.name} +${selected.dial}` : ''}
         </Box>
       );
     } else if (showCountrySelect) {
+      // Sanal render için düzleştirilmiş ülke listesi (başlıklar dahil)
+      const flatMenuItems: Array<{ type: 'header' | 'country', label?: string, country?: CountryType }> = [];
+      if (groupedCountries.favs.length > 0) {
+        flatMenuItems.push({ type: 'header', label: i18nFavorites });
+        groupedCountries.favs.forEach(c => flatMenuItems.push({ type: 'country', country: c }));
+      }
+      if (groupedCountries.recents.length > 0) {
+        flatMenuItems.push({ type: 'header', label: i18nRecents });
+        groupedCountries.recents.forEach(c => flatMenuItems.push({ type: 'country', country: c }));
+      }
+      groupedCountries.others.forEach(c => flatMenuItems.push({ type: 'country', country: c }));
+
       selectNode = (
         <Box sx={{ display: 'flex', alignItems: 'center', m: 0, p: 0 }}>
           <FormControl
@@ -281,7 +342,7 @@ export const BcPhoneInput = forwardRef<HTMLInputElement, BcPhoneInputProps>(
                 '& .MuiSelect-select': { pr: '18px', pl: 0 },
               }}
               inputProps={{
-                'aria-label': i18nCountryLabel,
+                'aria-label': `${i18nCountryLabel} - Select country for phone number`,
                 'aria-describedby': typeof rest['aria-describedby'] === 'string' ? rest['aria-describedby'] : undefined,
                 'aria-required': typeof rest.required === 'boolean' ? rest.required : undefined,
                 'aria-invalid': phone.length > 0 && !isValid ? true : undefined,
@@ -290,7 +351,66 @@ export const BcPhoneInput = forwardRef<HTMLInputElement, BcPhoneInputProps>(
               displayEmpty
               MenuProps={{
                 PaperProps: {
-                  style: { minWidth: 120 }
+                  style: { minWidth: 120 },
+                  ...(flatMenuItems.length > 50 ? {
+                    component: React.forwardRef(function VirtualizedPaper(props, ref) {
+                      return (
+                        <div ref={ref as React.Ref<HTMLDivElement>} {...props}>
+                          <VirtualizedMenuList
+                            items={flatMenuItems}
+                            getItemLabel={(item) => item.type === 'header' ? item.label! : item.country!.code}
+                            getItemKey={(item, idx) => item.type === 'header' ? `header-${item.label}` : item.country!.code}
+                            renderItem={(item, idx) =>
+                              item.type === 'header'
+                                ? <MenuItem key={`header-${item.label}`} disabled sx={{ fontWeight: 700, fontSize: 13, opacity: 0.7, pointerEvents: 'none', borderTop: idx !== 0 ? '1px solid #eee' : undefined, mt: idx !== 0 ? 1 : 0 }} aria-label={item.label}>{item.label}</MenuItem>
+                                : (
+                                  <MenuItem key={item.country!.code} value={item.country!.code} sx={{ display: 'flex', alignItems: 'center', gap: 0.5, pr: 0.5 }}>
+                                    <Box
+                                      component="span"
+                                      sx={{
+                                        display: 'flex',
+                                        alignItems: 'center',
+                                        gap: 1,
+                                        fontWeight: 500,
+                                        fontSize: 14,
+                                        px: 0.25,
+                                        py: 0.25,
+                                        width: '100%',
+                                      }}
+                                    >
+                                      <span
+                                        style={{
+                                          display: 'flex',
+                                          alignItems: 'center',
+                                          justifyContent: 'center',
+                                          width: 24,
+                                          height: 24,
+                                          background: '#f5f5f5',
+                                          borderRadius: '50%',
+                                          border: '1px solid #e0e0e0',
+                                          fontSize: 16,
+                                          marginRight: 6,
+                                          flexShrink: 0,
+                                          overflow: 'hidden',
+                                        }}
+                                      >
+                                        {item.country!.flag && item.country!.flag.trim() !== ''
+                                          ? <img src={item.country!.flag} alt={`Flag of ${item.country!.name}`} style={{ width: 20, height: 20, objectFit: 'cover', display: 'block' }} />
+                                          : countryCodeToFlagEmoji(item.country!.code)
+                                        }
+                                      </span>
+                                      <Box sx={{ fontWeight: 700, minWidth: 24 }}>{item.country!.code}</Box>
+                                      <Box sx={{ color: '#888', fontWeight: 500, minWidth: 28, ml: 0.5 }}>+{item.country!.dial}</Box>
+                                      {groupedCountries.favs.some(f => f.code === item.country!.code) && <StarIcon data-testid="StarIcon" sx={{ color: '#FFD700', fontSize: 18, ml: 0.5 }} />}
+                                    </Box>
+                                  </MenuItem>
+                                )
+                            }
+                          />
+                        </div>
+                      );
+                    })
+                  } : {})
                 }
               }}
               renderValue={(selected) => {
@@ -313,15 +433,40 @@ export const BcPhoneInput = forwardRef<HTMLInputElement, BcPhoneInputProps>(
                             <Box
                               component="span"
                               sx={{
-                                fontWeight: 600,
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: 1,
+                                fontWeight: 500,
                                 fontSize: 14,
-                                color: isDark ? '#fff' : appearance === 'underline' ? '#222' : undefined,
-                                background: isDark ? '#222' : 'transparent',
-                                borderRadius: appearance === 'underline' ? 0 : 4,
-                                px: 0,
+                                px: 0.25,
+                                py: 0.25,
+                                width: '100%',
                               }}
                             >
-                              {c.code} +{c.dial}
+                              <span
+                                style={{
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  justifyContent: 'center',
+                                  width: 24,
+                                  height: 24,
+                                  background: '#f5f5f5',
+                                  borderRadius: '50%',
+                                  border: '1px solid #e0e0e0',
+                                  fontSize: 16,
+                                  marginRight: 6,
+                                  flexShrink: 0,
+                                  overflow: 'hidden',
+                                }}
+                              >
+                                {c.flag && c.flag.trim() !== ''
+                                  ? <img src={c.flag} alt={`Flag of ${c.name}`} style={{ width: 20, height: 20, objectFit: 'cover', display: 'block' }} />
+                                  : countryCodeToFlagEmoji(c.code)
+                                }
+                              </span>
+                              <Box sx={{ fontWeight: 700, minWidth: 24 }}>{c.code}</Box>
+                              <Box sx={{ color: '#888', fontWeight: 500, minWidth: 28, ml: 0.5 }}>+{c.dial}</Box>
+                              <StarIcon sx={{ color: '#FFD700', fontSize: 18, ml: 0.5 }} />
                             </Box>
                           </MenuItem>
                         ))
@@ -329,21 +474,45 @@ export const BcPhoneInput = forwardRef<HTMLInputElement, BcPhoneInputProps>(
                     : []),
                   ...(groupedCountries.recents.length > 0
                     ? [
-                        <MenuItem key="recent-header" disabled sx={{ fontWeight: 700, fontSize: 13, opacity: 0.7, pointerEvents: 'none' }} aria-label={i18nRecents}>{i18nRecents}</MenuItem>,
+                        <MenuItem key="recents-header" disabled sx={{ fontWeight: 700, fontSize: 13, opacity: 0.7, pointerEvents: 'none', borderTop: '1px solid #eee', mt: 1 }} aria-label={i18nRecents}>{i18nRecents}</MenuItem>,
                         ...groupedCountries.recents.map(c => (
                           <MenuItem key={c.code} value={c.code} sx={{ display: 'flex', alignItems: 'center', gap: 0.5, pr: 0.5 }}>
                             <Box
                               component="span"
                               sx={{
-                                fontWeight: 600,
+                                display: 'flex',
+                                alignItems: 'center',
+                                gap: 1,
+                                fontWeight: 500,
                                 fontSize: 14,
-                                color: isDark ? '#fff' : appearance === 'underline' ? '#222' : undefined,
-                                background: isDark ? '#222' : 'transparent',
-                                borderRadius: appearance === 'underline' ? 0 : 4,
-                                px: 0,
+                                px: 0.25,
+                                py: 0.25,
+                                width: '100%',
                               }}
                             >
-                              {c.code} +{c.dial}
+                              <span
+                                style={{
+                                  display: 'flex',
+                                  alignItems: 'center',
+                                  justifyContent: 'center',
+                                  width: 24,
+                                  height: 24,
+                                  background: '#f5f5f5',
+                                  borderRadius: '50%',
+                                  border: '1px solid #e0e0e0',
+                                  fontSize: 16,
+                                  marginRight: 6,
+                                  flexShrink: 0,
+                                  overflow: 'hidden',
+                                }}
+                              >
+                                {c.flag && c.flag.trim() !== ''
+                                  ? <img src={c.flag} alt={`Flag of ${c.name}`} style={{ width: 20, height: 20, objectFit: 'cover', display: 'block' }} />
+                                  : countryCodeToFlagEmoji(c.code)
+                                }
+                              </span>
+                              <Box sx={{ fontWeight: 700, minWidth: 24 }}>{c.code}</Box>
+                              <Box sx={{ color: '#888', fontWeight: 500, minWidth: 28, ml: 0.5 }}>+{c.dial}</Box>
                             </Box>
                           </MenuItem>
                         ))
@@ -354,15 +523,39 @@ export const BcPhoneInput = forwardRef<HTMLInputElement, BcPhoneInputProps>(
                       <Box
                         component="span"
                         sx={{
-                          fontWeight: 600,
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: 1,
+                          fontWeight: 500,
                           fontSize: 14,
-                          color: isDark ? '#fff' : appearance === 'underline' ? '#222' : undefined,
-                          background: isDark ? '#222' : 'transparent',
-                          borderRadius: appearance === 'underline' ? 0 : 4,
-                          px: 0,
+                          px: 0.25,
+                          py: 0.25,
+                          width: '100%',
                         }}
                       >
-                        {c.code} +{c.dial}
+                        <span
+                          style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            width: 24,
+                            height: 24,
+                            background: '#f5f5f5',
+                            borderRadius: '50%',
+                            border: '1px solid #e0e0e0',
+                            fontSize: 16,
+                            marginRight: 6,
+                            flexShrink: 0,
+                            overflow: 'hidden',
+                          }}
+                        >
+                          {c.flag && c.flag.trim() !== ''
+                            ? <img src={c.flag} alt={`Flag of ${c.name}`} style={{ width: 20, height: 20, objectFit: 'cover', display: 'block' }} />
+                            : countryCodeToFlagEmoji(c.code)
+                          }
+                        </span>
+                        <Box sx={{ fontWeight: 700, minWidth: 24 }}>{c.code}</Box>
+                        <Box sx={{ color: '#888', fontWeight: 500, minWidth: 28, ml: 0.5 }}>+{c.dial}</Box>
                       </Box>
                     </MenuItem>
                   )),
@@ -394,7 +587,11 @@ export const BcPhoneInput = forwardRef<HTMLInputElement, BcPhoneInputProps>(
           inputPrefix={selectNode}
           sx={{ '& .MuiInputAdornment-root': { m: 0, p: 0 } }}
           aria-label={typeof i18nLabel === 'string' ? i18nLabel : undefined}
-          aria-describedby={typeof rest['aria-describedby'] === 'string' ? rest['aria-describedby'] : undefined}
+          aria-describedby={[
+            typeof rest['aria-describedby'] === 'string' ? rest['aria-describedby'] : undefined,
+            phone.length > 0 && !isValid ? errorId : undefined,
+            liveRegionId
+          ].filter(Boolean).join(' ') || undefined}
           aria-required={typeof rest.required === 'boolean' ? rest.required : undefined}
           aria-invalid={phone.length > 0 && !isValid ? true : undefined}
           inputMode={inputMode}
@@ -403,12 +600,17 @@ export const BcPhoneInput = forwardRef<HTMLInputElement, BcPhoneInputProps>(
         {/* Ekran okuyucu için live region */}
         <div
           ref={liveRegionRef}
+          id={liveRegionId}
           aria-live="polite"
           aria-atomic="true"
           style={{ position: 'absolute', left: -9999, width: 1, height: 1, overflow: 'hidden' }}
         >
           {screenReaderMessage}
         </div>
+        {/* Hata mesajı için ayrı bir div */}
+        {phone.length > 0 && !isValid && (
+          <div id={errorId} style={{ display: 'none' }}>{i18nStatusMessage}</div>
+        )}
       </>
     );
   }

@@ -6,7 +6,6 @@ import trTexts from '../i18n/i18n/tr.json';
 import { useForm, Controller } from "react-hook-form";
 import { countryList as defaultCountryList } from "./utils";
 import React from "react";
-import { CountryCode } from './types';
 
 const TEXTS: Record<string, Record<string, string>> = { en: enTexts.BcPhoneInput, tr: trTexts.BcPhoneInput };
 type Locale = keyof typeof TEXTS;
@@ -148,10 +147,10 @@ export const DifferentCountries: Story = {
     const [country4, setCountry4] = useState("GB");
     return (
       <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-        <BcPhoneInput label={getText(defaultLocale, 'label')} country={country1 as CountryCode} onCountryChange={setCountry1} locale={defaultLocale} />
-        <BcPhoneInput label={getText(defaultLocale, 'label')} country={country2 as CountryCode} onCountryChange={setCountry2} locale={defaultLocale} />
-        <BcPhoneInput label={getText(defaultLocale, 'label')} country={country3 as CountryCode} onCountryChange={setCountry3} locale={defaultLocale} />
-        <BcPhoneInput label={getText(defaultLocale, 'label')} country={country4 as CountryCode} onCountryChange={setCountry4} locale={defaultLocale} />
+        <BcPhoneInput label={getText(defaultLocale, 'label')} country={country1} onCountryChange={setCountry1} locale={defaultLocale} />
+        <BcPhoneInput label={getText(defaultLocale, 'label')} country={country2} onCountryChange={setCountry2} locale={defaultLocale} />
+        <BcPhoneInput label={getText(defaultLocale, 'label')} country={country3} onCountryChange={setCountry3} locale={defaultLocale} />
+        <BcPhoneInput label={getText(defaultLocale, 'label')} country={country4} onCountryChange={setCountry4} locale={defaultLocale} />
       </div>
     );
   },
@@ -314,13 +313,13 @@ export const RHFPhoneInputExample: Story = {
         phone: '+90',
       },
     });
-    const country = watch('country') as CountryCode;
+    const country = watch('country') as string;
     const phone = watch('phone');
     const countryList = defaultCountryList;
     const selectedCountry = countryList.find(c => c.code === country);
     const dial = selectedCountry ? `+${selectedCountry.dial}` : '';
 
-    const handleCountryChange = (newCountry: CountryCode) => {
+    const handleCountryChange = (newCountry: string) => {
       const newDial = countryList.find(c => c.code === newCountry)?.dial;
       setValue('country', newCountry);
       setValue('phone', `+${newDial}`);
@@ -368,7 +367,7 @@ export const FavoritesAndRecents = {
         {...args}
         label={args.label || (locale === 'tr' ? 'Telefon' : 'Phone')}
         favoriteCountries={['TR', 'US']}
-        country={selectedCountry as CountryCode}
+        country={selectedCountry}
         onCountryChange={setSelectedCountry}
         value={value}
         onChange={e => setValue(e.target.value)}
@@ -390,16 +389,16 @@ export const FavoritesAndRecents = {
 export const MultipleInputs = {
   render: (args: any, context: any) => {
     const defaultLocale = context?.globals?.locale ?? context?.locale ?? 'en';
-    const [country1, setCountry1] = React.useState<CountryCode>('TR');
-    const [country2, setCountry2] = React.useState<CountryCode>('US');
-    const [country3, setCountry3] = React.useState<CountryCode>('DE');
-    const [country4, setCountry4] = React.useState<CountryCode>('GB');
+    const [country1, setCountry1] = React.useState<string>('TR');
+    const [country2, setCountry2] = React.useState<string>('US');
+    const [country3, setCountry3] = React.useState<string>('DE');
+    const [country4, setCountry4] = React.useState<string>('GB');
     return (
       <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
-        <BcPhoneInput label={getText(defaultLocale, 'label')} country={country1 as CountryCode} onCountryChange={c => setCountry1(c as CountryCode)} locale={defaultLocale} />
-        <BcPhoneInput label={getText(defaultLocale, 'label')} country={country2 as CountryCode} onCountryChange={c => setCountry2(c as CountryCode)} locale={defaultLocale} />
-        <BcPhoneInput label={getText(defaultLocale, 'label')} country={country3 as CountryCode} onCountryChange={c => setCountry3(c as CountryCode)} locale={defaultLocale} />
-        <BcPhoneInput label={getText(defaultLocale, 'label')} country={country4 as CountryCode} onCountryChange={c => setCountry4(c as CountryCode)} locale={defaultLocale} />
+        <BcPhoneInput label={getText(defaultLocale, 'label')} country={country1} onCountryChange={c => setCountry1(c)} locale={defaultLocale} />
+        <BcPhoneInput label={getText(defaultLocale, 'label')} country={country2} onCountryChange={c => setCountry2(c)} locale={defaultLocale} />
+        <BcPhoneInput label={getText(defaultLocale, 'label')} country={country3} onCountryChange={c => setCountry3(c)} locale={defaultLocale} />
+        <BcPhoneInput label={getText(defaultLocale, 'label')} country={country4} onCountryChange={c => setCountry4(c)} locale={defaultLocale} />
       </div>
     );
   },
@@ -426,7 +425,7 @@ export const PerformanceTest = {
       // 1000 ülke simüle et
       const bigList = Array.from({ length: 1000 }, (_, i) => ({
         id: i + 1,
-        code: ('TR' as CountryCode), // veya uygun kodlar
+        code: ('TR' as string), // veya uygun kodlar
         name: { tr: `Ülke ${i + 1}`, en: `Country ${i + 1}` },
         flag: '🏳️',
         dial: 1000 + i,
@@ -434,8 +433,8 @@ export const PerformanceTest = {
       }));
       // TR ve US başa ekle
       bigList.unshift(
-        { id: 1001, code: 'TR' as CountryCode, name: { tr: 'Türkiye', en: 'Turkey' }, flag: '🇹🇷', dial: 90, mask: '(999) 999-9999' },
-        { id: 1002, code: 'US' as CountryCode, name: { tr: 'Amerika', en: 'United States' }, flag: '🇺🇸', dial: 1, mask: '(999) 999-9999' }
+        { id: 1001, code: 'TR' as string, name: { tr: 'Türkiye', en: 'Turkey' }, flag: '🇹🇷', dial: 90, mask: '(999) 999-9999' },
+        { id: 1002, code: 'US' as string, name: { tr: 'Amerika', en: 'United States' }, flag: '🇺🇸', dial: 1, mask: '(999) 999-9999' }
       );
       setTimeout(() => {
         setCountries(bigList);
@@ -453,7 +452,7 @@ export const PerformanceTest = {
           {...args}
           label={args.label || (locale === 'tr' ? 'Telefon' : 'Phone')}
           countryList={countries}
-          country={selectedCountry as CountryCode}
+          country={selectedCountry}
           onCountryChange={setSelectedCountry}
           value={value}
           onChange={e => setValue(e.target.value)}

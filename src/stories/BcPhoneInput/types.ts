@@ -1,22 +1,3 @@
-/**
- * Supported country codes for BcPhoneInput
- */
-export type CountryCode = 'TR' | 'US' | 'DE' | 'GB';
-
-/**
- * Enum for supported country codes
- */
-export enum CountryCodeEnum {
-  TR = 'TR',
-  US = 'US',
-  DE = 'DE',
-  GB = 'GB',
-}
-
-/**
- * Country name type, can be string or localized object
- */
-export type CountryNameType = string | { [locale: string]: string };
 
 /**
  * CountryType describes a country for phone input
@@ -27,12 +8,11 @@ export type CountryNameType = string | { [locale: string]: string };
  * @property mask - Phone mask for the country
  */
 export interface CountryType {
-  id: number;
-  code: CountryCode;
-  name: CountryNameType;
-  flag: string;
+  code: string;
+  name: string;
+  flag?: string | null;
   dial: number;
-  mask: string;
+  mask?: string | null;
 }
 
 export interface BcPhoneInputProps {
