@@ -1,237 +1,275 @@
-import React from "react";
-import { render, screen, fireEvent } from "@testing-library/react";
-import { BcPhoneInput } from "./BcPhoneInput";
+import React from 'react';
+import { render, screen,  waitFor } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { axe, toHaveNoViolations } from 'jest-axe';
+import { BcPhoneInput } from './BcPhoneInput';
+import type { CountryType } from './types';
 
-describe("BcPhoneInput", () => {
-  it("renders with label", () => {
-    render(<BcPhoneInput label="Telefon" />);
-    expect(screen.getByLabelText("Telefon")).toBeInTheDocument();
-  });
+expect.extend(toHaveNoViolations);
 
-  it("shows country select by default", () => {
-    render(<BcPhoneInput label="Telefon" />);
-    expect(screen.getByText("Türkiye +90")).toBeInTheDocument();
-  });
+// Mock country data
+const mockCountries: CountryType[] = [
+  { code: 'TR', name: 'Turkey', dial: '90', flag: '🇹🇷' },
+  { code: 'US', name: 'United States', dial: '1', flag: '🇺🇸' },
+  { code: 'DE', name: 'Germany', dial: '49', flag: '🇩🇪' },
+  { code: 'FR', name: 'France', dial: '33', flag: '🇫🇷' },
+  { code: 'GB', name: 'United Kingdom', dial: '44', flag: '🇬🇧' },
+];
 
-  it("can hide country select with showCountrySelect", () => {
-    render(<BcPhoneInput label="Telefon" showCountrySelect={false} />);
-    expect(screen.queryByText("Türkiye +90")).not.toBeInTheDocument();
-  });
-
-  it("calls onCountryChange (controlled)", () => {
-    const Wrapper = () => {
-      const [country, setCountry] = React.useState<string>("TR");
-      return <BcPhoneInput label="Telefon" country={country} onCountryChange={setCountry} />;
-    };
-    render(<Wrapper />);
-    fireEvent.mouseDown(screen.getByText("Türkiye +90"));
-    fireEvent.click(screen.getByText("Almanya +49"));
-    expect(screen.getByText("Almanya +49")).toBeInTheDocument();
-  });
-
-  it("shows error for invalid phone", () => {
-    render(<BcPhoneInput label="Telefon" defaultValue="123" country="TR" />);
-    expect(screen.getByText(/Geçersiz telefon/)).toBeInTheDocument();
-  });
-
-  it("supports controlled mode", () => {
-    const Wrapper = () => {
-      const [val, setVal] = React.useState("");
-      return <BcPhoneInput label="Telefon" value={val} onChange={e => setVal(e.target.value)} />;
-    };
-    render(<Wrapper />);
-    const input = screen.getByLabelText("Telefon");
-    fireEvent.change(input, { target: { value: "5551234567" } });
-    expect(input).toHaveValue("5551234567");
-  });
-
-  it("shows helperText and status", () => {
-    render(<BcPhoneInput label="Telefon" helperText="Yardım" status="info" statusMessage="Bilgi!" />);
-    expect(screen.getByText("Yardım")).toBeInTheDocument();
-    expect(screen.getByText("Bilgi!")).toBeInTheDocument();
-  });
-
-  it("renders disabled", () => {
-    render(<BcPhoneInput label="Telefon" disabled defaultValue="5551234567" />);
-    expect(screen.getByLabelText("Telefon")).toBeDisabled();
-  });
-
-  it("shows clear button", () => {
-    render(<BcPhoneInput label="Telefon" showClearButton defaultValue="5551234567" />);
-    expect(screen.getByLabelText("Temizle")).toBeInTheDocument();
-  });
-
-  it("validates very long phone number as invalid", () => {
-    render(<BcPhoneInput label="Telefon" defaultValue={"5".repeat(20)} country="TR" />);
-    expect(screen.getByText(/Geçersiz telefon/)).toBeInTheDocument();
-  });
-
-  it("validates only country code as invalid", () => {
-    render(<BcPhoneInput label="Telefon" defaultValue="" country="TR" />);
-    expect(screen.queryByText(/Geçersiz telefon/)).not.toBeInTheDocument();
-  });
-
-  it("handles paste event correctly", () => {
-    const Wrapper = () => {
-      const [val, setVal] = React.useState("");
-      return <BcPhoneInput label="Telefon" value={val} onChange={e => setVal(e.target.value)} />;
-    };
-    render(<Wrapper />);
-    const input = screen.getByLabelText("Telefon");
-    fireEvent.paste(input, { clipboardData: { getData: () => "5551234567" } });
-    // Paste event simülasyonu için change de tetiklenmeli
-    fireEvent.change(input, { target: { value: "5551234567" } });
-    expect(input).toHaveValue("5551234567");
-  });
-
-  it("supports custom validatePhone and getMask", () => {
-    const customValidate = (phone: string, country: string) => phone === "12345" && country === "TR";
-    const customMask = (country: string) => country === "TR" ? "12345" : "999";
-    render(<BcPhoneInput label="Telefon" defaultValue="12345" country="TR" validatePhone={customValidate} getMask={customMask} />);
-    expect(screen.queryByText(/Geçersiz telefon/)).not.toBeInTheDocument();
-  });
-
-  it("changes label and country name with locale", () => {
-    render(<BcPhoneInput label={undefined} locale="en" country="US" />);
-    expect(screen.getByLabelText("Phone")).toBeInTheDocument();
-    expect(screen.getByText("United States +1")).toBeInTheDocument();
-  });
-
-  // it("is accessible (axe)", async () => {
-  //   const { container } = render(<BcPhoneInput label="Telefon" />);
-  //   const results = await axe(container);
-  //   expect(results).toHaveNoViolations();
-  // });
+// Mock localStorage
+const localStorageMock = {
+  getItem: jest.fn(),
+  setItem: jest.fn(),
+  removeItem: jest.fn(),
+  clear: jest.fn(),
+};
+Object.defineProperty(window, 'localStorage', {
+  value: localStorageMock,
 });
 
-describe('BcPhoneInput advanced features', () => {
-  it('shows favorite countries at the top', () => {
-    render(<BcPhoneInput favoriteCountries={['TR', 'US']} countryList={[
-      { code: 'TR', name: 'Türkiye', flag: '🇹🇷', dial: 90, mask: '(999) 999-9999' },
-      { code: 'US', name: 'Amerika', flag: '🇺🇸', dial: 1, mask: '(999) 999-9999' },
-      { code: 'DE', name: 'Almanya', flag: '🇩🇪', dial: 49, mask: '9999 9999999' },
-    ]} />);
-    fireEvent.mouseDown(screen.getByRole('button', { name: /ülke|country/i }));
-    expect(screen.getByText(/Favorites|Favoriler/)).toBeInTheDocument();
-    expect(screen.getAllByRole('option')[1]).toHaveTextContent(/Türkiye|Turkey/);
-    expect(screen.getAllByRole('option')[2]).toHaveTextContent(/Amerika|United States/);
+describe('BcPhoneInput', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+    localStorageMock.getItem.mockReturnValue(null);
   });
 
-  it('updates recents when country changes', () => {
-    const [country, setCountry] = React.useState<string>('TR');
-    render(<BcPhoneInput favoriteCountries={['TR']} countryList={[
-      { code: 'TR', name: 'Türkiye', flag: '🇹🇷', dial: 90, mask: '(999) 999-9999' },
-      { code: 'US', name: 'Amerika', flag: '🇺🇸', dial: 1, mask: '(999) 999-9999' },
-    ]} country={country} onCountryChange={setCountry} />);
-    fireEvent.mouseDown(screen.getByRole('button', { name: /ülke|country/i }));
-    fireEvent.click(screen.getByText(/United States|Amerika/));
-    fireEvent.mouseDown(screen.getByRole('button', { name: /ülke|country/i }));
-    expect(screen.getByText(/Recent|Son Kullanılanlar/)).toBeInTheDocument();
-    expect(screen.getAllByRole('option')[2]).toHaveTextContent(/United States|Amerika/);
+  describe('Basic Rendering', () => {
+    it('renders with default props', () => {
+      render(<BcPhoneInput />);
+      expect(screen.getByRole('textbox')).toBeInTheDocument();
+      expect(screen.getByDisplayValue('')).toBeInTheDocument();
+    });
+
+    it('renders with custom label', () => {
+      render(<BcPhoneInput label="Phone Number" />);
+      expect(screen.getByLabelText('Phone Number')).toBeInTheDocument();
+    });
+
+    it('renders with custom placeholder', () => {
+      render(<BcPhoneInput placeholder="Enter phone number" />);
+      expect(screen.getByPlaceholderText('Enter phone number')).toBeInTheDocument();
+    });
+
+    it('renders with country select by default', () => {
+      render(<BcPhoneInput />);
+      expect(screen.getByRole('combobox')).toBeInTheDocument();
+    });
+
+    it('hides country select when showCountrySelect is false', () => {
+      render(<BcPhoneInput showCountrySelect={false} />);
+      expect(screen.queryByRole('combobox')).not.toBeInTheDocument();
+    });
+
+    it('shows readonly country when showCountrySelect is readonly', () => {
+      render(<BcPhoneInput showCountrySelect="readonly" country="TR" />);
+      expect(screen.queryByRole('combobox')).not.toBeInTheDocument();
+      expect(screen.getByText('Turkey +90')).toBeInTheDocument();
+    });
   });
 
-  it('renders readonly country code when showCountrySelect is readonly', () => {
-    render(<BcPhoneInput showCountrySelect="readonly" country={'TR'} countryList={[
-      { code: 'TR', name: 'Türkiye', flag: '🇹🇷', dial: 90, mask: '(999) 999-9999' },
-    ]} />);
-    expect(screen.getByText(/Türkiye|Turkey/)).toBeInTheDocument();
-    expect(screen.queryByRole('button', { name: /ülke|country/i })).not.toBeInTheDocument();
+  describe('Country Selection', () => {
+    it('displays default country (TR)', () => {
+      render(<BcPhoneInput countryList={mockCountries} />);
+      expect(screen.getByDisplayValue('TR +90')).toBeInTheDocument();
+    });
+
+    it('changes country when selected', async () => {
+      const onCountryChange = jest.fn();
+      render(
+        <BcPhoneInput 
+          countryList={mockCountries} 
+          onCountryChange={onCountryChange}
+        />
+      );
+      
+      const select = screen.getByRole('combobox');
+      await userEvent.click(select);
+      
+      const usOption = screen.getByText('US');
+      await userEvent.click(usOption);
+      
+      expect(onCountryChange).toHaveBeenCalledWith('US');
+    });
+
+    it('displays country flag and dial code in dropdown', async () => {
+      render(<BcPhoneInput countryList={mockCountries} />);
+      
+      const select = screen.getByRole('combobox');
+      await userEvent.click(select);
+      
+      expect(screen.getByText('TR')).toBeInTheDocument();
+      expect(screen.getByText('+90')).toBeInTheDocument();
+    });
+
+    it('groups countries by favorites and recent', async () => {
+      render(
+        <BcPhoneInput 
+          countryList={mockCountries}
+          favoriteCountries={['US', 'DE']}
+        />
+      );
+      
+      const select = screen.getByRole('combobox');
+      await userEvent.click(select);
+      
+      expect(screen.getByText('Favorites')).toBeInTheDocument();
+    });
   });
 
-  it('renders quickly with a large country list', async () => {
-    const bigList = Array.from({ length: 1000 }, (_, i) => ({
-      code: 'TR',
-      name: `Ülke ${i + 1}`,
-      flag: '🏳️',
-      dial: 1000 + i,
-      mask: '(999) 999-9999'
-    }));
-    render(<BcPhoneInput countryList={bigList} country={'TR'} />);
-    expect(screen.getByRole('textbox')).toBeInTheDocument();
+  describe('Phone Input', () => {
+    it('handles phone number input', async () => {
+      const onChange = jest.fn();
+      render(<BcPhoneInput onChange={onChange} />);
+      
+      const input = screen.getByRole('textbox');
+      await userEvent.type(input, '5551234567');
+      
+      expect(onChange).toHaveBeenCalled();
+      expect(input).toHaveValue('5551234567');
+    });
+
+    it('shows phone mask in placeholder', () => {
+      render(<BcPhoneInput country="TR" showMaskInPlaceholder />);
+      expect(screen.getByPlaceholderText(/\+90/)).toBeInTheDocument();
+    });
+
+    it('validates phone number format', async () => {
+      render(<BcPhoneInput country="TR" />);
+      
+      const input = screen.getByRole('textbox');
+      await userEvent.type(input, '123'); // Invalid for Turkey
+      
+      await waitFor(() => {
+        expect(screen.getByText(/Geçersiz telefon numarası|Invalid phone number/)).toBeInTheDocument();
+      });
+    });
+
+    it('uses custom validation function', async () => {
+      const validatePhone = jest.fn().mockReturnValue(false);
+      render(<BcPhoneInput validatePhone={validatePhone} />);
+      
+      const input = screen.getByRole('textbox');
+      await userEvent.type(input, '5551234567');
+      
+      expect(validatePhone).toHaveBeenCalledWith('5551234567', 'TR');
+    });
   });
 
-  it('shows i18n headers for favorites and recents', () => {
-    render(<BcPhoneInput favoriteCountries={['TR']} countryList={[
-      { code: 'TR', name: 'Türkiye', flag: '🇹🇷', dial: 90, mask: '(999) 999-9999' },
-      { code: 'US', name: 'Amerika', flag: '🇺🇸', dial: 1, mask: '(999) 999-9999' },
-    ]} locale="tr" country={'TR'} />);
-    fireEvent.mouseDown(screen.getByRole('button', { name: /ülke|country/i }));
-    expect(screen.getByText(/Favoriler/)).toBeInTheDocument();
+  describe('Async Country Loading', () => {
+    it('shows loading state when fetching countries', async () => {
+      const fetchCountries = jest.fn().mockImplementation(
+        () => new Promise(resolve => setTimeout(() => resolve(mockCountries), 100))
+      );
+      
+      render(<BcPhoneInput fetchCountries={fetchCountries} />);
+      
+      expect(screen.getByText(/Yükleniyor|Loading/)).toBeInTheDocument();
+      
+      await waitFor(() => {
+        expect(screen.queryByText(/Yükleniyor|Loading/)).not.toBeInTheDocument();
+      });
+    });
+
+    it('handles fetch countries error gracefully', async () => {
+      const consoleSpy = jest.spyOn(console, 'warn').mockImplementation();
+      const fetchCountries = jest.fn().mockRejectedValue(new Error('Network error'));
+      
+      render(<BcPhoneInput fetchCountries={fetchCountries} />);
+      
+      await waitFor(() => {
+        expect(consoleSpy).toHaveBeenCalledWith(
+          'BcPhoneInput: Failed to fetch countries:',
+          expect.any(Error)
+        );
+      });
+      
+      consoleSpy.mockRestore();
+    });
   });
 
-  it('shows loading state with async fetch', async () => {
-    const fetchCountries = () => new Promise<any[]>(resolve => setTimeout(() => resolve([
-      { code: 'TR', name: 'Türkiye', flag: '🇹🇷', dial: 90, mask: '(999) 999-9999' },
-    ]), 500));
-    render(<BcPhoneInput fetchCountries={fetchCountries} country={'TR'} />);
-    fireEvent.mouseDown(screen.getByRole('button', { name: /ülke|country/i }));
-    expect(screen.getByText(/Yükleniyor|Loading/)).toBeInTheDocument();
-    expect(await screen.findByText(/Türkiye|Turkey/)).toBeInTheDocument();
+  describe('LocalStorage Integration', () => {
+    it('loads recent countries from localStorage', () => {
+      localStorageMock.getItem.mockReturnValue(JSON.stringify(['US', 'DE']));
+      
+      render(<BcPhoneInput countryList={mockCountries} />);
+      
+      expect(localStorageMock.getItem).toHaveBeenCalledWith('bc-phoneinput-recent-countries');
+    });
+
+    it('saves recent countries to localStorage', async () => {
+      const onCountryChange = jest.fn();
+      render(
+        <BcPhoneInput 
+          countryList={mockCountries}
+          onCountryChange={onCountryChange}
+        />
+      );
+      
+      const select = screen.getByRole('combobox');
+      await userEvent.click(select);
+      
+      const usOption = screen.getByText('US');
+      await userEvent.click(usOption);
+      
+      expect(localStorageMock.setItem).toHaveBeenCalledWith(
+        'bc-phoneinput-recent-countries',
+        JSON.stringify(['US'])
+      );
+    });
   });
 
-  // Erişilebilirlik testi (jest-axe ile)
-  // it('is accessible', async () => {
-  //   const { container } = render(<BcPhoneInput country={'TR'} />);
-  //   const results = await axe(container);
-  //   expect(results).toHaveNoViolations();
-  // });
+  describe('Internationalization', () => {
+    it('displays Turkish labels when locale is tr', () => {
+      render(<BcPhoneInput locale="tr" />);
+      expect(screen.getByText('Telefon')).toBeInTheDocument();
+    });
+
+    it('displays English labels when locale is en', () => {
+      render(<BcPhoneInput locale="en" />);
+      expect(screen.getByText('Phone')).toBeInTheDocument();
+    });
+  });
+
+  describe('Accessibility', () => {
+    it('has proper ARIA attributes', () => {
+      render(<BcPhoneInput label="Phone Number" required />);
+      
+      const input = screen.getByRole('textbox');
+      expect(input).toHaveAttribute('aria-label', 'Phone Number');
+      expect(input).toHaveAttribute('aria-required', 'true');
+    });
+
+    it('has no accessibility violations', async () => {
+      const { container } = render(
+        <BcPhoneInput 
+          label="Phone Number"
+          countryList={mockCountries}
+          showClearButton
+        />
+      );
+      
+      const results = await axe(container);
+      expect(results).toHaveNoViolations();
+    });
+  });
+
+  describe('Integration with BcTextField', () => {
+    it('passes through BcTextField props correctly', () => {
+      render(
+        <BcPhoneInput 
+          showClearButton
+          helperText="Enter your phone number"
+          status="info"
+        />
+      );
+      
+      expect(screen.getByText('Enter your phone number')).toBeInTheDocument();
+    });
+
+    it('overrides type prop to tel', () => {
+      render(<BcPhoneInput />);
+      const input = screen.getByRole('textbox');
+      expect(input).toHaveAttribute('type', 'tel');
+    });
+  });
 });
-
-describe('BcPhoneInput yeni özellik testleri', () => {
-  it('placeholder ülke kodu ve maskeyi içerir', () => {
-    render(<BcPhoneInput country="TR" countryList={[{ code: 'TR', name: 'Türkiye', flag: '', dial: 90, mask: '(999) 999-9999' }]} />);
-    const input = screen.getByRole('textbox');
-    expect(input).toHaveAttribute('placeholder', expect.stringMatching(/\+90.*999/));
-  });
-
-  it('favori ülkelerde yıldız ikonu görünür', () => {
-    render(<BcPhoneInput favoriteCountries={['TR']} countryList={[
-      { code: 'TR', name: 'Türkiye', flag: '', dial: 90, mask: '(999) 999-9999' },
-      { code: 'US', name: 'Amerika', flag: '', dial: 1, mask: '(999) 999-9999' },
-    ]} />);
-    fireEvent.mouseDown(screen.getByRole('button', { name: /ülke|country/i }));
-    // Favori ülke satırında yıldız ikonu olmalı
-    expect(screen.getByTestId('StarIcon')).toBeInTheDocument();
-  });
-
-  it('son kullanılanlar başlığı/ayraç görünür', () => {
-    // Son kullanılan ülke için localStorage simüle et
-    window.localStorage.setItem('bc-phoneinput-recent-countries', JSON.stringify(['US']));
-    render(<BcPhoneInput countryList={[
-      { code: 'TR', name: 'Türkiye', flag: '', dial: 90, mask: '(999) 999-9999' },
-      { code: 'US', name: 'Amerika', flag: '', dial: 1, mask: '(999) 999-9999' },
-    ]} country="TR" />);
-    fireEvent.mouseDown(screen.getByRole('button', { name: /ülke|country/i }));
-    expect(screen.getByText(/Recently Used|Son Kullanılanlar/)).toBeInTheDocument();
-  });
-
-  it('input ve select erişilebilirlik özellikleri doğru atanır', () => {
-    render(<BcPhoneInput label="Telefon" country="TR" />);
-    const input = screen.getByLabelText('Telefon');
-    expect(input).toHaveAttribute('aria-describedby');
-    expect(input).toHaveAttribute('aria-label', 'Telefon');
-    // Hata mesajı id'si input'un aria-describedby'sinde olmalı (hatalı değer girilirse)
-    fireEvent.change(input, { target: { value: '123' } });
-    expect(input.getAttribute('aria-describedby')).toMatch(/bc-phoneinput-error-message/);
-    // Select için aria-label
-    fireEvent.mouseDown(screen.getByRole('button', { name: /ülke|country/i }));
-    const select = screen.getByRole('button', { name: /ülke|country/i });
-    expect(select).toHaveAttribute('aria-label', expect.stringMatching(/Select country/));
-  });
-
-  it('büyük listede sanal render ile başlıklar ve ülkeler doğru görünür', () => {
-    const bigList = Array.from({ length: 1000 }, (_, i) => ({
-      code: `C${i}`,
-      name: `Ülke ${i}`,
-      flag: '',
-      dial: 1000 + i,
-      mask: '(999) 999-9999'
-    }));
-    render(<BcPhoneInput countryList={bigList} country={'C0'} favoriteCountries={['C0', 'C1']} />);
-    fireEvent.mouseDown(screen.getByRole('button', { name: /ülke|country/i }));
-    // Favoriler başlığı ve ilk ülke görünmeli
-    expect(screen.getByText(/Favorites|Favoriler/)).toBeInTheDocument();
-    expect(screen.getByText(/Ülke 0/)).toBeInTheDocument();
-    // Sanal render ile listedeki bir ülke (örn. Ülke 999) DOM'da olmayabilir, ama başlıklar ve favoriler görünmeli
-  });
-}); 

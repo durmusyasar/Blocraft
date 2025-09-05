@@ -11,7 +11,7 @@ export interface CountryType {
   code: string;
   name: string;
   flag?: string | null;
-  dial: number;
+  dial: number | string;
   mask?: string | null;
 }
 

@@ -118,9 +118,31 @@ const meta: Meta<typeof BcPhoneInput> = {
       description: getText(defaultLocale, 'favoriteCountriesDescription'),
       control: "object",
     },
+    // Yeni gelişmiş özellikler
+    enableAdvancedMonitoring: {
+      control: 'boolean',
+      description: getText(defaultLocale, 'enableAdvancedMonitoringDescription'),
+    },
+    enableMobileOptimizations: {
+      control: 'boolean',
+      description: getText(defaultLocale, 'enableMobileOptimizationsDescription'),
+    },
+    enableAdvancedI18n: {
+      control: 'boolean',
+      description: getText(defaultLocale, 'enableAdvancedI18nDescription'),
+    },
+    enableThemeAwareStyles: {
+      control: 'boolean',
+      description: getText(defaultLocale, 'enableThemeAwareStylesDescription'),
+    },
+    enableKeyboardShortcuts: {
+      control: 'boolean',
+      description: getText(defaultLocale, 'enableKeyboardShortcutsDescription'),
+    },
   },
   decorators: [withLocale],
 };
+
 export default meta;
 type Story = StoryObj<typeof BcPhoneInput>;
 
@@ -470,4 +492,205 @@ export const PerformanceTest = {
       }
     }
   }
+};
+
+// Async country loading example
+export const AsyncCountryLoading = {
+  render: (args: any, context: any) => {
+    const [selectedCountry, setSelectedCountry] = React.useState('TR');
+    const [value, setValue] = React.useState('');
+    const locale = context?.globals?.locale ?? context?.locale ?? 'en';
+    
+    const fetchCountries = React.useCallback(async () => {
+      // Simulate API call
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      return defaultCountryList;
+    }, []);
+
+    return (
+      <BcPhoneInput
+        {...args}
+        label={args.label || (locale === 'tr' ? 'Telefon' : 'Phone')}
+        fetchCountries={fetchCountries}
+        country={selectedCountry}
+        onCountryChange={setSelectedCountry}
+        value={value}
+        onChange={e => setValue(e.target.value)}
+        locale={locale}
+        placeholder={args.placeholder || (locale === 'tr' ? 'Telefon numarası' : 'Phone number')}
+      />
+    );
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'Shows async country loading with 2 second delay. Countries are fetched from an API. Asenkron ülke yükleme örneği.'
+      }
+    }
+  }
+};
+
+// Custom validation example
+export const CustomValidation = {
+  render: (args: any, context: any) => {
+    const [selectedCountry, setSelectedCountry] = React.useState('TR');
+    const [value, setValue] = React.useState('');
+    const locale = context?.globals?.locale ?? context?.locale ?? 'en';
+    
+    const validatePhone = React.useCallback((phone: string, country: string) => {
+      if (country === 'TR') {
+        return phone.length >= 10 && phone.startsWith('5');
+      }
+      if (country === 'US') {
+        return phone.length === 10;
+      }
+      return phone.length >= 8;
+    }, []);
+
+    return (
+      <BcPhoneInput
+        {...args}
+        label={args.label || (locale === 'tr' ? 'Telefon' : 'Phone')}
+        validatePhone={validatePhone}
+        country={selectedCountry}
+        onCountryChange={setSelectedCountry}
+        value={value}
+        onChange={e => setValue(e.target.value)}
+        locale={locale}
+        placeholder={args.placeholder || (locale === 'tr' ? 'Telefon numarası' : 'Phone number')}
+        helperText={locale === 'tr' ? 'TR: 5 ile başlayan 10 haneli, US: 10 haneli' : 'TR: 10 digits starting with 5, US: 10 digits'}
+      />
+    );
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: 'Custom phone validation rules. TR numbers must start with 5 and be 10 digits, US numbers must be exactly 10 digits. Özel telefon doğrulama kuralları.'
+      }
+    }
+  }
+};
+
+// Advanced Monitoring Feature
+export const AdvancedMonitoring: Story = {
+  render: (args, context: any) => {
+    const locale = context.globals?.locale ?? context.locale ?? 'en';
+    return (
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+        <BcPhoneInput
+          label={getText(locale, 'label')}
+          placeholder={getText(locale, 'placeholder')}
+          enableAdvancedMonitoring={true}
+          locale={locale}
+        />
+        <div style={{ fontSize: 12, color: '#666' }}>
+          📊 {getText(locale, 'advancedMonitoringDescription')}
+        </div>
+      </div>
+    );
+  },
+};
+
+// Mobile Optimizations Feature
+export const MobileOptimizations: Story = {
+  render: (args, context: any) => {
+    const locale = context.globals?.locale ?? context.locale ?? 'en';
+    return (
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+        <BcPhoneInput
+          label={getText(locale, 'label')}
+          placeholder={getText(locale, 'placeholder')}
+          enableMobileOptimizations={true}
+          locale={locale}
+        />
+        <div style={{ fontSize: 12, color: '#666' }}>
+          📱 {getText(locale, 'mobileOptimizationsDescription')}
+        </div>
+      </div>
+    );
+  },
+};
+
+// Advanced i18n Feature
+export const AdvancedI18n: Story = {
+  render: (args, context: any) => {
+    const locale = context.globals?.locale ?? context.locale ?? 'en';
+    return (
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+        <BcPhoneInput
+          label={getText(locale, 'label')}
+          placeholder={getText(locale, 'placeholder')}
+          enableAdvancedI18n={true}
+          locale={locale}
+        />
+        <div style={{ fontSize: 12, color: '#666' }}>
+          🌍 {getText(locale, 'advancedI18nDescription')}
+        </div>
+      </div>
+    );
+  },
+};
+
+// Theme Aware Styles Feature
+export const ThemeAwareStyles: Story = {
+  render: (args, context: any) => {
+    const locale = context.globals?.locale ?? context.locale ?? 'en';
+    return (
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+        <BcPhoneInput
+          label={getText(locale, 'label')}
+          placeholder={getText(locale, 'placeholder')}
+          enableThemeAwareStyles={true}
+          locale={locale}
+        />
+        <div style={{ fontSize: 12, color: '#666' }}>
+          🎨 {getText(locale, 'themeAwareStylesDescription')}
+        </div>
+      </div>
+    );
+  },
+};
+
+// Keyboard Shortcuts Feature
+export const KeyboardShortcuts: Story = {
+  render: (args, context: any) => {
+    const locale = context.globals?.locale ?? context.locale ?? 'en';
+    return (
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+        <BcPhoneInput
+          label={getText(locale, 'label')}
+          placeholder={getText(locale, 'placeholder')}
+          enableKeyboardShortcuts={true}
+          locale={locale}
+        />
+        <div style={{ fontSize: 12, color: '#666' }}>
+          ⌨️ {getText(locale, 'keyboardShortcutsDescription')}
+        </div>
+      </div>
+    );
+  },
+};
+
+// All Advanced Features Combined
+export const AllAdvancedFeatures: Story = {
+  render: (args, context: any) => {
+    const locale = context.globals?.locale ?? context.locale ?? 'en';
+    return (
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
+        <BcPhoneInput
+          label={getText(locale, 'label')}
+          placeholder={getText(locale, 'placeholder')}
+          enableAdvancedMonitoring={true}
+          enableMobileOptimizations={true}
+          enableAdvancedI18n={true}
+          enableThemeAwareStyles={true}
+          enableKeyboardShortcuts={true}
+          locale={locale}
+        />
+        <div style={{ fontSize: 12, color: '#666' }}>
+          🚀 {getText(locale, 'allAdvancedFeaturesDescription')}
+        </div>
+      </div>
+    );
+  },
 }; 

@@ -1,14 +1,22 @@
-import React, { useState, useMemo, useEffect, forwardRef } from "react";
+import React, { useState, useMemo, useEffect, forwardRef, useCallback } from "react";
 import { BcTextField } from "../BcTextField/BcTextField";
 import type { BcTextFieldProps } from "../BcTextField/BcTextField";
 import { countryList as defaultCountryList, getPhoneMask, isPhoneValid } from "./utils";
 import { countrySelectStyle, countrySelectAppearances } from "./styles";
 import { Select, MenuItem, FormControl, Box, CircularProgress, SelectChangeEvent } from "@mui/material";
 import StarIcon from '@mui/icons-material/Star';
-import { FixedSizeList } from 'react-window';
 import enTexts from '../i18n/i18n/en.json';
 import trTexts from '../i18n/i18n/tr.json';
 import type { CountryType } from "./types";
+import { useAdvancedMonitoring } from "../BcPasswordInput/hooks/useAdvancedMonitoring";
+import { useMobileOptimizations, useHapticFeedback } from "../BcPasswordInput/hooks/useMobileOptimizations";
+import { useAdvancedI18n } from "../BcPasswordInput/hooks/useAdvancedI18n";
+import { useThemeAwareStyles } from "../BcPasswordInput/hooks/useThemeAwareStyles";
+import { useKeyboardShortcuts } from "../BcPasswordInput/hooks/useKeyboardShortcuts";
+
+// Lazy load react-window only when needed
+let FixedSizeList: any = null;
+let isReactWindowLoading = false;
 
 const TEXTS: Record<string, Record<string, string>> = { en: enTexts.BcPhoneInput, tr: trTexts.BcPhoneInput };
 type Locale = keyof typeof TEXTS;
@@ -33,7 +41,7 @@ const getText = (locale: Locale | undefined, key: string, fallbackLocale?: Local
  * @property fallbackLocale - Yedek dil kodu
  * @property ...rest - Diğer BcTextFieldProps
  */
-export interface BcPhoneInputProps extends Omit<BcTextFieldProps, "type"> {
+export interface BcPhoneInputProps extends Omit<BcTextFieldProps, "type" | "inputMode"> {
   /** Seçili ülke kodu (ISO 3166-1 alpha-2) */
   country?: string;
   /** Ülke değiştiğinde çağrılır */
@@ -54,12 +62,22 @@ export interface BcPhoneInputProps extends Omit<BcTextFieldProps, "type"> {
   getMask?: (country: string) => string;
   /** Mask placeholderda gösterilsin mi */
   showMaskInPlaceholder?: boolean;
-  /** inputMode (örn. 'tel') */
-  inputMode?: 'text' | 'tel' | 'url' | 'email' | 'numeric' | 'decimal' | 'search';
+  /** inputMode (örn. 'tel') - BcTextField'dan farklı olarak sadece telefon için uygun değerler */
+  inputMode?: 'tel' | 'numeric';
   /** Otomatik odaklanma */
   autoFocus?: boolean;
   /** Favori ülke kodları */
   favoriteCountries?: string[];
+  /** Gelişmiş izleme */
+  enableAdvancedMonitoring?: boolean;
+  /** Mobil optimizasyonlar */
+  enableMobileOptimizations?: boolean;
+  /** Gelişmiş i18n */
+  enableAdvancedI18n?: boolean;
+  /** Tema uyumlu stiller */
+  enableThemeAwareStyles?: boolean;
+  /** Klavye kısayolları */
+  enableKeyboardShortcuts?: boolean;
 }
 
 // Ülke kodunu emoji bayrağa çeviren yardımcı fonksiyon
@@ -82,6 +100,35 @@ function VirtualizedMenuList({ items, getItemLabel, getItemKey, renderItem, heig
   height?: number;
   itemSize?: number;
 }) {
+  const [isLoaded, setIsLoaded] = React.useState(!!FixedSizeList);
+
+  // Lazy load react-window if not already loaded
+  React.useEffect(() => {
+    if (!FixedSizeList && !isReactWindowLoading) {
+      isReactWindowLoading = true;
+      import('react-window').then(module => {
+        FixedSizeList = module.FixedSizeList;
+        setIsLoaded(true);
+        isReactWindowLoading = false;
+      }).catch(() => {
+        isReactWindowLoading = false;
+      });
+    }
+  }, []);
+
+  // Fallback to regular rendering while loading or if react-window is not available
+  if (!isLoaded || !FixedSizeList) {
+    return (
+      <div style={{ height, overflow: 'auto', maxWidth: 320 }}>
+        {items.map((item, index) => (
+          <div key={getItemKey(item, index)}>
+            {renderItem(item, index)}
+          </div>
+        ))}
+      </div>
+    );
+  }
+
   return (
     <FixedSizeList
       height={height}
@@ -91,7 +138,7 @@ function VirtualizedMenuList({ items, getItemLabel, getItemKey, renderItem, heig
       overscanCount={6}
       style={{ maxWidth: 320 }}
     >
-      {({ index, style }) => (
+      {({ index, style }: { index: number; style: React.CSSProperties }) => (
         <div style={style} key={getItemKey(items[index], index)}>
           {renderItem(items[index], index)}
         </div>
@@ -121,6 +168,11 @@ export const BcPhoneInput = forwardRef<HTMLInputElement, BcPhoneInputProps>(
       inputMode = 'tel',
       autoFocus = false,
       favoriteCountries = [],
+      enableAdvancedMonitoring = false,
+      enableMobileOptimizations = true,
+      enableAdvancedI18n = false,
+      enableThemeAwareStyles = true,
+      enableKeyboardShortcuts = true,
       ...rest
     },
     ref
@@ -130,6 +182,26 @@ export const BcPhoneInput = forwardRef<HTMLInputElement, BcPhoneInputProps>(
     const [screenReaderMessage, setScreenReaderMessage] = useState<string>("");
     const liveRegionRef = React.useRef<HTMLDivElement>(null);
     const [recentCountries, setRecentCountries] = useState<string[]>([]);
+
+    // Gelişmiş özellikler hook'ları
+    const advancedMonitoring = useAdvancedMonitoring(rest.monitoring || {}, {
+      enableAnalytics: enableAdvancedMonitoring,
+      enablePerformanceTracking: enableAdvancedMonitoring,
+      enableUserBehaviorTracking: enableAdvancedMonitoring,
+    });
+
+    const mobileOptimizations = useMobileOptimizations();
+    const { triggerHaptic } = useHapticFeedback();
+
+    const advancedI18n = useAdvancedI18n({
+      locale,
+      fallbackLocale,
+      translations: rest.translations,
+      enablePluralization: enableAdvancedI18n,
+      enableInterpolation: enableAdvancedI18n,
+    });
+
+    const themeStyles = useThemeAwareStyles();
 
     // Dinamik veya async countryList desteği
     useEffect(() => {
@@ -144,7 +216,8 @@ export const BcPhoneInput = forwardRef<HTMLInputElement, BcPhoneInputProps>(
           try {
             const fetched = await fetchCountries();
             if (isMounted) setUsedCountryList(fetched);
-          } catch {
+          } catch (error) {
+            console.warn('BcPhoneInput: Failed to fetch countries:', error);
             if (isMounted) setUsedCountryList(list);
           } finally {
             if (isMounted) setLoadingCountries(false);
@@ -162,8 +235,15 @@ export const BcPhoneInput = forwardRef<HTMLInputElement, BcPhoneInputProps>(
     useEffect(() => {
       try {
         const stored = localStorage.getItem('bc-phoneinput-recent-countries');
-        if (stored) setRecentCountries(JSON.parse(stored));
-      } catch {}
+        if (stored) {
+          const parsed = JSON.parse(stored);
+          if (Array.isArray(parsed)) {
+            setRecentCountries(parsed);
+          }
+        }
+      } catch (error) {
+        console.warn('BcPhoneInput: Failed to load recent countries from localStorage:', error);
+      }
     }, []);
 
     // Ülke değiştiğinde son kullanılanlara ekle
@@ -173,7 +253,9 @@ export const BcPhoneInput = forwardRef<HTMLInputElement, BcPhoneInputProps>(
         const updated = [country, ...prev.filter(c => c !== country)].slice(0, 3);
         try {
           localStorage.setItem('bc-phoneinput-recent-countries', JSON.stringify(updated));
-        } catch {}
+        } catch (error) {
+          console.warn('BcPhoneInput: Failed to save recent countries to localStorage:', error);
+        }
         return updated;
       });
     }, [country]);
@@ -221,22 +303,25 @@ export const BcPhoneInput = forwardRef<HTMLInputElement, BcPhoneInputProps>(
       return isPhoneValid(phone, country, usedCountryList);
     }, [phone, country, usedCountryList, validatePhone]);
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
       if (!isControlled) setValue(e.target.value);
       if (rest.onChange) rest.onChange(e);
-    };
+    }, [isControlled, rest]);
 
-    const handleCountryChange = (event: SelectChangeEvent<string>) => {
+    const handleCountryChange = useCallback((event: SelectChangeEvent<string>) => {
       const value = event.target.value as string;
       if (onCountryChange) {
         onCountryChange(value);
         // Ekran okuyucuya ülke kodu değişti mesajı gönder
         const selected = usedCountryList.find(c => c.code === value);
         if (selected) {
-          setScreenReaderMessage(`Ülke kodu değişti: ${selected.name}`);
+          const message = locale === 'tr' 
+            ? `Ülke kodu değişti: ${selected.name}` 
+            : `Country code changed: ${selected.name}`;
+          setScreenReaderMessage(message);
         }
       }
-    };
+    }, [onCountryChange, usedCountryList, locale]);
 
     // Select için appearance ve disabled stillerini uygula
     const selectAppearance = (appearance && Object.prototype.hasOwnProperty.call(countrySelectAppearances, appearance)) ? appearance as keyof typeof countrySelectAppearances : undefined;

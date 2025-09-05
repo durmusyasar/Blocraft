@@ -22,6 +22,7 @@ export const globalTypes = {
 const I18N_MAP = {
   BcTextField: { en: enTexts, tr: trTexts },
   BcPhoneInput: { en: enTexts, tr: trTexts },
+  BcPasswordInput: { en: enTexts, tr: trTexts },
   // Diğer componentler için buraya ekleme yapılacak
 };
 
