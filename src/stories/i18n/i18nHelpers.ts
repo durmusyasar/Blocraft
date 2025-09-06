@@ -79,22 +79,34 @@ export function getTranslation(
   key: string,
   locale: string,
   customTranslations?: Record<string, string>,
-  fallbackLocale: string = 'en'
+  fallbackLocale: string = 'en',
+  params?: Record<string, any>
 ) {
+  let translation: string;
+
   // First check custom translations
   if (customTranslations?.[key]) {
-    return customTranslations[key];
+    translation = customTranslations[key];
+  } else {
+    // Then check default translations for current locale
+    const defaultTranslations = getDefaultTranslations(locale);
+    if (defaultTranslations[key]) {
+      translation = defaultTranslations[key];
+    } else {
+      // Finally fallback to fallback locale
+      const fallbackTranslations = getDefaultTranslations(fallbackLocale);
+      translation = fallbackTranslations[key] || key;
+    }
   }
 
-  // Then check default translations for current locale
-  const defaultTranslations = getDefaultTranslations(locale);
-  if (defaultTranslations[key]) {
-    return defaultTranslations[key];
+  // Apply interpolation if params are provided
+  if (params && typeof translation === 'string') {
+    return translation.replace(/\{\{(\w+)\}\}/g, (match, paramKey) => {
+      return params[paramKey] || match;
+    });
   }
 
-  // Finally fallback to fallback locale
-  const fallbackTranslations = getDefaultTranslations(fallbackLocale);
-  return fallbackTranslations[key] || key;
+  return translation;
 }
 
 export function formatTranslation(template: string, params: Record<string, string | number>) {
