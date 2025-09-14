@@ -29,6 +29,22 @@ import { getStatusIconAndColor } from './hooks/useStatusIcon';
 import { getAppearanceSx } from './hooks/useAppearanceSx';
 import { useInputAdornments } from './hooks/useInputAdornments';
 import { useLiveRegion } from './hooks/useLiveRegion';
+import { useRichTextEditor } from './hooks/useRichTextEditor';
+import { useTextFormatting } from './hooks/useTextFormatting';
+import { useTextCounter } from './hooks/useTextCounter';
+import { useAutoComplete } from './hooks/useAutoComplete';
+import { useSmartSuggestions } from './hooks/useSmartSuggestions';
+import { useSmartValidation } from './hooks/useSmartValidation';
+import { useAdvancedValidation } from './hooks/useAdvancedValidation';
+import { useBusinessRules } from './hooks/useBusinessRules';
+import { useCrossFieldValidation } from './hooks/useCrossFieldValidation';
+import { useSmartPlaceholder } from './hooks/useSmartPlaceholder';
+import { useSmartHelp } from './hooks/useSmartHelp';
+import { useProgressiveDisclosure } from './hooks/useProgressiveDisclosure';
+import { useAccessibility } from './hooks/useAccessibility';
+import { usePerformance } from './hooks/usePerformance';
+import { useTesting } from './hooks/useTesting';
+import { useIntegration } from './hooks/useIntegration';
 
 
 /**
@@ -117,6 +133,344 @@ export interface BcTextFieldProps
   loadingReadonly?: boolean;
   inputPrefix?: React.ReactNode;
   inputSuffix?: React.ReactNode;
+  /** Rich Text Editor */
+  enableRichText?: boolean;
+  enableMarkdown?: boolean;
+  enableHTML?: boolean;
+  enableFormatting?: boolean;
+  enableLinks?: boolean;
+  enableColors?: boolean;
+  /** Text Formatting */
+  enableTransformation?: boolean;
+  enableAutoResize?: boolean;
+  enableCharacterCount?: boolean;
+  enableWordCount?: boolean;
+  enableLineCount?: boolean;
+  enableParagraphCount?: boolean;
+  /** Text Counter */
+  enableCounter?: boolean;
+  maxCharacters?: number;
+  maxWords?: number;
+  maxLines?: number;
+  maxParagraphs?: number;
+  warningThreshold?: number;
+  criticalThreshold?: number;
+  /** Auto Complete */
+  enableAutoComplete?: boolean;
+  autoCompleteOptions?: Array<{ value: string; label: string; description?: string; category?: string; icon?: string; disabled?: boolean }>;
+  fetchAutoCompleteOptions?: (query: string) => Promise<Array<{ value: string; label: string; description?: string; category?: string; icon?: string; disabled?: boolean }>>;
+  minAutoCompleteQueryLength?: number;
+  maxAutoCompleteSuggestions?: number;
+  autoCompleteDebounceMs?: number;
+  enableAutoCompleteCategories?: boolean;
+  enableAutoCompleteIcons?: boolean;
+  enableAutoCompleteKeyboardNavigation?: boolean;
+  /** Smart Suggestions */
+  enableSmartSuggestions?: boolean;
+  enableRecentHistory?: boolean;
+  enableFavorites?: boolean;
+  enableTrending?: boolean;
+  enableRecommendations?: boolean;
+  maxHistoryItems?: number;
+  maxFavorites?: number;
+  maxTrending?: number;
+  maxRecommendations?: number;
+  suggestionDebounceMs?: number;
+  enableLearning?: boolean;
+  enablePersonalization?: boolean;
+  /** Smart Validation */
+  enableSmartValidation?: boolean;
+  enableSmartRealTimeValidation?: boolean;
+  enableValidationSuggestions?: boolean;
+  enableValidationLearning?: boolean;
+  smartValidationDebounceMs?: number;
+  smartCustomValidationRules?: Array<{
+    id: string;
+    name: string;
+    test: (value: string) => boolean;
+    message: string;
+    severity: 'error' | 'warning' | 'info';
+    category: 'format' | 'length' | 'pattern' | 'custom';
+    enabled: boolean;
+  }>;
+  /** Advanced Validation */
+  enableAdvancedValidation?: boolean;
+  enableAdvancedAsyncValidation?: boolean;
+  enableContextValidation?: boolean;
+  enableAdvancedBusinessRules?: boolean;
+  enableAdvancedCrossFieldValidation?: boolean;
+  enableAdvancedRealTimeValidation?: boolean;
+  maxConcurrentValidations?: number;
+  advancedCustomValidationRules?: Array<{
+    id: string;
+    name: string;
+    test: (value: string) => boolean;
+    message: string;
+    severity: 'error' | 'warning' | 'info';
+    category: 'format' | 'length' | 'pattern' | 'custom' | 'business';
+    enabled: boolean;
+    priority: number;
+    dependencies?: string[];
+    customValidator?: (value: string, context?: any) => Promise<boolean>;
+  }>;
+  validationContext?: {
+    fieldName?: string;
+    formData?: Record<string, any>;
+    userContext?: Record<string, any>;
+    locale?: string;
+  };
+  /** Business Rules */
+  enableBusinessRules?: boolean;
+  enableBusinessRealTimeEvaluation?: boolean;
+  enableRuleLearning?: boolean;
+  enableRuleOptimization?: boolean;
+  businessEvaluationDebounceMs?: number;
+  customBusinessRules?: Array<{
+    id: string;
+    name: string;
+    description: string;
+    category: 'pricing' | 'inventory' | 'user' | 'product' | 'order' | 'custom';
+    priority: number;
+    enabled: boolean;
+    conditions: Array<{
+      field: string;
+      operator: 'equals' | 'not_equals' | 'contains' | 'not_contains' | 'greater_than' | 'less_than' | 'in' | 'not_in' | 'regex' | 'custom';
+      value: any;
+      customFunction?: (value: any, context: any) => boolean;
+    }>;
+    actions: Array<{
+      type: 'validation' | 'transformation' | 'notification' | 'calculation' | 'custom';
+      field?: string;
+      value?: any;
+      message?: string;
+      customFunction?: (value: any, context: any) => any;
+    }>;
+    metadata?: Record<string, any>;
+  }>;
+  businessContext?: {
+    formData: Record<string, any>;
+    userContext: Record<string, any>;
+    systemContext: Record<string, any>;
+    locale: string;
+  };
+  /** Cross Field Validation */
+  enableCrossFieldValidation?: boolean;
+  enableCrossFieldDependencyTracking?: boolean;
+  customCrossFieldRules?: Array<{
+    id: string;
+    name: string;
+    description: string;
+    fields: string[];
+    condition: (values: Record<string, any>) => boolean;
+    message: string;
+    severity: 'error' | 'warning' | 'info';
+    enabled: boolean;
+    priority: number;
+    dependencies?: string[];
+  }>;
+  crossFieldContext?: {
+    formData: Record<string, any>;
+    fieldValues: Record<string, any>;
+    fieldErrors: Record<string, string[]>;
+    fieldWarnings: Record<string, string[]>;
+    fieldInfo: Record<string, string[]>;
+    locale: string;
+  };
+  /** Smart Placeholder */
+  enableSmartPlaceholder?: boolean;
+  enableContextualPlaceholders?: boolean;
+  enableTimeBasedPlaceholders?: boolean;
+  enablePersonalizedPlaceholders?: boolean;
+  enablePlaceholderLearning?: boolean;
+  customPlaceholderTemplates?: Array<{
+    id: string;
+    name: string;
+    template: string;
+    context: string[];
+    priority: number;
+    enabled: boolean;
+    conditions?: (context: any) => boolean;
+    customFunction?: (context: any) => string;
+  }>;
+  placeholderContext?: {
+    fieldName?: string;
+    fieldType?: string;
+    userContext?: Record<string, any>;
+    formContext?: Record<string, any>;
+    locale?: string;
+    timeOfDay?: 'morning' | 'afternoon' | 'evening' | 'night';
+    dayOfWeek?: 'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday' | 'saturday' | 'sunday';
+    season?: 'spring' | 'summer' | 'autumn' | 'winter';
+  };
+  /** Smart Help */
+  enableSmartHelp?: boolean;
+  enableContextualHelp?: boolean;
+  enableProgressiveHelp?: boolean;
+  enableHelpLearning?: boolean;
+  enableHelpPersonalization?: boolean;
+  customHelpItems?: Array<{
+    id: string;
+    title: string;
+    content: string;
+    type: 'tip' | 'warning' | 'info' | 'example' | 'tutorial' | 'faq';
+    priority: number;
+    enabled: boolean;
+    context: string[];
+    conditions?: (context: any) => boolean;
+    customFunction?: (context: any) => string;
+    metadata?: Record<string, any>;
+  }>;
+  helpContext?: {
+    fieldName?: string;
+    fieldType?: string;
+    fieldValue?: string;
+    userContext?: Record<string, any>;
+    formContext?: Record<string, any>;
+    locale?: string;
+    userLevel?: 'beginner' | 'intermediate' | 'advanced';
+    deviceType?: 'desktop' | 'tablet' | 'mobile';
+    timeSpent?: number;
+    errorCount?: number;
+  };
+  /** Progressive Disclosure */
+  enableProgressiveDisclosure?: boolean;
+  enableContextualDisclosure?: boolean;
+  enableDisclosureLearning?: boolean;
+  enableDisclosurePersonalization?: boolean;
+  customDisclosureRules?: Array<{
+    id: string;
+    name: string;
+    description: string;
+    trigger: 'immediate' | 'onFocus' | 'onError' | 'onTimeout' | 'onInteraction' | 'custom';
+    delay?: number;
+    priority: number;
+    enabled: boolean;
+    context: string[];
+    conditions?: (context: any) => boolean;
+    customFunction?: (context: any) => boolean;
+    metadata?: Record<string, any>;
+  }>;
+  customDisclosureContent?: Array<{
+    id: string;
+    title: string;
+    content: string;
+    type: 'tooltip' | 'popover' | 'modal' | 'inline' | 'sidebar' | 'overlay';
+    position?: 'top' | 'bottom' | 'left' | 'right' | 'center';
+    size?: 'small' | 'medium' | 'large' | 'full';
+    priority: number;
+    enabled: boolean;
+    context: string[];
+    conditions?: (context: any) => boolean;
+    customFunction?: (context: any) => string;
+    metadata?: Record<string, any>;
+  }>;
+  disclosureContext?: {
+    fieldName?: string;
+    fieldType?: string;
+    fieldValue?: string;
+    userContext?: Record<string, any>;
+    formContext?: Record<string, any>;
+    locale?: string;
+    userLevel?: 'beginner' | 'intermediate' | 'advanced';
+    deviceType?: 'desktop' | 'tablet' | 'mobile';
+    timeSpent?: number;
+    interactionCount?: number;
+    errorCount?: number;
+  };
+  /** Accessibility */
+  enableAccessibility?: boolean;
+  enableScreenReaderSupport?: boolean;
+  enableKeyboardNavigation?: boolean;
+  enableAccessibilityHighContrast?: boolean;
+  enableAccessibilityReducedMotion?: boolean;
+  enableFocusManagement?: boolean;
+  enableARIALabels?: boolean;
+  enableLiveRegions?: boolean;
+  enableSkipLinks?: boolean;
+  enableTooltips?: boolean;
+  enableErrorAnnouncements?: boolean;
+  enableStatusAnnouncements?: boolean;
+  enableProgressAnnouncements?: boolean;
+  /** Performance */
+  enablePerformanceTracking?: boolean;
+  enableRenderTracking?: boolean;
+  enableMemoryTracking?: boolean;
+  enableNetworkTracking?: boolean;
+  enableUserInteractionTracking?: boolean;
+  enablePerformanceOptimization?: boolean;
+  enableDebouncing?: boolean;
+  enableThrottling?: boolean;
+  enableCaching?: boolean;
+  enableMemoization?: boolean;
+  /** Monitoring */
+  enableMonitoring?: boolean;
+  enableRealTimeMonitoring?: boolean;
+  enableAnalytics?: boolean;
+  enableErrorReporting?: boolean;
+  enablePerformanceMonitoring?: boolean;
+  enableUserBehaviorTracking?: boolean;
+  enableSecurityMonitoring?: boolean;
+  enableCustomEvents?: boolean;
+  monitoringApiEndpoint?: string;
+  monitoringApiKey?: string;
+  /** Testing */
+  enableTesting?: boolean;
+  enableTestMode?: boolean;
+  enableMockData?: boolean;
+  enableTestHelpers?: boolean;
+  enableTestUtilities?: boolean;
+  enableTestValidation?: boolean;
+  enableTestPerformance?: boolean;
+  enableTestAccessibility?: boolean;
+  enableTestMonitoring?: boolean;
+  enableTestDebugging?: boolean;
+  enableTestLogging?: boolean;
+  enableTestAssertions?: boolean;
+  enableTestSnapshots?: boolean;
+  enableTestCoverage?: boolean;
+  enableTestReporting?: boolean;
+  testTimeout?: number;
+  testRetries?: number;
+  testDelay?: number;
+  mockData?: Record<string, any>;
+  testConfig?: Record<string, any>;
+  customTestHelpers?: Record<string, Function>;
+  customTestUtilities?: Record<string, Function>;
+  customTestValidators?: Record<string, Function>;
+  customTestAssertions?: Record<string, Function>;
+  /** Integration */
+  enableIntegration?: boolean;
+  enableFormIntegration?: boolean;
+  enableValidationIntegration?: boolean;
+  enableStateIntegration?: boolean;
+  enableEventIntegration?: boolean;
+  enableDataIntegration?: boolean;
+  enableAPIIntegration?: boolean;
+  enableStorageIntegration?: boolean;
+  enableThemeIntegration?: boolean;
+  enableI18nIntegration?: boolean;
+  enableAccessibilityIntegration?: boolean;
+  enablePerformanceIntegration?: boolean;
+  enableMonitoringIntegration?: boolean;
+  enableTestingIntegration?: boolean;
+  enableCustomIntegration?: boolean;
+  integrationTimeout?: number;
+  integrationRetries?: number;
+  integrationDelay?: number;
+  customIntegrations?: Record<string, any>;
+  integrationConfig?: Record<string, any>;
+  apiEndpoints?: Record<string, string>;
+  storageKeys?: Record<string, string>;
+  eventTypes?: string[];
+  dataFormats?: string[];
+  validationRules?: Record<string, any>;
+  stateKeys?: string[];
+  themeKeys?: string[];
+  i18nKeys?: string[];
+  accessibilityKeys?: string[];
+  performanceKeys?: string[];
+  monitoringKeys?: string[];
+  testingKeys?: string[];
 }
 
 const BcTextFieldInner = forwardRef<HTMLInputElement, BcTextFieldProps>(
@@ -156,11 +510,209 @@ const BcTextFieldInner = forwardRef<HTMLInputElement, BcTextFieldProps>(
       validateInput,
       showValidationStatus,
       validationDebounceMs,
-      monitoring,
+      monitoring: monitoringProp,
       renderCustomIcon,
       renderHelperText,
       inputPrefix,
       inputSuffix,
+      // Rich Text Editor
+      enableRichText = false,
+      enableMarkdown = false,
+      enableHTML = false,
+      enableFormatting = true,
+      enableLinks = true,
+      enableColors = true,
+      // Text Formatting
+      enableTransformation = true,
+      enableAutoResize = true,
+      enableCharacterCount = true,
+      enableWordCount = true,
+      enableLineCount = false,
+      enableParagraphCount = false,
+      // Text Counter
+      enableCounter = true,
+      maxCharacters,
+      maxWords,
+      maxLines,
+      maxParagraphs,
+      warningThreshold = 0.8,
+      criticalThreshold = 0.95,
+      // Auto Complete
+      enableAutoComplete = false,
+      autoCompleteOptions = [],
+      fetchAutoCompleteOptions,
+      minAutoCompleteQueryLength = 1,
+      maxAutoCompleteSuggestions = 10,
+      autoCompleteDebounceMs = 300,
+      enableAutoCompleteCategories = true,
+      enableAutoCompleteIcons = true,
+      enableAutoCompleteKeyboardNavigation = true,
+      // Smart Suggestions
+      enableSmartSuggestions = false,
+      enableRecentHistory = true,
+      enableFavorites = true,
+      enableTrending = false,
+      enableRecommendations = false,
+      maxHistoryItems = 50,
+      maxFavorites = 20,
+      maxTrending = 10,
+      maxRecommendations = 15,
+      suggestionDebounceMs = 300,
+      enableLearning = true,
+      enablePersonalization = true,
+      // Smart Validation
+      enableSmartValidation = false,
+      enableSmartRealTimeValidation = true,
+      enableValidationSuggestions = true,
+      enableValidationLearning = true,
+      smartValidationDebounceMs = 500,
+      smartCustomValidationRules = [],
+      // Advanced Validation
+      enableAdvancedValidation = false,
+      enableAdvancedAsyncValidation = true,
+      enableContextValidation = true,
+      enableAdvancedBusinessRules = false,
+      enableAdvancedCrossFieldValidation = false,
+      enableAdvancedRealTimeValidation = true,
+      maxConcurrentValidations = 5,
+      advancedCustomValidationRules = [],
+      validationContext = {},
+      // Business Rules
+      enableBusinessRules: enableBusinessRulesValidation = false,
+      enableBusinessRealTimeEvaluation = true,
+      enableRuleLearning = true,
+      enableRuleOptimization = true,
+      businessEvaluationDebounceMs = 300,
+      customBusinessRules = [],
+      businessContext = {
+        formData: {},
+        userContext: {},
+        systemContext: {},
+        locale: 'en',
+      },
+      // Cross Field Validation
+      enableCrossFieldValidation: enableCrossFieldValidationValidation = false,
+      enableCrossFieldDependencyTracking = true,
+      customCrossFieldRules = [],
+      crossFieldContext = {
+        formData: {},
+        fieldValues: {},
+        fieldErrors: {},
+        fieldWarnings: {},
+        fieldInfo: {},
+        locale: 'en',
+      },
+      // Smart Placeholder
+      enableSmartPlaceholder = false,
+      enableContextualPlaceholders = true,
+      enableTimeBasedPlaceholders = true,
+      enablePersonalizedPlaceholders = true,
+      enablePlaceholderLearning = true,
+      customPlaceholderTemplates = [],
+      placeholderContext = {},
+      // Smart Help
+      enableSmartHelp = false,
+      enableContextualHelp = true,
+      enableProgressiveHelp = true,
+      enableHelpLearning = true,
+      enableHelpPersonalization = true,
+      customHelpItems = [],
+      helpContext = {},
+      // Progressive Disclosure
+      enableProgressiveDisclosure = false,
+      enableContextualDisclosure = true,
+      enableDisclosureLearning = true,
+      enableDisclosurePersonalization = true,
+      customDisclosureRules = [],
+      customDisclosureContent = [],
+      disclosureContext = {},
+      // Accessibility
+      enableAccessibility = true,
+      enableScreenReaderSupport = true,
+      enableKeyboardNavigation = true,
+      enableAccessibilityHighContrast = false,
+      enableAccessibilityReducedMotion = false,
+      enableFocusManagement = true,
+      enableARIALabels = true,
+      enableLiveRegions = true,
+      enableSkipLinks = false,
+      enableTooltips = true,
+      enableErrorAnnouncements = true,
+      enableStatusAnnouncements = true,
+      enableProgressAnnouncements = true,
+      // Performance
+      enablePerformanceTracking = true,
+      enableRenderTracking = true,
+      enableMemoryTracking = true,
+      enableNetworkTracking = true,
+      enableUserInteractionTracking = true,
+      enablePerformanceOptimization = true,
+      enableDebouncing = true,
+      enableThrottling = true,
+      enableCaching = true,
+      enableMemoization = true,
+      // Monitoring
+      enableMonitoring = false,
+      monitoringApiEndpoint,
+      monitoringApiKey,
+      // Testing
+      enableTesting = false,
+      enableTestMode = false,
+      enableMockData = false,
+      enableTestHelpers = true,
+      enableTestUtilities = true,
+      enableTestValidation = true,
+      enableTestPerformance = true,
+      enableTestAccessibility = true,
+      enableTestMonitoring = true,
+      enableTestDebugging = false,
+      enableTestLogging = true,
+      enableTestAssertions = true,
+      enableTestSnapshots = true,
+      enableTestCoverage = true,
+      enableTestReporting = true,
+      testTimeout = 5000,
+      testRetries = 3,
+      testDelay = 100,
+      mockData = {},
+      testConfig = {},
+      customTestHelpers = {},
+      customTestUtilities = {},
+      customTestValidators = {},
+      customTestAssertions = {},
+      // Integration
+      enableIntegration = true,
+      enableFormIntegration = true,
+      enableValidationIntegration = true,
+      enableStateIntegration = true,
+      enableEventIntegration = true,
+      enableDataIntegration = true,
+      enableAPIIntegration = false,
+      enableStorageIntegration = true,
+      enableThemeIntegration = true,
+      enableI18nIntegration = true,
+      enableAccessibilityIntegration = true,
+      enablePerformanceIntegration = true,
+      enableMonitoringIntegration = false,
+      enableTestingIntegration = false,
+      enableCustomIntegration = false,
+      integrationTimeout = 5000,
+      integrationRetries = 3,
+      integrationDelay = 1000,
+      customIntegrations = {},
+      integrationConfig = {},
+      apiEndpoints = {},
+      storageKeys = {},
+      eventTypes = [],
+      dataFormats = [],
+      validationRules = {},
+      stateKeys = [],
+      themeKeys = [],
+      i18nKeys = [],
+      accessibilityKeys = [],
+      performanceKeys = [],
+      monitoringKeys = [],
+      testingKeys = [],
       ...rest
     } = props;
 
@@ -186,21 +738,6 @@ const BcTextFieldInner = forwardRef<HTMLInputElement, BcTextFieldProps>(
     const ariaDescribedByStr =
       ariaDescribedByArr.length > 0 ? ariaDescribedByArr.join(" ") : undefined;
 
-    // OnChange handler
-    const handleChange = useCallback(
-      (e: React.ChangeEvent<HTMLInputElement>) => {
-        if (!isControlled) setInternalValue(e.target.value);
-        if (onChange) onChange(e);
-        if (monitoring && typeof monitoring.onChange === 'function') {
-          try {
-            monitoring.onChange(e.target.value);
-          } catch (err) {
-            if (monitoring.onError) monitoring.onError(err as Error);
-          }
-        }
-      },
-      [isControlled, onChange, monitoring]
-    );
 
     // Clear handler
     const handleClear = useCallback(() => {
@@ -209,16 +746,16 @@ const BcTextFieldInner = forwardRef<HTMLInputElement, BcTextFieldProps>(
         // Controlled ise, boş bir event ile value'yu sıfırla
         const event = { target: { value: "" } } as React.ChangeEvent<HTMLInputElement>;
         onChange(event);
-        if (monitoring && typeof monitoring.onChange === 'function') {
+        if (monitoringProp && typeof monitoringProp.onChange === 'function') {
           try {
-            monitoring.onChange("");
+            monitoringProp.onChange("");
           } catch (err) {
-            if (monitoring.onError) monitoring.onError(err as Error);
+            if (monitoringProp.onError) monitoringProp.onError(err as Error);
           }
         }
       }
       if (onClear) onClear();
-    }, [isControlled, onClear, onChange, monitoring]);
+    }, [isControlled, onClear, onChange, monitoringProp]);
 
     // Compose adornments için gerekli değişkenler
     let startAdornment: React.ReactNode = undefined;
@@ -274,7 +811,7 @@ const BcTextFieldInner = forwardRef<HTMLInputElement, BcTextFieldProps>(
       enableAsyncValidation,
       validateInput,
       validationDebounceMs,
-      monitoring,
+      monitoring: monitoringProp,
       keyboardNavigationAnnouncements: false,
       liveRegionRef: { current: null },
       setScreenReaderMessage: () => {},
@@ -323,15 +860,59 @@ const BcTextFieldInner = forwardRef<HTMLInputElement, BcTextFieldProps>(
       renderEndAdornment,
     });
 
+    const textCounter = useTextCounter({
+      enableCounter,
+      showCharacterCount: enableCharacterCount,
+      showWordCount: enableWordCount,
+      showLineCount: enableLineCount,
+      showParagraphCount: enableParagraphCount,
+      maxCharacters,
+      maxWords,
+      maxLines,
+      maxParagraphs,
+      warningThreshold,
+      criticalThreshold,
+    });
+
+
     // Status varsa helperText'i override et (memoize)
     const finalHelperText = useMemo(() => {
       let result = helperText;
+      
+      // Counter bilgisini ekle
+      if (enableCounter && textCounter) {
+        const counterDisplay = textCounter.getCounterDisplay();
+        if (counterDisplay.show) {
+          const counterText = (
+            <span style={{ 
+              display: 'block', 
+              color: counterDisplay.color, 
+              fontSize: 12, 
+              marginTop: 4 
+            }}>
+              {counterDisplay.icon} {counterDisplay.text}
+            </span>
+          );
+          
+          if (result) {
+            result = (
+              <span style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+                <span style={{ display: 'block' }}>{result}</span>
+                {counterText}
+              </span>
+            );
+          } else {
+            result = counterText;
+          }
+        }
+      }
+      
       if (finalStatus && finalStatusMessage) {
-        if (helperText) {
+        if (result) {
           result = (
             <span style={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
               <span style={{ display: 'block', marginBottom: 2 }}>{finalStatusMessage}</span>
-              <span style={{ display: 'block', color: '#888', fontSize: 13, marginTop: 2 }}>{helperText}</span>
+              <span style={{ display: 'block', color: '#888', fontSize: 13, marginTop: 2 }}>{result}</span>
             </span>
           );
         } else {
@@ -342,7 +923,7 @@ const BcTextFieldInner = forwardRef<HTMLInputElement, BcTextFieldProps>(
         result = renderHelperText(result);
       }
       return result;
-    }, [helperText, finalStatus, finalStatusMessage, renderHelperText]);
+    }, [helperText, enableCounter, textCounter, finalStatus, finalStatusMessage, renderHelperText]);
 
     // Style composition (memoize)
     const composedSx = useMemo(() => {
@@ -427,6 +1008,464 @@ const BcTextFieldInner = forwardRef<HTMLInputElement, BcTextFieldProps>(
       enableAsyncValidation: !!enableAsyncValidation,
       validationResult,
     });
+
+    // Yeni gelişmiş hook'lar
+    const richTextEditor = useRichTextEditor({
+      enableRichText,
+      enableMarkdown,
+      enableHTML,
+      enableFormatting,
+      enableLinks,
+      enableColors,
+    });
+
+    const textFormatting = useTextFormatting({
+      enableTransformation,
+      enableAutoResize,
+      enableCharacterCount,
+      enableWordCount,
+      maxLength: maxCharacters,
+      minLength: props.minLength,
+    });
+
+    // Akıllı özellikler hook'ları
+    const autoComplete = useAutoComplete({
+      enableAutoComplete,
+      options: autoCompleteOptions,
+      fetchOptions: fetchAutoCompleteOptions,
+      minQueryLength: minAutoCompleteQueryLength,
+      maxSuggestions: maxAutoCompleteSuggestions,
+      debounceMs: autoCompleteDebounceMs,
+      enableCategories: enableAutoCompleteCategories,
+      enableIcons: enableAutoCompleteIcons,
+      enableKeyboardNavigation: enableAutoCompleteKeyboardNavigation,
+    });
+
+    const smartSuggestions = useSmartSuggestions({
+      enableSmartSuggestions,
+      enableRecentHistory,
+      enableFavorites,
+      enableTrending,
+      enableRecommendations,
+      maxHistoryItems,
+      maxFavorites,
+      maxTrending,
+      maxRecommendations,
+      suggestionDebounceMs,
+      enableLearning,
+      enablePersonalization,
+    });
+
+    const smartValidation = useSmartValidation({
+      enableSmartValidation,
+      enableRealTimeValidation: enableSmartRealTimeValidation,
+      enableSuggestions: enableValidationSuggestions,
+      enableLearning: enableValidationLearning,
+      validationDebounceMs: smartValidationDebounceMs,
+      customRules: smartCustomValidationRules,
+    });
+
+    // Gelişmiş doğrulama hook'ları
+    const advancedValidation = useAdvancedValidation({
+      enableAdvancedValidation,
+      enableAsyncValidation: enableAdvancedAsyncValidation,
+      enableContextValidation,
+      enableBusinessRules: enableAdvancedBusinessRules,
+      enableCrossFieldValidation: enableAdvancedCrossFieldValidation,
+      enableRealTimeValidation: enableAdvancedRealTimeValidation,
+      validationDebounceMs: smartValidationDebounceMs,
+      maxConcurrentValidations,
+      customRules: advancedCustomValidationRules,
+      validationContext,
+    });
+
+    const businessRules = useBusinessRules({
+      enableBusinessRules: enableBusinessRulesValidation,
+      enableRealTimeEvaluation: enableBusinessRealTimeEvaluation,
+      enableRuleLearning,
+      enableRuleOptimization,
+      evaluationDebounceMs: businessEvaluationDebounceMs,
+      customRules: customBusinessRules,
+      businessContext,
+    });
+
+    const crossFieldValidation = useCrossFieldValidation({
+      enableCrossFieldValidation: enableCrossFieldValidationValidation,
+      enableRealTimeValidation: enableAdvancedRealTimeValidation,
+      enableDependencyTracking: enableCrossFieldDependencyTracking,
+      validationDebounceMs: smartValidationDebounceMs,
+      customRules: customCrossFieldRules,
+      crossFieldContext,
+    });
+
+    // Kullanıcı deneyimi hook'ları
+    const smartPlaceholder = useSmartPlaceholder({
+      enableSmartPlaceholder,
+      enableContextualPlaceholders,
+      enableTimeBasedPlaceholders,
+      enablePersonalizedPlaceholders,
+      enableLearning: enablePlaceholderLearning,
+      customTemplates: customPlaceholderTemplates,
+      placeholderContext,
+    });
+
+    const smartHelp = useSmartHelp({
+      enableSmartHelp,
+      enableContextualHelp,
+      enableProgressiveHelp,
+      enableLearning: enableHelpLearning,
+      enablePersonalization: enableHelpPersonalization,
+      customHelpItems,
+      helpContext,
+    });
+
+    const progressiveDisclosure = useProgressiveDisclosure({
+      enableProgressiveDisclosure,
+      enableContextualDisclosure,
+      enableLearning: enableDisclosureLearning,
+      enablePersonalization: enableDisclosurePersonalization,
+      customRules: customDisclosureRules,
+      customContent: customDisclosureContent,
+      disclosureContext,
+    });
+
+    // Erişilebilirlik ve Performans hook'ları
+    const accessibility = useAccessibility({
+      enableScreenReaderSupport,
+      enableKeyboardNavigation,
+      enableHighContrast: enableAccessibilityHighContrast,
+      enableReducedMotion: enableAccessibilityReducedMotion,
+      enableFocusManagement,
+      enableARIALabels,
+      enableLiveRegions,
+      enableSkipLinks,
+      enableTooltips,
+      enableErrorAnnouncements,
+      enableStatusAnnouncements,
+      enableProgressAnnouncements,
+    });
+
+    const performance = usePerformance({
+      enablePerformanceTracking,
+      enableRenderTracking,
+      enableMemoryTracking,
+      enableNetworkTracking,
+      enableUserInteractionTracking,
+      enablePerformanceOptimization,
+      enableDebouncing,
+      enableThrottling,
+      enableCaching,
+      enableMemoization,
+    });
+
+
+    // Testing ve Integration hook'ları
+    const testing = useTesting({
+      enableTesting,
+      enableTestMode,
+      enableMockData,
+      enableTestHelpers,
+      enableTestUtilities,
+      enableTestValidation,
+      enableTestPerformance,
+      enableTestAccessibility,
+      enableTestMonitoring,
+      enableTestDebugging,
+      enableTestLogging,
+      enableTestAssertions,
+      enableTestSnapshots,
+      enableTestCoverage,
+      enableTestReporting,
+      testTimeout,
+      testRetries,
+      testDelay,
+      mockData,
+      testConfig,
+      customTestHelpers,
+      customTestUtilities,
+      customTestValidators,
+      customTestAssertions,
+    });
+
+    const integration = useIntegration({
+      enableIntegration,
+      enableFormIntegration,
+      enableValidationIntegration,
+      enableStateIntegration,
+      enableEventIntegration,
+      enableDataIntegration,
+      enableAPIIntegration,
+      enableStorageIntegration,
+      enableThemeIntegration,
+      enableI18nIntegration,
+      enableAccessibilityIntegration,
+      enablePerformanceIntegration,
+      enableMonitoringIntegration,
+      enableTestingIntegration,
+      enableCustomIntegration,
+      integrationTimeout,
+      integrationRetries,
+      integrationDelay,
+      customIntegrations,
+      integrationConfig,
+      apiEndpoints,
+      storageKeys,
+      eventTypes,
+      dataFormats,
+      validationRules,
+      stateKeys,
+      themeKeys,
+      i18nKeys,
+      accessibilityKeys,
+      performanceKeys,
+      monitoringKeys,
+      testingKeys,
+    });
+
+    // OnChange handler
+    const handleChange = useCallback(
+      (e: React.ChangeEvent<HTMLInputElement>) => {
+        let newValue = e.target.value;
+        
+        // Text formatting uygula
+        if (enableTransformation && textFormatting.transformation) {
+          const activeTransformation = Object.entries(textFormatting.transformation)
+            .find(([_, isActive]) => isActive)?.[0] as keyof typeof textFormatting.transformation;
+          
+          if (activeTransformation) {
+            newValue = textFormatting.transformText(newValue, activeTransformation);
+          }
+        }
+        
+        // Rich text editor uygula
+        if (enableRichText && richTextEditor.isRichTextEnabled) {
+          newValue = richTextEditor.getFormattedText(newValue);
+        }
+        
+        // Counter güncelle
+        if (enableCounter) {
+          textCounter.updateCounter(newValue);
+        }
+        
+        // Auto complete güncelle
+        if (enableAutoComplete) {
+          autoComplete.showSuggestions(newValue);
+        }
+        
+        // Smart suggestions güncelle
+        if (enableSmartSuggestions) {
+          smartSuggestions.searchSuggestions(newValue);
+        }
+        
+        // Smart validation güncelle
+        if (enableSmartValidation) {
+          smartValidation.validate(newValue);
+        }
+        
+        // Advanced validation güncelle
+        if (enableAdvancedValidation) {
+          advancedValidation.validate(newValue, validationContext);
+        }
+        
+        // Business rules güncelle
+        if (enableBusinessRulesValidation) {
+          businessRules.evaluateRules(newValue, businessContext);
+        }
+        
+        // Cross field validation güncelle
+        if (enableCrossFieldValidationValidation) {
+          crossFieldValidation.validateCrossFields(name || 'field', newValue, crossFieldContext);
+        }
+        
+        // Smart placeholder güncelle
+        if (enableSmartPlaceholder) {
+          const context = {
+            fieldName: name,
+            fieldType: type,
+            fieldValue: newValue,
+            userContext: placeholderContext.userContext,
+            formContext: placeholderContext.formContext,
+            locale: placeholderContext.locale || locale,
+          };
+          smartPlaceholder.generatePlaceholder(context);
+        }
+        
+        // Smart help güncelle
+        if (enableSmartHelp) {
+          const context = {
+            fieldName: name,
+            fieldType: type,
+            fieldValue: newValue,
+            userContext: helpContext.userContext,
+            formContext: helpContext.formContext,
+            locale: helpContext.locale || locale,
+            userLevel: helpContext.userLevel,
+            deviceType: helpContext.deviceType,
+            timeSpent: helpContext.timeSpent,
+            errorCount: helpContext.errorCount,
+          };
+          smartHelp.generateHelp(context);
+        }
+        
+        // Progressive disclosure güncelle
+        if (enableProgressiveDisclosure) {
+          const context = {
+            fieldName: name,
+            fieldType: type,
+            fieldValue: newValue,
+            userContext: disclosureContext.userContext,
+            formContext: disclosureContext.formContext,
+            locale: disclosureContext.locale || locale,
+            userLevel: disclosureContext.userLevel,
+            deviceType: disclosureContext.deviceType,
+            timeSpent: disclosureContext.timeSpent,
+            interactionCount: disclosureContext.interactionCount,
+            errorCount: disclosureContext.errorCount,
+          };
+          progressiveDisclosure.generateDisclosure(context);
+        }
+        
+        // Accessibility güncelle
+        if (enableAccessibility) {
+          accessibility.actions.announce(`Değer değişti: ${newValue}`, 'polite');
+          if (enableUserInteractionTracking) {
+            accessibility.actions.updateContext({
+              fieldName: name,
+              fieldType: type,
+              fieldValue: newValue,
+            });
+          }
+        }
+        
+        // Performance tracking
+        if (enablePerformanceTracking) {
+          const renderStart = window.performance.now();
+          performance.actions.trackRender('BcTextField', renderStart);
+          performance.actions.trackUserInteraction('input_change');
+        }
+        
+        // Monitoring
+        if (enableMonitoring && monitoringProp) {
+          if (monitoringProp.onChange) {
+            monitoringProp.onChange(newValue);
+          }
+        }
+        
+        // Testing
+        if (enableTesting) {
+          testing.actions.logTest('info', `Input changed: ${newValue}`, {
+            fieldName: name,
+            fieldType: type,
+            value: newValue,
+          });
+          
+          if (enableTestValidation) {
+            testing.actions.validateInput(newValue, validationRules);
+          }
+          
+          if (enableTestPerformance) {
+            testing.actions.validatePerformance(() => {
+              // Simulate some processing
+            }, 100);
+          }
+        }
+        
+        // Integration
+        if (enableIntegration) {
+          if (enableFormIntegration) {
+            integration.actions.updateFormData(name || 'field', newValue);
+          }
+          
+          if (enableStateIntegration) {
+            integration.actions.updateState(name || 'field', newValue);
+          }
+          
+          if (enableEventIntegration) {
+            integration.actions.emitEvent('input_change', {
+              fieldName: name,
+              fieldType: type,
+              value: newValue,
+            });
+          }
+          
+          if (enableDataIntegration) {
+            integration.actions.cacheData(name || 'field', newValue);
+          }
+        }
+        
+        if (!isControlled) setInternalValue(newValue);
+        if (onChange) {
+          // Formatlanmış değerle event oluştur
+          const formattedEvent = {
+            ...e,
+            target: { ...e.target, value: newValue }
+          };
+          onChange(formattedEvent);
+        }
+        if (monitoringProp && typeof monitoringProp.onChange === 'function') {
+          try {
+            monitoringProp.onChange(newValue);
+          } catch (err) {
+            if (monitoringProp.onError) monitoringProp.onError(err as Error);
+          }
+        }
+      },
+      [
+        isControlled, 
+        onChange, 
+        monitoringProp, 
+        enableTransformation, 
+        textFormatting, 
+        enableRichText, 
+        richTextEditor, 
+        enableCounter, 
+        textCounter,
+        enableAutoComplete,
+        autoComplete,
+        enableSmartSuggestions,
+        smartSuggestions,
+        enableSmartValidation,
+        smartValidation,
+        enableAdvancedValidation,
+        advancedValidation,
+        validationContext,
+        enableBusinessRulesValidation,
+        businessRules,
+        businessContext,
+        enableCrossFieldValidationValidation,
+        crossFieldValidation,
+        crossFieldContext,
+        name,
+        enableSmartPlaceholder,
+        smartPlaceholder,
+        placeholderContext,
+        type,
+        enableSmartHelp,
+        smartHelp,
+        helpContext,
+        enableProgressiveDisclosure,
+        progressiveDisclosure,
+        disclosureContext,
+        locale,
+        enableAccessibility,
+        accessibility,
+        enableUserInteractionTracking,
+        enablePerformanceTracking,
+        performance,
+        enableMonitoring,
+        enableTesting,
+        testing,
+        enableTestValidation,
+        validationRules,
+        enableTestPerformance,
+        enableIntegration,
+        integration,
+        enableFormIntegration,
+        enableStateIntegration,
+        enableEventIntegration,
+        enableDataIntegration
+      ]
+    );
 
     // slotProps.input'a ekle
     let inputSlotProps = {

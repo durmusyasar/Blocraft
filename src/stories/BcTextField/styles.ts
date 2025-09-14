@@ -28,7 +28,7 @@ export const labelBaseStyle = (theme: Theme) => ({
   // Label arka planı: hem light hem dark modda border üstünde net görünür
   background: theme.palette.mode === 'dark'
     ? 'rgba(35,39,47,0.85)'
-    : 'rgba(255,255,255,0.85)',
+    : 'transparent',
   transition: "color 0.3s, background 0.3s, backdrop-filter 0.3s",
   "&.Mui-focused": { color: "#7c4dff" },
   "&.Mui-disabled": { color: "#666" },
@@ -76,7 +76,7 @@ export const softStyles = (theme: Theme) => ({
   '& .MuiInputLabel-root': {
     ...labelBaseStyle(theme),
     color: theme.palette.mode === 'dark' ? '#90caf9' : theme.palette.text.secondary,
-    background: theme.palette.mode === 'dark' ? 'rgba(35,39,47,0.98)' : 'rgba(255,255,255,0.85)',
+    background: theme.palette.mode === 'dark' ? 'rgba(35,39,47,0.98)' : 'transparent',
   },
 });
 
@@ -117,7 +117,7 @@ export const minimalStyles = (theme: Theme) => ({
   '& .MuiInputLabel-root': {
     ...labelBaseStyle(theme),
     color: theme.palette.mode === 'dark' ? '#90caf9' : theme.palette.text.secondary,
-    background: theme.palette.mode === 'dark' ? 'rgba(35,39,47,0.98)' : 'rgba(255,255,255,0.85)',
+    background: theme.palette.mode === 'dark' ? 'rgba(35,39,47,0.98)' : 'transparent',
   },
 });
 
@@ -160,7 +160,7 @@ export const underlineStyles = (theme: Theme) => ({
   '& .MuiInputLabel-root': {
     ...labelBaseStyle(theme),
     color: theme.palette.mode === 'dark' ? '#90caf9' : theme.palette.text.secondary,
-    background: theme.palette.mode === 'dark' ? 'rgba(35,39,47,0.98)' : 'rgba(255,255,255,0.85)',
+    background: theme.palette.mode === 'dark' ? 'rgba(35,39,47,0.98)' : 'transparent',
   },
 });
 
