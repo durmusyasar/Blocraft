@@ -5,8 +5,7 @@
   - [Özellikler](#özellikler)
   - [Props Tablosu](#props-tablosu)
   - [Kullanım](#kullanım)
-  - [Ülke Seçimi](#ülke-seçimi)
-  - [Telefon Doğrulama](#telefon-doğrulama)
+  - [BcTextField Kalıtımı](#bctextfield-kalıtımı)
   - [React Hook Form ile Kullanım](#react-hook-form-ile-kullanım)
   - [Sıkça Sorulan Sorular (FAQ)](#sıkça-sorulan-sorular-faq)
   - [Sorun Giderme](#sorun-giderme)
@@ -16,8 +15,7 @@
   - [Features](#features)
   - [Props Table](#props-table)
   - [Usage](#usage)
-  - [Country Selection](#country-selection)
-  - [Phone Validation](#phone-validation)
+  - [BcTextField Inheritance](#bctextfield-inheritance)
   - [React Hook Form Integration](#react-hook-form-integration)
   - [Frequently Asked Questions (FAQ)](#frequently-asked-questions-faq)
   - [Troubleshooting](#troubleshooting)
@@ -29,136 +27,183 @@
 ## Türkçe
 
 ### Özellikler
-- Material-UI tabanlı, modern ve özelleştirilebilir telefon input bileşeni
-- **BcTextField inheritance** - Tüm BcTextField özelliklerini destekler
-- Ülke kodu seçimi ile otomatik telefon numarası formatlaması
-- Favori ülkeler ve son kullanılan ülkeler desteği
-- **Asenkron ülke listesi yükleme** (API'den ülke verileri)
-- **Özel telefon doğrulama** fonksiyonları
-- **Özel maske formatları** ülkeye göre
-- **Çoklu dil/i18n desteği** (Türkçe, İngilizce, Almanca, Fransızca)
-- **Erişilebilirlik** (ARIA, screen reader, keyboard navigation)
-- **Responsive tasarım** ve tema uyumluluğu
-- **Virtualization** büyük ülke listeleri için
-- **LocalStorage** entegrasyonu (son kullanılan ülkeler)
+- Material-UI tabanlı, BcTextField'den türetilmiş telefon input bileşeni
+- Ülke kodu seçimi, telefon numarası formatlama ve doğrulama
+- BcTextField'in tüm özelliklerini kalıtım yoluyla alır
+- Responsive, status, loading, clear, i18n, erişilebilirlik desteği
+- **Çoklu dil/i18n desteği** (translations, locale, fallbackLocale)
+- **Async validation** (enableAsyncValidation, validateInput, showValidationStatus, validationDebounceMs)
+- **Monitoring/analitik** (monitoring prop'u ile değişiklik, hata, performans callback'leri)
+- **Custom render** (renderCustomIcon, renderHelperText)
+- **High contrast & reduced motion** (erişilebilirlik için)
+- **RTL (sağdan sola) desteği**
+
+#### 📱 Telefon Özel Özellikleri
+- **Ülke Seçimi**: Bayrak emojileri ile ülke kodu seçimi
+- **Telefon Formatlama**: Ülkeye özel telefon numarası formatlama
+- **Doğrulama**: Ülkeye özel telefon numarası doğrulama
+- **Favori Ülkeler**: Sık kullanılan ülkeleri favorilere ekleme
+- **Geçmiş**: Son kullanılan ülkeler ve telefon numaraları
+- **Arama**: Ülke arama ve filtreleme
+- **Otomatik Algılama**: IP/konum tabanlı ülke algılama
+
+#### 🚀 Gelişmiş Özellikler
+- **QR Kod**: Telefon numarası için QR kod oluşturma
+- **Sesli Arama**: Sesli komutlarla ülke/telefon arama
+- **Öneriler**: Akıllı telefon numarası önerileri
+- **Geçmiş Takibi**: Detaylı telefon numarası geçmişi
+- **Mobil Optimizasyonlar**: Mobil cihazlar için özel optimizasyonlar
+- **Klavye Kısayolları**: Güçlü kullanıcılar için klavye kısayolları
+
+#### ♿ Erişilebilirlik ve Performans
+- **Accessibility**: Screen reader, keyboard navigation, ARIA labels, live regions, focus management
+- **Performance**: Lazy loading, debouncing, memoization, efficient rendering
+- **Monitoring**: Real-time monitoring, analytics, error reporting, user behavior tracking
 
 ### Props Tablosu
-| Prop                | Tip      | Açıklama |
-|---------------------|----------|----------|
-| country             | string   | Seçili ülke kodu (ISO 3166-1 alpha-2) |
-| onCountryChange     | function | Ülke değiştiğinde çağrılır |
-| countryList         | array/Promise | Ülke listesi veya Promise |
-| fetchCountries      | function | Ülkeleri async olarak getirir |
-| showCountrySelect   | boolean/'readonly' | Select gösterilsin mi / 'readonly' |
-| validatePhone       | function | Telefon doğrulama fonksiyonu |
-| getMask             | function | Mask fonksiyonu |
-| showMaskInPlaceholder | boolean | Mask placeholderda gösterilsin mi |
-| favoriteCountries   | array    | Favori ülke kodları |
-| locale              | string   | Dil kodu |
-| fallbackLocale      | string   | Yedek dil kodu |
-| translations        | object   | Özel çeviriler |
-| ...rest             | ...      | Diğer tüm BcTextField props |
+
+#### BcTextField'den Kalıtılan Props
+Tüm BcTextField props'ları kullanılabilir. Detaylı liste için BcTextField dokümantasyonuna bakın.
+
+#### Telefon Özel Props
+
+| Prop | Tip | Varsayılan | Açıklama |
+|------|-----|------------|----------|
+| **Temel Props** | | | |
+| country | string | "TR" | Varsayılan seçili ülke kodu |
+| onCountryChange | (country: string) => void | - | Ülke değiştiğinde çağrılan fonksiyon |
+| countryList | CountryType[] | defaultCountryList | Mevcut ülkeler listesi |
+| fetchCountries | () => Promise<CountryType[]> | - | Async ülke yükleme fonksiyonu |
+| showCountrySelect | boolean | true | Ülke seçici dropdown'u göster |
+| validatePhone | (phone: string, country: string) => boolean | - | Özel telefon doğrulama |
+| getMask | (country: string) => string | - | Özel maske fonksiyonu |
+| showMaskInPlaceholder | boolean | true | Placeholder'da telefon maskesini göster |
+| favoriteCountries | string[] | [] | Favori ülke kodları listesi |
+| **Gelişmiş Özellikler** | | | |
+| enablePhoneFormatting | boolean | true | Gerçek zamanlı telefon formatlama |
+| enableCountrySearch | boolean | true | Ülke arama işlevselliği |
+| enableAdvancedValidation | boolean | true | Ülkeye özel doğrulama |
+| enableAutoCountryDetection | boolean | false | Otomatik ülke algılama |
+| enablePhoneSuggestions | boolean | true | Telefon numarası önerileri |
+| enableQRCode | boolean | false | QR kod oluşturma |
+| enableVoiceSearch | boolean | false | Sesli arama entegrasyonu |
+| enablePhoneHistory | boolean | true | Telefon geçmişi takibi |
+| enableAdvancedMonitoring | boolean | false | Gelişmiş kullanım izleme |
+| enableMobileOptimizations | boolean | true | Mobil özel optimizasyonlar |
+| enableAdvancedI18n | boolean | false | Gelişmiş i18n özellikleri |
+| enableThemeAwareStyles | boolean | true | Tema uyumlu stil |
+| enableKeyboardShortcuts | boolean | true | Klavye kısayolları |
+| **BcTextField Kalıtılan** | | | |
+| appearance | string | "outlined" | Görünüm stili (premium, soft, glass, minimal, neumorph, underline, dark, borderless) |
+| size | string | "medium" | Boyut (small, medium, large) |
+| status | string | - | Durum göstergesi (error, warning, success, info) |
+| color | string | "primary" | Renk teması (primary, secondary, success, error, info, warning) |
+| responsiveWidth | boolean | false | Responsive genişlik |
+| showClearButton | boolean | false | Temizleme butonu göster |
+| loading | boolean | false | Yükleme durumu |
+| disabled | boolean | false | Devre dışı |
+| translations | object | - | Çoklu dil/i18n çevirileri |
+| locale, fallbackLocale | string | - | Dil kodu ve yedek dil |
+| enableAsyncValidation | boolean | false | Asenkron doğrulama aktif |
+| validateInput | fonksiyon | - | Asenkron doğrulama fonksiyonu |
+| showValidationStatus | boolean | false | Doğrulama durumunu göster |
+| validationDebounceMs | number | 300 | Doğrulama debounce süresi (ms) |
+| monitoring | object | - | onChange, onError, onPerformance callback'leri |
+| renderCustomIcon | fonksiyon | - | Durum ikonunu özelleştir |
+| renderHelperText | fonksiyon | - | helperText'i özelleştir |
+| enableHighContrast | boolean | false | Yüksek kontrast modu |
+| enableReducedMotion | boolean | false | Hareket azaltma modu |
+| enableRTL | boolean | false | Sağdan sola yazım desteği |
+| fontSize | number/string | - | Yazı tipi boyutu |
+| inputPrefix | node | - | Input başına özel içerik |
+| inputSuffix | node | - | Input sonuna özel içerik |
 
 ### Kullanım
 
 #### Temel Kullanım
 ```tsx
-import { BcPhoneInput } from "../BcPhoneInput/BcPhoneInput";
+import { BcPhoneInput } from "./components/BcPhoneInput/BcPhoneInput";
 
 <BcPhoneInput
   label="Telefon Numarası"
+  country="TR"
   placeholder="Telefon numaranızı girin"
-  country="TR"
-  onCountryChange={(country) => console.log('Ülke değişti:', country)}
 />
 ```
 
-#### Favori Ülkeler ile
+#### Gelişmiş Kullanım
 ```tsx
 <BcPhoneInput
-  label="Telefon"
-  favoriteCountries={['TR', 'US', 'DE']}
+  label="Profesyonel Telefon Girişi"
   country="TR"
-  onCountryChange={setCountry}
+  appearance="premium"
+  size="large"
+  color="success"
+  showClearButton={true}
+  responsiveWidth={true}
+  enableRTL={true}
+  
+  // Telefon özel özellikler
+  enablePhoneFormatting={true}
+  enableCountrySearch={true}
+  enableAdvancedValidation={true}
+  enableAutoCountryDetection={true}
+  enablePhoneSuggestions={true}
+  enableQRCode={true}
+  enableVoiceSearch={true}
+  enablePhoneHistory={true}
+  
+  // Gelişmiş izleme
+  enableAdvancedMonitoring={true}
+  enableMobileOptimizations={true}
+  enableAdvancedI18n={true}
+  enableThemeAwareStyles={true}
+  enableKeyboardShortcuts={true}
+  
+  // Özel yapılandırma
+  favoriteCountries={["TR", "US", "GB", "DE", "FR"]}
+  validatePhone={(phone, country) => {
+    // Özel doğrulama mantığı
+    return phone.length >= 10;
+  }}
+  onCountryChange={(country) => {
+    console.log('Ülke değişti:', country);
+  }}
 />
 ```
 
-#### Asenkron Ülke Yükleme
-```tsx
-const fetchCountries = async () => {
-  const response = await fetch('/api/countries');
-  return response.json();
-};
+### BcTextField Kalıtımı
 
+#### Tüm BcTextField Özellikleri Kullanılabilir
+```tsx
+// BcTextField'den kalıtılan tüm özellikler çalışır
 <BcPhoneInput
-  label="Telefon"
-  fetchCountries={fetchCountries}
+  // BcTextField kalıtılan props
+  label="Telefon Numarası"
+  appearance="premium"
+  size="large"
+  color="success"
+  showClearButton={true}
+  responsiveWidth={true}
+  enableRTL={true}
+  enableHighContrast={true}
+  enableReducedMotion={true}
+  translations={{
+    clearButtonLabel: "Temizle",
+    helperText: "Yardım metni",
+    statusMessage: "Durum mesajı",
+    label: "Etiket"
+  }}
+  locale="tr"
+  helperText="Telefon numaranızı girin"
+  status="success"
+  statusMessage="Geçerli telefon numarası"
+  
+  // Telefon özel props
   country="TR"
-  onCountryChange={setCountry}
-/>
-```
-
-### Ülke Seçimi
-
-#### Ülke Seçimi Gizleme
-```tsx
-// Ülke seçimini tamamen gizle
-<BcPhoneInput showCountrySelect={false} />
-
-// Ülke seçimini sadece okunur yap
-<BcPhoneInput showCountrySelect="readonly" country="TR" />
-```
-
-#### Özel Ülke Listesi
-```tsx
-const customCountries = [
-  { code: 'TR', name: 'Türkiye', dial: '90', flag: '🇹🇷' },
-  { code: 'US', name: 'Amerika', dial: '1', flag: '🇺🇸' },
-];
-
-<BcPhoneInput
-  countryList={customCountries}
-  country="TR"
-  onCountryChange={setCountry}
-/>
-```
-
-### Telefon Doğrulama
-
-#### Özel Doğrulama Fonksiyonu
-```tsx
-const validatePhone = (phone: string, country: string) => {
-  if (country === 'TR') {
-    return phone.length >= 10 && phone.startsWith('5');
-  }
-  if (country === 'US') {
-    return phone.length === 10;
-  }
-  return phone.length >= 8;
-};
-
-<BcPhoneInput
-  validatePhone={validatePhone}
-  country="TR"
-  helperText="TR: 5 ile başlayan 10 haneli numara"
-/>
-```
-
-#### Özel Maske Formatı
-```tsx
-const getMask = (country: string) => {
-  switch (country) {
-    case 'TR': return '(999) 999-9999';
-    case 'US': return '(999) 999-9999';
-    case 'DE': return '999 99999999';
-    default: return '999-999-9999';
-  }
-};
-
-<BcPhoneInput
-  getMask={getMask}
-  showMaskInPlaceholder
-  country="TR"
+  favoriteCountries={["TR", "US", "GB"]}
+  enablePhoneFormatting={true}
+  enableAdvancedValidation={true}
 />
 ```
 
@@ -167,28 +212,25 @@ const getMask = (country: string) => {
 import { useForm, Controller } from 'react-hook-form';
 import { BcPhoneInput } from './BcPhoneInput';
 
-function PhoneForm() {
+function MyForm() {
   const { control, handleSubmit } = useForm();
   const onSubmit = data => console.log(data);
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <Controller
-        name="phone"
+        name="phoneNumber"
         control={control}
         defaultValue=""
-        rules={{ 
-          required: 'Telefon numarası gerekli',
-          minLength: { value: 10, message: 'En az 10 karakter' }
-        }}
-        render={({ field, fieldState }) => (
+        render={({ field }) => (
           <BcPhoneInput
             {...field}
             label="Telefon Numarası"
+            country="TR"
             placeholder="Telefon numaranızı girin"
-            helperText={fieldState.error?.message}
-            status={fieldState.error ? 'error' : undefined}
             showClearButton
+            enablePhoneFormatting
+            enableAdvancedValidation
           />
         )}
       />
@@ -199,47 +241,29 @@ function PhoneForm() {
 ```
 
 ### Sıkça Sorulan Sorular (FAQ)
-
-**BcPhoneInput neden BcTextField'ı extend ediyor?**
-- BcTextField'ın tüm özelliklerini (appearance, status, loading, clear button, i18n, accessibility) kullanabilmek için inheritance kullanılır.
-
-**Ülke listesi nasıl yüklenir?**
-- Varsayılan olarak built-in ülke listesi kullanılır. `countryList` prop'u ile özel liste veya `fetchCountries` ile async yükleme yapılabilir.
-
-**Favori ülkeler nasıl çalışır?**
-- `favoriteCountries` prop'u ile favori ülke kodları verilir. Bu ülkeler dropdown'da en üstte "Favorites" başlığı altında gösterilir.
-
-**Son kullanılan ülkeler nerede saklanır?**
-- localStorage'da `bc-phoneinput-recent-countries` anahtarı altında saklanır. Son 3 ülke hatırlanır.
-
-**Telefon doğrulama nasıl özelleştirilir?**
-- `validatePhone` prop'u ile özel doğrulama fonksiyonu verilir. Fonksiyon `(phone: string, country: string) => boolean` formatında olmalıdır.
+- **BcPhoneInput neden BcTextField'den türetiliyor?**
+  - Tüm BcTextField özelliklerini kalıtım yoluyla almak ve tutarlı API sağlamak için.
+- **i18n çevirileri nereden yükleniyor?**
+  - i18n çevirileri i18n klasöründeki JSON dosyalarından veya translations prop'u ile yüklenir.
+- **Async ülke yükleme nasıl çalışıyor?**
+  - fetchCountries fonksiyonu ile async olarak ülke listesi yüklenebilir.
+- **Telefon formatlama nasıl özelleştirilir?**
+  - getMask prop'u ile ülkeye özel formatlama maskesi tanımlanabilir.
 
 ### Sorun Giderme
-
-**"Cannot find module 'react-window'":**
-- react-window paketini kurun: `npm install react-window @types/react-window`
-
-**Ülke listesi yüklenmiyor:**
-- `fetchCountries` fonksiyonunun Promise döndürdüğünden emin olun
-- Network hatalarını kontrol edin
-
-**LocalStorage hatası:**
-- Tarayıcı localStorage'ı destekliyor mu kontrol edin
-- Private/Incognito modda localStorage çalışmayabilir
-
-**Telefon doğrulama çalışmıyor:**
-- `validatePhone` fonksiyonunun doğru format döndürdüğünden emin olun
-- Country code'un doğru olduğunu kontrol edin
+- **"toHaveNoViolations" hatası:**
+  - jest-axe için tip dosyasını (jest-axe.d.ts) ekleyin.
+- **"Cannot find module 'react-hook-form'":**
+  - Paketi kurduğunuzdan ve import ettiğinizden emin olun.
+- **Performans sorunları:**
+  - Çok büyük ülke listelerinde lazy loading ve memoization kullanın.
 
 ### En İyi Kullanım İpuçları
-
-- **Performance**: Büyük ülke listeleri için `fetchCountries` kullanın
-- **UX**: Favori ülkeleri kullanıcı deneyimini iyileştirir
-- **Validation**: Ülkeye özel doğrulama kuralları kullanın
-- **Accessibility**: `aria-label` ve `helperText` kullanın
-- **i18n**: `locale` ve `fallbackLocale` prop'larını kullanın
-- **Error Handling**: `validatePhone` fonksiyonunda hata yakalama yapın
+- i18n için translations prop'unu ve locale/fallbackLocale değerlerini kullanın.
+- Async validation fonksiyonlarını useCallback ile sarmalayın.
+- Monitoring callback'lerinde try/catch kullanın.
+- favoriteCountries ile sık kullanılan ülkeleri optimize edin.
+- enableMobileOptimizations'ı mobil uygulamalar için etkinleştirin.
 
 ### Lisans
 MIT
@@ -249,136 +273,183 @@ MIT
 ## English
 
 ### Features
-- Material-UI based, modern and customizable phone input component
-- **BcTextField inheritance** - Supports all BcTextField features
-- Country code selection with automatic phone number formatting
-- Favorite countries and recently used countries support
-- **Async country list loading** (country data from API)
-- **Custom phone validation** functions
-- **Custom mask formats** by country
-- **Multi-language/i18n support** (Turkish, English, German, French)
-- **Accessibility** (ARIA, screen reader, keyboard navigation)
-- **Responsive design** and theme compatibility
-- **Virtualization** for large country lists
-- **LocalStorage** integration (recently used countries)
+- Material-UI based phone input component **derived from BcTextField**
+- Country code selection, phone number formatting and validation
+- Inherits all BcTextField features through proper inheritance
+- Responsive, status, loading, clear, i18n, accessibility support
+- **Multi-language/i18n support** (translations, locale, fallbackLocale)
+- **Async validation** (enableAsyncValidation, validateInput, showValidationStatus, validationDebounceMs)
+- **Monitoring/analytics** (monitoring prop with onChange, onError, onPerformance callbacks)
+- **Custom render** (renderCustomIcon, renderHelperText)
+- **High contrast & reduced motion** (for accessibility)
+- **RTL (right-to-left) support**
+
+#### 📱 Phone-Specific Features
+- **Country Selection**: Country code selection with flag emojis
+- **Phone Formatting**: Country-specific phone number formatting
+- **Validation**: Country-specific phone number validation
+- **Favorite Countries**: Add frequently used countries to favorites
+- **History**: Recent countries and phone numbers
+- **Search**: Country search and filtering
+- **Auto Detection**: IP/location-based country detection
+
+#### 🚀 Advanced Features
+- **QR Code**: Generate QR codes for phone numbers
+- **Voice Search**: Search countries/phones with voice commands
+- **Suggestions**: Smart phone number suggestions
+- **History Tracking**: Detailed phone number history
+- **Mobile Optimizations**: Special optimizations for mobile devices
+- **Keyboard Shortcuts**: Keyboard shortcuts for power users
+
+#### ♿ Accessibility and Performance
+- **Accessibility**: Screen reader, keyboard navigation, ARIA labels, live regions, focus management
+- **Performance**: Lazy loading, debouncing, memoization, efficient rendering
+- **Monitoring**: Real-time monitoring, analytics, error reporting, user behavior tracking
 
 ### Props Table
-| Prop                | Type     | Description |
-|---------------------|----------|-------------|
-| country             | string   | Selected country code (ISO 3166-1 alpha-2) |
-| onCountryChange     | function | Called when country changes |
-| countryList         | array/Promise | Country list or Promise |
-| fetchCountries      | function | Fetches countries asynchronously |
-| showCountrySelect   | boolean/'readonly' | Show select / 'readonly' |
-| validatePhone       | function | Phone validation function |
-| getMask             | function | Mask function |
-| showMaskInPlaceholder | boolean | Show mask in placeholder |
-| favoriteCountries   | array    | Favorite country codes |
-| locale              | string   | Language code |
-| fallbackLocale      | string   | Fallback language code |
-| translations        | object   | Custom translations |
-| ...rest             | ...      | All other BcTextField props |
+
+#### Inherited Props (from BcTextField)
+All BcTextField props are available. See BcTextField documentation for complete list.
+
+#### Phone-Specific Props
+
+| Prop | Type | Default | Description |
+|------|-----|---------|-------------|
+| **Basic Props** | | | |
+| country | string | "TR" | Default selected country code |
+| onCountryChange | (country: string) => void | - | Callback when country changes |
+| countryList | CountryType[] | defaultCountryList | List of available countries |
+| fetchCountries | () => Promise<CountryType[]> | - | Async country loading function |
+| showCountrySelect | boolean | true | Show country selection dropdown |
+| validatePhone | (phone: string, country: string) => boolean | - | Custom phone validation |
+| getMask | (country: string) => string | - | Custom mask function |
+| showMaskInPlaceholder | boolean | true | Show phone mask in placeholder |
+| favoriteCountries | string[] | [] | List of favorite country codes |
+| **Advanced Features** | | | |
+| enablePhoneFormatting | boolean | true | Enable real-time phone formatting |
+| enableCountrySearch | boolean | true | Enable country search functionality |
+| enableAdvancedValidation | boolean | true | Enable country-specific validation |
+| enableAutoCountryDetection | boolean | false | Enable automatic country detection |
+| enablePhoneSuggestions | boolean | true | Enable phone number suggestions |
+| enableQRCode | boolean | false | Enable QR code generation |
+| enableVoiceSearch | boolean | false | Enable voice search integration |
+| enablePhoneHistory | boolean | true | Enable phone history tracking |
+| enableAdvancedMonitoring | boolean | false | Enable advanced usage monitoring |
+| enableMobileOptimizations | boolean | true | Enable mobile-specific optimizations |
+| enableAdvancedI18n | boolean | false | Enable advanced i18n features |
+| enableThemeAwareStyles | boolean | true | Enable theme-aware styling |
+| enableKeyboardShortcuts | boolean | true | Enable keyboard shortcuts |
+| **BcTextField Inherited** | | | |
+| appearance | string | "outlined" | Appearance style (premium, soft, glass, minimal, neumorph, underline, dark, borderless) |
+| size | string | "medium" | Size (small, medium, large) |
+| status | string | - | Status indicator (error, warning, success, info) |
+| color | string | "primary" | Color theme (primary, secondary, success, error, info, warning) |
+| responsiveWidth | boolean | false | Responsive width |
+| showClearButton | boolean | false | Show clear button |
+| loading | boolean | false | Loading state |
+| disabled | boolean | false | Disabled |
+| translations | object | - | Multi-language/i18n translations |
+| locale, fallbackLocale | string | - | Language code and fallback |
+| enableAsyncValidation | boolean | false | Enable async validation |
+| validateInput | function | - | Async validation function |
+| showValidationStatus | boolean | false | Show validation status |
+| validationDebounceMs | number | 300 | Validation debounce duration (ms) |
+| monitoring | object | - | onChange, onError, onPerformance callbacks |
+| renderCustomIcon | function | - | Custom status icon renderer |
+| renderHelperText | function | - | Custom helperText renderer |
+| enableHighContrast | boolean | false | High contrast mode |
+| enableReducedMotion | boolean | false | Reduced motion mode |
+| enableRTL | boolean | false | Right-to-left support |
+| fontSize | number/string | - | Font size |
+| inputPrefix | node | - | Custom content at input start |
+| inputSuffix | node | - | Custom content at input end |
 
 ### Usage
 
 #### Basic Usage
 ```tsx
-import { BcPhoneInput } from "../BcPhoneInput/BcPhoneInput";
+import { BcPhoneInput } from "./components/BcPhoneInput/BcPhoneInput";
 
 <BcPhoneInput
   label="Phone Number"
+  country="TR"
   placeholder="Enter your phone number"
-  country="US"
-  onCountryChange={(country) => console.log('Country changed:', country)}
 />
 ```
 
-#### With Favorite Countries
+#### Advanced Usage
 ```tsx
 <BcPhoneInput
-  label="Phone"
-  favoriteCountries={['US', 'TR', 'DE']}
-  country="US"
-  onCountryChange={setCountry}
+  label="Professional Phone Input"
+  country="TR"
+  appearance="premium"
+  size="large"
+  color="success"
+  showClearButton={true}
+  responsiveWidth={true}
+  enableRTL={true}
+  
+  // Phone-specific features
+  enablePhoneFormatting={true}
+  enableCountrySearch={true}
+  enableAdvancedValidation={true}
+  enableAutoCountryDetection={true}
+  enablePhoneSuggestions={true}
+  enableQRCode={true}
+  enableVoiceSearch={true}
+  enablePhoneHistory={true}
+  
+  // Advanced monitoring
+  enableAdvancedMonitoring={true}
+  enableMobileOptimizations={true}
+  enableAdvancedI18n={true}
+  enableThemeAwareStyles={true}
+  enableKeyboardShortcuts={true}
+  
+  // Custom configuration
+  favoriteCountries={["TR", "US", "GB", "DE", "FR"]}
+  validatePhone={(phone, country) => {
+    // Custom validation logic
+    return phone.length >= 10;
+  }}
+  onCountryChange={(country) => {
+    console.log('Country changed:', country);
+  }}
 />
 ```
 
-#### Async Country Loading
-```tsx
-const fetchCountries = async () => {
-  const response = await fetch('/api/countries');
-  return response.json();
-};
+### BcTextField Inheritance
 
+#### All BcTextField Features Available
+```tsx
+// All BcTextField inherited features work
 <BcPhoneInput
-  label="Phone"
-  fetchCountries={fetchCountries}
-  country="US"
-  onCountryChange={setCountry}
-/>
-```
-
-### Country Selection
-
-#### Hide Country Selection
-```tsx
-// Hide country selection completely
-<BcPhoneInput showCountrySelect={false} />
-
-// Make country selection readonly
-<BcPhoneInput showCountrySelect="readonly" country="US" />
-```
-
-#### Custom Country List
-```tsx
-const customCountries = [
-  { code: 'US', name: 'United States', dial: '1', flag: '🇺🇸' },
-  { code: 'TR', name: 'Turkey', dial: '90', flag: '🇹🇷' },
-];
-
-<BcPhoneInput
-  countryList={customCountries}
-  country="US"
-  onCountryChange={setCountry}
-/>
-```
-
-### Phone Validation
-
-#### Custom Validation Function
-```tsx
-const validatePhone = (phone: string, country: string) => {
-  if (country === 'US') {
-    return phone.length === 10;
-  }
-  if (country === 'TR') {
-    return phone.length >= 10 && phone.startsWith('5');
-  }
-  return phone.length >= 8;
-};
-
-<BcPhoneInput
-  validatePhone={validatePhone}
-  country="US"
-  helperText="US: 10 digit number"
-/>
-```
-
-#### Custom Mask Format
-```tsx
-const getMask = (country: string) => {
-  switch (country) {
-    case 'US': return '(999) 999-9999';
-    case 'TR': return '(999) 999-9999';
-    case 'DE': return '999 99999999';
-    default: return '999-999-9999';
-  }
-};
-
-<BcPhoneInput
-  getMask={getMask}
-  showMaskInPlaceholder
-  country="US"
+  // BcTextField inherited props
+  label="Phone Number"
+  appearance="premium"
+  size="large"
+  color="success"
+  showClearButton={true}
+  responsiveWidth={true}
+  enableRTL={true}
+  enableHighContrast={true}
+  enableReducedMotion={true}
+  translations={{
+    clearButtonLabel: "Clear",
+    helperText: "Helper text",
+    statusMessage: "Status message",
+    label: "Label"
+  }}
+  locale="en"
+  helperText="Enter your phone number"
+  status="success"
+  statusMessage="Valid phone number"
+  
+  // Phone-specific props
+  country="TR"
+  favoriteCountries={["TR", "US", "GB"]}
+  enablePhoneFormatting={true}
+  enableAdvancedValidation={true}
 />
 ```
 
@@ -387,28 +458,25 @@ const getMask = (country: string) => {
 import { useForm, Controller } from 'react-hook-form';
 import { BcPhoneInput } from './BcPhoneInput';
 
-function PhoneForm() {
+function MyForm() {
   const { control, handleSubmit } = useForm();
   const onSubmit = data => console.log(data);
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <Controller
-        name="phone"
+        name="phoneNumber"
         control={control}
         defaultValue=""
-        rules={{ 
-          required: 'Phone number is required',
-          minLength: { value: 10, message: 'At least 10 characters' }
-        }}
-        render={({ field, fieldState }) => (
+        render={({ field }) => (
           <BcPhoneInput
             {...field}
             label="Phone Number"
+            country="TR"
             placeholder="Enter your phone number"
-            helperText={fieldState.error?.message}
-            status={fieldState.error ? 'error' : undefined}
             showClearButton
+            enablePhoneFormatting
+            enableAdvancedValidation
           />
         )}
       />
@@ -419,47 +487,29 @@ function PhoneForm() {
 ```
 
 ### Frequently Asked Questions (FAQ)
-
-**Why does BcPhoneInput extend BcTextField?**
-- To use all BcTextField features (appearance, status, loading, clear button, i18n, accessibility) through inheritance.
-
-**How is the country list loaded?**
-- By default, built-in country list is used. Custom list via `countryList` prop or async loading via `fetchCountries`.
-
-**How do favorite countries work?**
-- Use `favoriteCountries` prop with country codes. These countries appear at the top under "Favorites" header in dropdown.
-
-**Where are recently used countries stored?**
-- In localStorage under `bc-phoneinput-recent-countries` key. Last 3 countries are remembered.
-
-**How to customize phone validation?**
-- Use `validatePhone` prop with custom validation function. Function should be `(phone: string, country: string) => boolean`.
+- **Why does BcPhoneInput extend BcTextField?**
+  - To inherit all BcTextField features and provide consistent API.
+- **Where do i18n translations come from?**
+  - From i18n JSON files or the translations prop.
+- **How does async country loading work?**
+  - Use fetchCountries function to load country list asynchronously.
+- **How to customize phone formatting?**
+  - Use getMask prop to define country-specific formatting masks.
 
 ### Troubleshooting
-
-**"Cannot find module 'react-window'":**
-- Install react-window package: `npm install react-window @types/react-window`
-
-**Country list not loading:**
-- Ensure `fetchCountries` function returns a Promise
-- Check for network errors
-
-**LocalStorage error:**
-- Check if browser supports localStorage
-- localStorage may not work in Private/Incognito mode
-
-**Phone validation not working:**
-- Ensure `validatePhone` function returns correct format
-- Check if country code is correct
+- **"toHaveNoViolations" error:**
+  - Add a jest-axe type declaration file (jest-axe.d.ts).
+- **"Cannot find module 'react-hook-form'":**
+  - Make sure the package is installed and imported.
+- **Performance issues:**
+  - Use lazy loading and memoization for large country lists.
 
 ### Best Practices
-
-- **Performance**: Use `fetchCountries` for large country lists
-- **UX**: Use favorite countries to improve user experience
-- **Validation**: Use country-specific validation rules
-- **Accessibility**: Use `aria-label` and `helperText`
-- **i18n**: Use `locale` and `fallbackLocale` props
-- **Error Handling**: Add error handling in `validatePhone` function
+- Use translations prop and locale/fallbackLocale for i18n.
+- Wrap async validation functions with useCallback.
+- Use try/catch in monitoring callbacks.
+- Optimize with favoriteCountries for frequently used countries.
+- Enable enableMobileOptimizations for mobile apps.
 
 ### License
 MIT
