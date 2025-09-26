@@ -34,14 +34,14 @@ export interface AnalyticsState {
   events: Array<{
     id: string;
     type: string;
-    data: any;
+    data: unknown;
     timestamp: number;
   }>;
-  heatmapData: Record<string, any>;
+  heatmapData: Record<string, unknown>;
   userJourney: Array<{
     step: string;
     timestamp: number;
-    data: any;
+    data: unknown;
   }>;
   abTests: Array<{
     id: string;
@@ -54,13 +54,13 @@ export interface AnalyticsState {
   realTimeEvents: Array<{
     id: string;
     type: string;
-    data: any;
+    data: unknown;
     timestamp: number;
   }>;
   batchQueue: Array<{
     id: string;
     type: string;
-    data: any;
+    data: unknown;
     timestamp: number;
   }>;
   metrics: {
@@ -76,31 +76,31 @@ export interface AnalyticsState {
 }
 
 export interface AnalyticsActions {
-  trackEvent: (type: string, data: any) => void;
+  trackEvent: (type: string, data: unknown) => void;
   trackClick: (element: string, position: { x: number; y: number }) => void;
   trackScroll: (scrollDepth: number) => void;
   trackFormInteraction: (field: string, action: string) => void;
-  trackError: (error: Error, context: any) => void;
+  trackError: (error: Error, context: unknown) => void;
   trackPerformance: (metric: string, value: number) => void;
-  trackUserBehavior: (behavior: string, data: any) => void;
+  trackUserBehavior: (behavior: string, data: unknown) => void;
   trackConversion: (goal: string, value?: number) => void;
   startSession: () => void;
   endSession: () => void;
   startABTest: (testName: string, variant: string) => string;
   endABTest: (testId: string) => void;
-  trackABTestEvent: (testId: string, event: string, data: any) => void;
-  getABTestResults: (testId: string) => any;
-  sendRealTimeEvent: (type: string, data: any) => void;
+  trackABTestEvent: (testId: string, event: string, data: unknown) => void;
+  getABTestResults: (testId: string) => unknown;
+  sendRealTimeEvent: (type: string, data: unknown) => void;
   flushBatch: () => void;
   setProvider: (provider: string, apiKey?: string, endpoint?: string) => void;
   setSampleRate: (rate: number) => void;
   setBatchSize: (size: number) => void;
   setFlushInterval: (interval: number) => void;
-  getMetrics: () => any;
-  getHeatmapData: () => any;
-  getUserJourney: () => any[];
-  getRealTimeEvents: () => any[];
-  getBatchQueue: () => any[];
+  getMetrics: () => unknown;
+  getHeatmapData: () => unknown;
+  getUserJourney: () => unknown[];
+  getRealTimeEvents: () => unknown[];
+  getBatchQueue: () => unknown[];
   clearData: () => void;
   exportData: () => string;
   reset: () => void;
@@ -162,7 +162,7 @@ export function useAdvancedAnalytics(options: AdvancedAnalyticsOptions = {}) {
   const abTestIdCounter = useRef(0);
 
   // Track event
-  const trackEvent = useCallback((type: string, data: any) => {
+  const trackEvent = useCallback((type: string, data: unknown) => {
     if (!enableAnalytics) return;
 
     // Apply sampling
@@ -246,7 +246,7 @@ export function useAdvancedAnalytics(options: AdvancedAnalyticsOptions = {}) {
         ...prev,
         heatmapData: {
           ...prev.heatmapData,
-          [element]: (prev.heatmapData[element] || 0) + 1,
+          [element]: ((prev.heatmapData[element] as number) || 0) + 1,
         },
       }));
     }
@@ -279,7 +279,7 @@ export function useAdvancedAnalytics(options: AdvancedAnalyticsOptions = {}) {
   }, [enableAnalytics, enableFormAnalytics, enableUserJourney, trackEvent]);
 
   // Track error
-  const trackError = useCallback((error: Error, context: any) => {
+  const trackError = useCallback((error: Error, context: unknown) => {
     if (!enableAnalytics || !enableErrorTracking) return;
 
     trackEvent('error', {
@@ -297,7 +297,7 @@ export function useAdvancedAnalytics(options: AdvancedAnalyticsOptions = {}) {
   }, [enableAnalytics, enablePerformanceTracking, trackEvent]);
 
   // Track user behavior
-  const trackUserBehavior = useCallback((behavior: string, data: any) => {
+  const trackUserBehavior = useCallback((behavior: string, data: unknown) => {
     if (!enableAnalytics || !enableUserBehavior) return;
 
     trackEvent('user_behavior', { behavior, data });
@@ -429,7 +429,7 @@ export function useAdvancedAnalytics(options: AdvancedAnalyticsOptions = {}) {
   }, [enableAnalytics, enableABTesting]);
 
   // Track AB Test Event
-  const trackABTestEvent = useCallback((testId: string, event: string, data: any) => {
+  const trackABTestEvent = useCallback((testId: string, event: string, data: unknown) => {
     if (!enableAnalytics || !enableABTesting) return;
 
     const abTest = state.abTests.find(test => test.id === testId);
@@ -464,7 +464,7 @@ export function useAdvancedAnalytics(options: AdvancedAnalyticsOptions = {}) {
   }, [state.abTests]);
 
   // Send Real Time Event
-  const sendRealTimeEvent = useCallback((type: string, data: any) => {
+  const sendRealTimeEvent = useCallback((type: string, data: unknown) => {
     if (!enableAnalytics || !enableRealTimeAnalytics) return;
 
     const event = {

@@ -13,7 +13,7 @@ export function useAdvancedI18n(options: AdvancedI18nOptions) {
   const { locale, fallbackLocale, translations, enablePluralization = true, enableInterpolation = true } = options;
 
   const t = useMemo(() => {
-    return (key: string, params?: Record<string, any>) => {
+    return (key: string, params?: Record<string, string | number | boolean>) => {
       let text = getTranslation(key, locale, translations, fallbackLocale);
       
       if (!text) {
@@ -72,7 +72,7 @@ export function useAdvancedI18n(options: AdvancedI18nOptions) {
   }, [t]);
 
   const getAccessibilityText = useMemo(() => {
-    return (action: string, params?: Record<string, any>) => {
+    return (action: string, params?: Record<string, string | number | boolean>) => {
       return t(`a11y_${action}`, params);
     };
   }, [t]);

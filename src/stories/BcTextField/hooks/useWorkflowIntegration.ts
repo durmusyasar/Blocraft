@@ -18,28 +18,28 @@ export interface WorkflowIntegrationOptions {
   enableWorkflowReporting?: boolean;
   workflowEngine?: 'bpmn' | 'workflow' | 'state-machine' | 'custom';
   workflowFormats?: string[];
-  workflowTemplates?: Record<string, any>;
-  workflowProcesses?: Record<string, any>;
-  workflowSteps?: Record<string, any>;
-  workflowTransitions?: Record<string, any>;
-  workflowConditions?: Record<string, any>;
-  workflowActions?: Record<string, any>;
-  workflowEvents?: Record<string, any>;
-  workflowTimers?: Record<string, any>;
-  workflowGateways?: Record<string, any>;
-  workflowSubprocesses?: Record<string, any>;
-  workflowData?: Record<string, any>;
-  workflowCache?: Record<string, any>;
-  workflowSecurityConfig?: Record<string, any>;
-  workflowEncryptionConfig?: Record<string, any>;
-  workflowCompressionConfig?: Record<string, any>;
-  workflowMonitoringConfig?: Record<string, any>;
-  workflowAnalyticsConfig?: Record<string, any>;
-  workflowDebuggingConfig?: Record<string, any>;
-  workflowLoggingConfig?: Record<string, any>;
-  workflowMetricsConfig?: Record<string, any>;
-  workflowErrorHandlingConfig?: Record<string, any>;
-  workflowFallbacksConfig?: Record<string, any>;
+  workflowTemplates?: Record<string, unknown>;
+  workflowProcesses?: Record<string, unknown>;
+  workflowSteps?: Record<string, unknown>;
+  workflowTransitions?: Record<string, unknown>;
+  workflowConditions?: Record<string, unknown>;
+  workflowActions?: Record<string, unknown>;
+  workflowEvents?: Record<string, unknown>;
+  workflowTimers?: Record<string, unknown>;
+  workflowGateways?: Record<string, unknown>;
+  workflowSubprocesses?: Record<string, unknown>;
+  workflowData?: Record<string, unknown>;
+  workflowCache?: Record<string, unknown>;
+  workflowSecurityConfig?: Record<string, unknown>;
+  workflowEncryptionConfig?: Record<string, unknown>;
+  workflowCompressionConfig?: Record<string, unknown>;
+  workflowMonitoringConfig?: Record<string, unknown>;
+  workflowAnalyticsConfig?: Record<string, unknown>;
+  workflowDebuggingConfig?: Record<string, unknown>;
+  workflowLoggingConfig?: Record<string, unknown>;
+  workflowMetricsConfig?: Record<string, unknown>;
+  workflowErrorHandlingConfig?: Record<string, unknown>;
+  workflowFallbacksConfig?: Record<string, unknown>;
   workflowCompression?: {
     enableCompression: boolean;
     compressionLevel: number;
@@ -86,7 +86,7 @@ export interface WorkflowIntegrationOptions {
     customMetrics: string[];
   };
   workflowErrorHandling?: {
-    onError: (error: Error, context: any) => void;
+    onError: (error: Error, context: unknown) => void;
     fallbackBehavior: 'disable' | 'ignore' | 'retry' | 'replace';
     maxRetries: number;
     retryDelay: number;
@@ -106,28 +106,28 @@ export interface WorkflowIntegrationState {
   isWorkflowAnalyticsEnabled: boolean;
   currentWorkflowEngine: string;
   currentWorkflowFormats: string[];
-  workflowTemplates: Record<string, any>;
-  workflowProcesses: Record<string, any>;
-  workflowSteps: Record<string, any>;
-  workflowTransitions: Record<string, any>;
-  workflowConditions: Record<string, any>;
-  workflowActions: Record<string, any>;
-  workflowEvents: Record<string, any>;
-  workflowTimers: Record<string, any>;
-  workflowGateways: Record<string, any>;
-  workflowSubprocesses: Record<string, any>;
-  workflowData: Record<string, any>;
-  workflowCache: Record<string, any>;
-  workflowSecurityConfig: Record<string, any>;
-  workflowEncryptionConfig: Record<string, any>;
-  workflowCompressionConfig: Record<string, any>;
-  workflowMonitoringConfig: Record<string, any>;
-  workflowAnalyticsConfig: Record<string, any>;
-  workflowDebuggingConfig: Record<string, any>;
-  workflowLoggingConfig: Record<string, any>;
-  workflowMetricsConfig: Record<string, any>;
-  workflowErrorHandlingConfig: Record<string, any>;
-  workflowFallbacksConfig: Record<string, any>;
+  workflowTemplates: Record<string, unknown>;
+  workflowProcesses: Record<string, unknown>;
+  workflowSteps: Record<string, unknown>;
+  workflowTransitions: Record<string, unknown>;
+  workflowConditions: Record<string, unknown>;
+  workflowActions: Record<string, unknown>;
+  workflowEvents: Record<string, unknown>;
+  workflowTimers: Record<string, unknown>;
+  workflowGateways: Record<string, unknown>;
+  workflowSubprocesses: Record<string, unknown>;
+  workflowData: Record<string, unknown>;
+  workflowCache: Record<string, unknown>;
+  workflowSecurityConfig: Record<string, unknown>;
+  workflowEncryptionConfig: Record<string, unknown>;
+  workflowCompressionConfig: Record<string, unknown>;
+  workflowMonitoringConfig: Record<string, unknown>;
+  workflowAnalyticsConfig: Record<string, unknown>;
+  workflowDebuggingConfig: Record<string, unknown>;
+  workflowLoggingConfig: Record<string, unknown>;
+  workflowMetricsConfig: Record<string, unknown>;
+  workflowErrorHandlingConfig: Record<string, unknown>;
+  workflowFallbacksConfig: Record<string, unknown>;
   workflows: Array<{
     id: string;
     name: string;
@@ -139,16 +139,16 @@ export interface WorkflowIntegrationState {
     updatedAt: number;
     createdBy: string;
     updatedBy: string;
-    steps: any[];
-    transitions: any[];
-    conditions: any[];
-    actions: any[];
-    events: any[];
-    timers: any[];
-    gateways: any[];
-    subprocesses: any[];
-    data: any;
-    metadata: any;
+    steps: unknown[];
+    transitions: unknown[];
+    conditions: unknown[];
+    actions: unknown[];
+    events: unknown[];
+    timers: unknown[];
+    gateways: unknown[];
+    subprocesses: unknown[];
+    data: unknown;
+    metadata: unknown;
   }>;
   workflowInstances: Array<{
     id: string;
@@ -158,8 +158,8 @@ export interface WorkflowIntegrationState {
     startedAt: number;
     completedAt: number;
     duration: number;
-    data: any;
-    metadata: any;
+    data: unknown;
+    metadata: unknown;
   }>;
   workflowMetricsData: {
     totalWorkflows: number;
@@ -177,13 +177,13 @@ export interface WorkflowIntegrationState {
     id: string;
     error: Error;
     timestamp: number;
-    context: any;
+    context: unknown;
   }>;
   workflowAnalyticsData: {
     usage: Record<string, number>;
     performance: Record<string, number[]>;
     errors: Record<string, number>;
-    userBehavior: Record<string, any>;
+    userBehavior: Record<string, unknown>;
   };
   workflowDebuggingData: {
     logs: Array<{
@@ -191,11 +191,11 @@ export interface WorkflowIntegrationState {
       level: string;
       message: string;
       timestamp: number;
-      context: any;
+      context: unknown;
     }>;
     traces: Array<{
       id: string;
-      trace: any;
+      trace: unknown;
       timestamp: number;
     }>;
   };
@@ -216,28 +216,28 @@ export interface WorkflowIntegrationState {
 }
 
 export interface WorkflowIntegrationActions {
-  createWorkflow: (name: string, description: string, type: string, steps: any[], transitions: any[], conditions: any[], actions: any[], events: any[], timers: any[], gateways: any[], subprocesses: any[], data: any) => string;
-  updateWorkflow: (workflowId: string, updates: any) => void;
+  createWorkflow: (name: string, description: string, type: string, steps: unknown[], transitions: unknown[], conditions: unknown[], actions: unknown[], events: unknown[], timers: unknown[], gateways: unknown[], subprocesses: unknown[], data: unknown) => string;
+  updateWorkflow: (workflowId: string, updates: unknown) => void;
   deleteWorkflow: (workflowId: string) => void;
-  startWorkflow: (workflowId: string, data: any) => string;
+  startWorkflow: (workflowId: string, data: unknown) => string;
   pauseWorkflow: (instanceId: string) => void;
   resumeWorkflow: (instanceId: string) => void;
   cancelWorkflow: (instanceId: string) => void;
   completeWorkflow: (instanceId: string) => void;
   failWorkflow: (instanceId: string, error: Error) => void;
-  getWorkflow: (workflowId: string) => any;
-  getWorkflows: (filter?: any) => any[];
-  getWorkflowInstance: (instanceId: string) => any;
-  getWorkflowInstances: (filter?: any) => any[];
-  getWorkflowMetrics: () => any;
+  getWorkflow: (workflowId: string) => unknown;
+  getWorkflows: (filter?: unknown) => unknown[];
+  getWorkflowInstance: (instanceId: string) => unknown;
+  getWorkflowInstances: (filter?: unknown) => unknown[];
+  getWorkflowMetrics: () => unknown;
   clearWorkflowMetrics: () => void;
-  getWorkflowAnalytics: () => any;
+  getWorkflowAnalytics: () => unknown;
   clearWorkflowAnalytics: () => void;
-  getWorkflowLogs: () => any[];
+  getWorkflowLogs: () => unknown[];
   clearWorkflowLogs: () => void;
-  getWorkflowTraces: () => any[];
+  getWorkflowTraces: () => unknown[];
   clearWorkflowTraces: () => void;
-  getWorkflowCache: () => any;
+  getWorkflowCache: () => unknown;
   clearWorkflowCache: () => void;
   exportWorkflowData: () => string;
   importWorkflowData: (data: string) => void;
@@ -335,7 +335,7 @@ export function useWorkflowIntegration(options: WorkflowIntegrationOptions = {})
       customMetrics: [],
     },
     workflowErrorHandling = {
-      onError: (error: Error, context: any) => {
+      onError: (error: Error, context: unknown) => {
         console.error('Workflow error:', error, context);
       },
       fallbackBehavior: 'disable',
@@ -415,7 +415,7 @@ export function useWorkflowIntegration(options: WorkflowIntegrationOptions = {})
   const errorIdCounter = useRef(0);
 
   // Log workflow event
-  const logWorkflowEvent = useCallback((level: string, message: string, context?: any) => {
+  const logWorkflowEvent = useCallback((level: string, message: string, context?: unknown) => {
     if (!enableWorkflowLogging) return;
 
     const log = {
@@ -442,7 +442,7 @@ export function useWorkflowIntegration(options: WorkflowIntegrationOptions = {})
 
 
   // Create workflow
-  const createWorkflow = useCallback((name: string, description: string, type: string, steps: any[], transitions: any[], conditions: any[], actions: any[], events: any[], timers: any[], gateways: any[], subprocesses: any[], data: any): string => {
+  const createWorkflow = useCallback((name: string, description: string, type: string, steps: unknown[], transitions: unknown[], conditions: unknown[], actions: unknown[], events: unknown[], timers: unknown[], gateways: unknown[], subprocesses: unknown[], data: unknown): string => {
     if (!enableWorkflowIntegration) throw new Error('Workflow integration is not enabled');
 
     const workflowId = `workflow-${++workflowIdCounter.current}-${Date.now()}`;
@@ -499,7 +499,7 @@ export function useWorkflowIntegration(options: WorkflowIntegrationOptions = {})
   }, [enableWorkflowIntegration, enableWorkflowLogging, logWorkflowEvent, enableWorkflowErrorHandling, workflowErrorHandling, enableWorkflowMetrics, workflowMetrics]);
 
   // Update workflow
-  const updateWorkflow = useCallback((workflowId: string, updates: any) => {
+  const updateWorkflow = useCallback((workflowId: string, updates: unknown) => {
     if (!enableWorkflowIntegration) return;
 
     try {
@@ -507,7 +507,7 @@ export function useWorkflowIntegration(options: WorkflowIntegrationOptions = {})
         ...prev,
         workflows: prev.workflows.map(w =>
           w.id === workflowId
-            ? { ...w, ...updates, updatedAt: Date.now(), updatedBy: 'system', version: w.version + 1 }
+            ? { ...w, ...(updates as Record<string, unknown>), updatedAt: Date.now(), updatedBy: 'system', version: w.version + 1 }
             : w
         ),
       }));
@@ -543,7 +543,7 @@ export function useWorkflowIntegration(options: WorkflowIntegrationOptions = {})
   }, [enableWorkflowIntegration, enableWorkflowLogging, logWorkflowEvent, enableWorkflowErrorHandling, workflowErrorHandling]);
 
   // Start workflow
-  const startWorkflow = useCallback((workflowId: string, data: any): string => {
+  const startWorkflow = useCallback((workflowId: string, data: unknown): string => {
     if (!enableWorkflowIntegration) throw new Error('Workflow integration is not enabled');
 
     const instanceId = `instance-${++instanceIdCounter.current}-${Date.now()}`;
@@ -556,7 +556,7 @@ export function useWorkflowIntegration(options: WorkflowIntegrationOptions = {})
         id: instanceId,
         workflowId,
         status: 'running' as 'running' | 'paused' | 'completed' | 'failed' | 'cancelled',
-        currentStep: workflow.steps[0]?.id || 'start',
+        currentStep: ((workflow.steps[0] as Record<string, unknown>)?.id as string) || 'start',
         startedAt: Date.now(),
         completedAt: 0,
         duration: 0,
@@ -743,10 +743,10 @@ export function useWorkflowIntegration(options: WorkflowIntegrationOptions = {})
   }, [state.workflows]);
 
   // Get workflows
-  const getWorkflows = useCallback((filter?: any) => {
+  const getWorkflows = useCallback((filter?: unknown) => {
     if (filter) {
       return state.workflows.filter(workflow =>
-        Object.keys(filter).every(key => workflow[key as keyof typeof workflow] === filter[key])
+        Object.keys(filter as Record<string, unknown>).every(key => workflow[key as keyof typeof workflow] === (filter as Record<string, unknown>)[key])
       );
     }
     return state.workflows;
@@ -758,10 +758,10 @@ export function useWorkflowIntegration(options: WorkflowIntegrationOptions = {})
   }, [state.workflowInstances]);
 
   // Get workflow instances
-  const getWorkflowInstances = useCallback((filter?: any) => {
+  const getWorkflowInstances = useCallback((filter?: unknown) => {
     if (filter) {
       return state.workflowInstances.filter(instance =>
-        Object.keys(filter).every(key => instance[key as keyof typeof instance] === filter[key])
+        Object.keys(filter as Record<string, unknown>).every(key => instance[key as keyof typeof instance] === (filter as Record<string, unknown>)[key])
       );
     }
     return state.workflowInstances;

@@ -1,185 +1,260 @@
+
+import React from 'react';
 import { Meta, StoryObj } from "@storybook/react/*";
+import { useState } from 'react';
+import { Box, Paper, Typography } from '@mui/material';
 import { BcPasswordInput } from './BcPasswordInput';
+import { BcTextField } from '../BcTextField/BcTextField';
 import enTexts from '../i18n/i18n/en.json';
 import trTexts from '../i18n/i18n/tr.json';
 
-const TEXTS: Record<string, Record<string, string>> = { en: enTexts.BcPasswordInput, tr: trTexts.BcPasswordInput };
+const TEXTS: Record<string, Record<string, string>> = {
+  en: enTexts.BcPasswordInput,
+  tr: trTexts.BcPasswordInput,
+};
 type Locale = keyof typeof TEXTS;
-
 const getText = (locale: Locale | undefined, key: string): string => {
-  const safeLocale = locale || 'en';
+  const safeLocale = locale || "en";
   return TEXTS[safeLocale]?.[key] || TEXTS.en[key] || key;
 };
 
-// Storybook global locale decorator
-const withLocale = (Story: any, context: any) => {
-  const locale = context.locale || context.globals.locale;
-  const storyProps = context.args || {};
-  const hasLocale = storyProps.locale !== undefined;
-  return <Story {...context} args={hasLocale ? storyProps : { ...storyProps, locale }} />;
-};
-const defaultLocale = (window as any)?.__STORYBOOK_ADDONS_CHANNEL__?.data?.globalsUpdated?.[0]?.globals?.locale || 'en';
-
+const defaultLocale = "en";
 
 const meta: Meta<typeof BcPasswordInput> = {
   title: 'Components/BcPasswordInput',
   component: BcPasswordInput,
-  tags: ["autodocs"],
   parameters: {
+    layout: 'centered',
     docs: {
       description: {
-        component: getText(defaultLocale, 'componentDocsDescription'),
+        component:
+          getText(defaultLocale, "componentDocsDescription") +
+          " " +
+          getText(defaultLocale, "inheritanceDescription"),
       },
     },
   },
+  args: {
+    // EN ÖNEMLİ 10 PROP - Controls panelinde gösterilecek
+    label: getText(defaultLocale, "label"),
+    placeholder: getText(defaultLocale, "placeholder"),
+    showPasswordToggle: true,
+    enablePasswordGeneration: true,
+    enableStrengthIndicator: true,
+    showStrengthMeter: true,
+    enablePasswordValidation: true,
+    showRequirements: true,
+    enablePasswordHistory: true,
+    enablePasswordSuggestions: true,
+  },
   argTypes: {
+    // EN ÖNEMLİ 10 PROP - Controls panelinde gösterilecek
     label: {
-      control: 'text',
-      description: getText(defaultLocale, 'labelDescription'),
+      description: getText(defaultLocale, "labelDescription"),
+      control: "text",
     },
     placeholder: {
-      control: 'text',
-      description: getText(defaultLocale, 'placeholderDescription'),
-    },
-    showStrengthBar: {
-      control: 'boolean',
-      description: getText(defaultLocale, 'showStrengthBarDescription'),
-    },
-    minLength: {
-      control: { type: 'number', min: 1, max: 50 },
-      description: getText(defaultLocale, 'minLengthDescription'),
-    },
-    requireUppercase: {
-      control: 'boolean',
-      description: getText(defaultLocale, 'requireUppercaseDescription'),
-    },
-    requireLowercase: {
-      control: 'boolean',
-      description: getText(defaultLocale, 'requireLowercaseDescription'),
-    },
-    requireNumber: {
-      control: 'boolean',
-      description: getText(defaultLocale, 'requireNumberDescription'),
-    },
-    requireSpecial: {
-      control: 'boolean',
-      description: getText(defaultLocale, 'requireSpecialDescription'),
+      description: getText(defaultLocale, "placeholderDescription"),
+      control: "text",
     },
     showPasswordToggle: {
-      control: 'boolean',
-      description: getText(defaultLocale, 'showPasswordToggleDescription'),
+      description: getText(defaultLocale, "showPasswordToggleDescription"),
+      control: "boolean",
     },
-    showCopyButton: {
-      control: 'boolean',
-      description: getText(defaultLocale, 'showCopyButtonDescription'),
+    enablePasswordGeneration: {
+      description: getText(defaultLocale, "enablePasswordGeneratorDescription"),
+      control: "boolean",
     },
-    useZxcvbnStrength: {
-      control: 'boolean',
-      description: getText(defaultLocale, 'useZxcvbnStrengthDescription'),
+    enableStrengthIndicator: {
+      description: getText(defaultLocale, "showStrengthBarDescription"),
+      control: "boolean",
     },
-    enableAsyncValidation: {
-      control: 'boolean',
-      description: getText(defaultLocale, 'enableAsyncValidationDescription'),
+    showStrengthMeter: {
+      description: getText(defaultLocale, "showStrengthBarDescription"),
+      control: "boolean",
     },
-    showValidationStatus: {
-      control: 'boolean',
-      description: getText(defaultLocale, 'showValidationStatusDescription'),
+    enablePasswordValidation: {
+      description: getText(defaultLocale, "enableAsyncValidationDescription"),
+      control: "boolean",
+    },
+    showRequirements: {
+      description: getText(defaultLocale, "showValidationStatusDescription"),
+      control: "boolean",
+    },
+    enablePasswordHistory: {
+      description: getText(defaultLocale, "enablePasswordHistoryDescription"),
+      control: "boolean",
+    },
+    enablePasswordSuggestions: {
+      description: getText(defaultLocale, "enablePasswordSuggestionsDescription"),
+      control: "boolean",
+    },
+
+    // MissingPropsTable'da gösterilen prop'lar - Controls panelinde gizli
+    onStrengthChange: {
+      table: { disable: true },
+    },
+    customValidationRules: {
+      table: { disable: true },
     },
     validationDebounceMs: {
-      control: { type: 'number', min: 100, max: 2000, step: 100 },
-      description: getText(defaultLocale, 'validationDebounceMsDescription'),
+      table: { disable: true },
+    },
+    showValidationMessages: {
+      table: { disable: true },
+    },
+    onPasswordGenerated: {
+      table: { disable: true },
+    },
+    onSecurityWarning: {
+      table: { disable: true },
+    },
+    onVisibilityChange: {
+      table: { disable: true },
+    },
+    customStrengthColors: {
+      table: { disable: true },
+    },
+    onPasswordHistoryChange: {
+      table: { disable: true },
+    },
+    customSuggestions: {
+      table: { disable: true },
+    },
+    onSuggestionSelect: {
+      table: { disable: true },
+    },
+    passwordToggleAriaLabel: {
+      table: { disable: true },
+    },
+    strengthMeterAriaLabel: {
+      table: { disable: true },
+    },
+    requirementsAriaLabel: {
+      table: { disable: true },
+    },
+    breachDetectionApi: {
+      table: { disable: true },
+    },
+    commonPasswordsList: {
+      table: { disable: true },
+    },
+    dictionaryWords: {
+      table: { disable: true },
+    },
+    enableBreachDetection: {
+      table: { disable: true },
+    },
+    enableCommonPasswordCheck: {
+      table: { disable: true },
+    },
+    enablePatternDetection: {
+      table: { disable: true },
+    },
+    enableKeyboardPatternCheck: {
+      table: { disable: true },
+    },
+    enableRepeatedCharCheck: {
+      table: { disable: true },
+    },
+    enableSequentialCharCheck: {
+      table: { disable: true },
+    },
+    enableDictionaryCheck: {
+      table: { disable: true },
+    },
+    passwordTranslations: {
+      table: { disable: true },
     },
     locale: {
-      control: 'select',
-      options: ['en', 'tr'],
-      description: getText(defaultLocale, 'localeDescription'),
+      table: { disable: true },
     },
-    appearance: {
-      control: 'select',
-      options: ['premium', 'soft', 'glass', 'minimal', 'neumorph', 'underline', 'dark', 'borderless'],
-      description: getText(defaultLocale, 'appearanceDescription'),
+    onFocus: {
+      table: { disable: true },
     },
-    size: {
-      control: 'select',
-      options: ['small', 'normal', 'large'],
-      description: getText(defaultLocale, 'sizeDescription'),
+    onBlur: {
+      table: { disable: true },
     },
-    status: {
-      control: 'select',
-      options: ['error', 'warning', 'success', 'info'],
-      description: getText(defaultLocale, 'statusDescription'),
-    },
-    disabled: {
-      control: 'boolean',
-      description: getText(defaultLocale, 'disabledDescription'),
-    },
-    loading: {
-      control: 'boolean',
-      description: getText(defaultLocale, 'loadingDescription'),
-    },
-    responsiveWidth: {
-      control: 'boolean',
-      description: getText(defaultLocale, 'responsiveWidthDescription'),
-    },
-    onStrengthChange: {
-      description: getText(defaultLocale, 'onStrengthChangeDescription'),
-      action: 'strengthChanged',
+    value: {
+      table: { disable: true },
     },
     onChange: {
-      description: getText(defaultLocale, 'onChangeDescription'),
-      action: 'changed',
+      table: { disable: true },
     },
-    onClear: {
-      description: getText(defaultLocale, 'onClearDescription'),
-      action: 'cleared',
+    ref: {
+      table: { disable: true },
     },
-    translations: {
-      description: getText(defaultLocale, 'translationsDescription'),
-      control: 'object',
+    passwordToggleLabel: {
+      table: { disable: true },
+    },
+    passwordTogglePosition: {
+      table: { disable: true },
+    },
+    rememberPasswordVisibility: {
+      table: { disable: true },
+    },
+    strengthConfig: {
+      table: { disable: true },
+    },
+    generationOptions: {
+      table: { disable: true },
+    },
+    securityFeatures: {
+      table: { disable: true },
+    },
+    analytics: {
+      table: { disable: true },
+    },
+    defaultVisible: {
+      table: { disable: true },
+    },
+    strengthDisplayMode: {
+      table: { disable: true },
+    },
+    strengthColorScheme: {
+      table: { disable: true },
+    },
+    appearance: {
+      table: { disable: true },
+    },
+    size: {
+      table: { disable: true },
+    },
+    color: {
+      table: { disable: true },
+    },
+    disabled: {
+      table: { disable: true },
     },
     fallbackLocale: {
-      description: getText(defaultLocale, 'fallbackLocaleDescription'),
-      control: 'text',
+      table: { disable: true },
     },
-    monitoring: {
-      description: getText(defaultLocale, 'monitoringDescription'),
-      control: false,
+    showClearButton: {
+      table: { disable: true },
     },
-    // Yeni gelişmiş özellikler
-    enablePasswordGenerator: {
-      control: 'boolean',
-      description: getText(defaultLocale, 'enablePasswordGeneratorDescription'),
+    responsiveWidth: {
+      table: { disable: true },
     },
-    enableBreachCheck: {
-      control: 'boolean',
-      description: getText(defaultLocale, 'enableBreachCheckDescription'),
+    enableRTL: {
+      table: { disable: true },
     },
-    enableKeyboardShortcuts: {
-      control: 'boolean',
-      description: getText(defaultLocale, 'enableKeyboardShortcutsDescription'),
+    enableHighContrast: {
+      table: { disable: true },
     },
-    enableAdvancedScoring: {
-      control: 'boolean',
-      description: getText(defaultLocale, 'enableAdvancedScoringDescription'),
+    requirementsPosition: {
+      table: { disable: true },
     },
-    enableThemeAwareStyles: {
-      control: 'boolean',
-      description: getText(defaultLocale, 'enableThemeAwareStylesDescription'),
+    requirementsStyle: {
+      table: { disable: true },
     },
-    enableAdvancedMonitoring: {
-      control: 'boolean',
-      description: getText(defaultLocale, 'enableAdvancedMonitoringDescription'),
+    maxHistoryItems: {
+      table: { disable: true },
     },
-    enableMobileOptimizations: {
-      control: 'boolean',
-      description: getText(defaultLocale, 'enableMobileOptimizationsDescription'),
-    },
-    enableAdvancedI18n: {
-      control: 'boolean',
-      description: getText(defaultLocale, 'enableAdvancedI18nDescription'),
+    suggestionSource: {
+      table: { disable: true },
     },
   },
-  decorators: [withLocale],
+  tags: ['autodocs'],
 };
 
 export default meta;
@@ -187,866 +262,849 @@ type Story = StoryObj<typeof BcPasswordInput>;
 
 // Default story
 export const Default: Story = {
-  render: (args, context: any) => {
-    const locale = context.globals?.locale ?? context.locale ?? 'en';
-    return (
-      <BcPasswordInput
-        {...args}
-        label={getText(locale, 'label')}
-        placeholder={getText(locale, 'placeholder')}
-        locale={locale}
-      />
-    );
+  args: {
+    label: getText(defaultLocale, "label"),
+    placeholder: getText(defaultLocale, "placeholder"),
+    showPasswordToggle: true,
+    enablePasswordGeneration: false,
+    enableStrengthIndicator: false,
+    showStrengthMeter: false,
+    enablePasswordValidation: false,
+    showRequirements: false,
+    showClearButton: true,
   },
 };
 
-// With different appearances
-export const Appearances: Story = {
-  render: (args, context: any) => {
-    const locale = context.globals?.locale ?? context.locale ?? 'en';
-    return (
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-        {[
-          "premium",
-          "soft",
-          "glass",
-          "minimal",
-          "neumorph",
-          "underline",
-          "dark",
-          "borderless",
-        ].map((appearance) => (
-          <BcPasswordInput
-            key={appearance}
-            label={getText(locale, 'label')}
-            appearance={appearance as any}
-            placeholder={getText(locale, 'placeholder')}
-            locale={locale}
-          />
-        ))}
-      </div>
-    );
+// Missing Props Table / Eksik Prop'lar Tablosu - EN ÜSTTE (Kullanıcılar önce tüm prop'ları görebilir)
+export const MissingPropsTable: Story = {
+  args: {
+    // Varsayılan değerler - Controls panelinde değiştirilebilir
+    label: getText(defaultLocale, "label"),
+    placeholder: getText(defaultLocale, "placeholder"),
+    showPasswordToggle: true,
+    enablePasswordGeneration: true,
+    enableStrengthIndicator: true,
+    showStrengthMeter: true,
+    enablePasswordValidation: true,
+    showRequirements: true,
+    enablePasswordHistory: true,
+    enablePasswordSuggestions: true,
+    enableBreachDetection: false,
+    enableCommonPasswordCheck: true,
+    enablePatternDetection: true,
+    enableKeyboardPatternCheck: true,
+    enableRepeatedCharCheck: true,
+    enableSequentialCharCheck: true,
+    enableDictionaryCheck: true,
+    responsiveWidth: false,
+    enableRTL: false,
+    enableHighContrast: false,
+    showClearButton: false,
+    locale: defaultLocale,
   },
-};
+  render: (args, context: { globals?: { locale?: string }; locale?: string }) => {
+    const locale = context.globals?.locale ?? context.locale ?? "en";
+    const [currentPage, setCurrentPage] = React.useState(1);
+    const [searchTerm, setSearchTerm] = React.useState("");
+    const itemsPerPage = 10;
 
-// With different sizes
-export const Sizes: Story = {
-  render: (args, context: any) => {
-    const locale = context.globals?.locale ?? context.locale ?? 'en';
-    return (
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-        {["small", "normal", "large"].map((size) => (
-          <BcPasswordInput
-            key={size}
-            label={getText(locale, 'label')}
-            size={size as any}
-            placeholder={getText(locale, 'placeholder')}
-            locale={locale}
-          />
-        ))}
-      </div>
+    const missingProps = [
+      // Password Specific Props
+      {
+        name: "onStrengthChange",
+        type: "function",
+        category: getText(locale, "categoryPasswordSpecific"),
+        description: getText(locale, "missingPropsOnStrengthChange"),
+      },
+      {
+        name: "customValidationRules",
+        type: "PasswordValidationRule[]",
+        category: getText(locale, "categoryPasswordSpecific"),
+        description: getText(locale, "missingPropsCustomValidationRules"),
+      },
+      {
+        name: "validationDebounceMs",
+        type: "number",
+        category: getText(locale, "categoryPasswordSpecific"),
+        description: getText(locale, "missingPropsValidationDebounceMs"),
+      },
+      {
+        name: "showValidationMessages",
+        type: "boolean",
+        category: getText(locale, "categoryPasswordSpecific"),
+        description: getText(locale, "missingPropsShowValidationMessages"),
+      },
+      {
+        name: "onPasswordGenerated",
+        type: "function",
+        category: getText(locale, "categoryPasswordSpecific"),
+        description: getText(locale, "missingPropsOnPasswordGenerated"),
+      },
+      {
+        name: "onSecurityWarning",
+        type: "function",
+        category: getText(locale, "categoryPasswordSpecific"),
+        description: getText(locale, "missingPropsOnSecurityWarning"),
+      },
+      {
+        name: "onVisibilityChange",
+        type: "function",
+        category: getText(locale, "categoryPasswordSpecific"),
+        description: getText(locale, "missingPropsOnVisibilityChange"),
+      },
+      {
+        name: "customStrengthColors",
+        type: "object",
+        category: getText(locale, "categoryPasswordSpecific"),
+        description: getText(locale, "missingPropsCustomStrengthColors"),
+      },
+      {
+        name: "onPasswordHistoryChange",
+        type: "function",
+        category: getText(locale, "categoryPasswordSpecific"),
+        description: getText(locale, "missingPropsOnPasswordHistoryChange"),
+      },
+      {
+        name: "customSuggestions",
+        type: "string[]",
+        category: getText(locale, "categoryPasswordSpecific"),
+        description: getText(locale, "missingPropsCustomSuggestions"),
+      },
+      {
+        name: "onSuggestionSelect",
+        type: "function",
+        category: getText(locale, "categoryPasswordSpecific"),
+        description: getText(locale, "missingPropsOnSuggestionSelect"),
+      },
+      {
+        name: "passwordToggleAriaLabel",
+        type: "string",
+        category: getText(locale, "categoryPasswordSpecific"),
+        description: getText(locale, "missingPropsPasswordToggleAriaLabel"),
+      },
+      {
+        name: "strengthMeterAriaLabel",
+        type: "string",
+        category: getText(locale, "categoryPasswordSpecific"),
+        description: getText(locale, "missingPropsStrengthMeterAriaLabel"),
+      },
+      {
+        name: "requirementsAriaLabel",
+        type: "string",
+        category: getText(locale, "categoryPasswordSpecific"),
+        description: getText(locale, "missingPropsRequirementsAriaLabel"),
+      },
+      {
+        name: "breachDetectionApi",
+        type: "string",
+        category: getText(locale, "categoryPasswordSpecific"),
+        description: getText(locale, "missingPropsBreachDetectionApi"),
+      },
+      {
+        name: "commonPasswordsList",
+        type: "string[]",
+        category: getText(locale, "categoryPasswordSpecific"),
+        description: getText(locale, "missingPropsCommonPasswordsList"),
+      },
+      {
+        name: "dictionaryWords",
+        type: "string[]",
+        category: getText(locale, "categoryPasswordSpecific"),
+        description: getText(locale, "missingPropsDictionaryWords"),
+      },
+      {
+        name: "enableBreachDetection",
+        type: "boolean",
+        category: getText(locale, "categoryPasswordSpecific"),
+        description: getText(locale, "missingPropsEnableBreachDetection"),
+      },
+      {
+        name: "enableCommonPasswordCheck",
+        type: "boolean",
+        category: getText(locale, "categoryPasswordSpecific"),
+        description: getText(locale, "missingPropsEnableCommonPasswordCheck"),
+      },
+      {
+        name: "enablePatternDetection",
+        type: "boolean",
+        category: getText(locale, "categoryPasswordSpecific"),
+        description: getText(locale, "missingPropsEnablePatternDetection"),
+      },
+      {
+        name: "enableKeyboardPatternCheck",
+        type: "boolean",
+        category: getText(locale, "categoryPasswordSpecific"),
+        description: getText(locale, "missingPropsEnableKeyboardPatternCheck"),
+      },
+      {
+        name: "enableRepeatedCharCheck",
+        type: "boolean",
+        category: getText(locale, "categoryPasswordSpecific"),
+        description: getText(locale, "missingPropsEnableRepeatedCharCheck"),
+      },
+      {
+        name: "enableSequentialCharCheck",
+        type: "boolean",
+        category: getText(locale, "categoryPasswordSpecific"),
+        description: getText(locale, "missingPropsEnableSequentialCharCheck"),
+      },
+      {
+        name: "enableDictionaryCheck",
+        type: "boolean",
+        category: getText(locale, "categoryPasswordSpecific"),
+        description: getText(locale, "missingPropsEnableDictionaryCheck"),
+      },
+
+      // BcTextField Inherited Props
+      {
+        name: "appearance",
+        type: "string",
+        category: getText(locale, "categoryBcTextFieldInherited"),
+        description: getText(locale, "missingPropsAppearance"),
+      },
+      {
+        name: "size",
+        type: "string",
+        category: getText(locale, "categoryBcTextFieldInherited"),
+        description: getText(locale, "missingPropsSize"),
+      },
+      {
+        name: "color",
+        type: "string",
+        category: getText(locale, "categoryBcTextFieldInherited"),
+        description: getText(locale, "missingPropsColor"),
+      },
+      {
+        name: "disabled",
+        type: "boolean",
+        category: getText(locale, "categoryBcTextFieldInherited"),
+        description: getText(locale, "missingPropsDisabled"),
+      },
+      {
+        name: "fallbackLocale",
+        type: "string",
+        category: getText(locale, "categoryBcTextFieldInherited"),
+        description: getText(locale, "missingPropsFallbackLocale"),
+      },
+      {
+        name: "locale",
+        type: "string",
+        category: getText(locale, "categoryBcTextFieldInherited"),
+        description: getText(locale, "missingPropsLocale"),
+      },
+      {
+        name: "showClearButton",
+        type: "boolean",
+        category: getText(locale, "categoryBcTextFieldInherited"),
+        description: getText(locale, "missingPropsShowClearButton"),
+      },
+      {
+        name: "responsiveWidth",
+        type: "boolean",
+        category: getText(locale, "categoryBcTextFieldInherited"),
+        description: getText(locale, "missingPropsResponsiveWidth"),
+      },
+      {
+        name: "enableRTL",
+        type: "boolean",
+        category: getText(locale, "categoryBcTextFieldInherited"),
+        description: getText(locale, "missingPropsEnableRTL"),
+      },
+      {
+        name: "enableHighContrast",
+        type: "boolean",
+        category: getText(locale, "categoryBcTextFieldInherited"),
+        description: getText(locale, "missingPropsEnableHighContrast"),
+      },
+      {
+        name: "passwordTranslations",
+        type: "object",
+        category: getText(locale, "categoryBcTextFieldInherited"),
+        description: getText(locale, "missingPropsPasswordTranslations"),
+      },
+      {
+        name: "onFocus",
+        type: "function",
+        category: getText(locale, "categoryBcTextFieldInherited"),
+        description: getText(locale, "missingPropsOnFocus"),
+      },
+      {
+        name: "onBlur",
+        type: "function",
+        category: getText(locale, "categoryBcTextFieldInherited"),
+        description: getText(locale, "missingPropsOnBlur"),
+      },
+      {
+        name: "value",
+        type: "string",
+        category: getText(locale, "categoryBcTextFieldInherited"),
+        description: getText(locale, "missingPropsValue"),
+      },
+      {
+        name: "onChange",
+        type: "function",
+        category: getText(locale, "categoryBcTextFieldInherited"),
+        description: getText(locale, "missingPropsOnChange"),
+      },
+      {
+        name: "ref",
+        type: "RefObject",
+        category: getText(locale, "categoryBcTextFieldInherited"),
+        description: getText(locale, "missingPropsRef"),
+      },
+    ];
+
+    const filteredProps = missingProps.filter(prop =>
+      prop.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      prop.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      prop.category.toLowerCase().includes(searchTerm.toLowerCase())
     );
-  },
-};
 
-// With different statuses
-export const Statuses: Story = {
-  render: (args, context: any) => {
-    const locale = context.globals?.locale ?? context.locale ?? 'en';
-    return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-      {[
-        { status: "error", statusMessage: getText(locale, 'statusMessage') },
-        { status: "warning", statusMessage: getText(locale, 'statusMessage') },
-        { status: "success", statusMessage: getText(locale, 'statusMessage') },
-        { status: "info", statusMessage: getText(locale, 'statusMessage') },
-      ].map((s: { status: string; statusMessage: string }) => (
-        <BcPasswordInput
-          key={s.status}
-          label={getText(locale, 'label')}
-          placeholder={getText(locale, 'placeholder')}
-          status={s.status as any}
-          statusMessage={s.statusMessage}
-          locale={locale}
-        />
-      ))}
-    </div>
-    );
-  },
-};
+    const totalPages = Math.ceil(filteredProps.length / itemsPerPage);
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    const currentProps = filteredProps.slice(startIndex, endIndex);
 
-// With different password requirements
-export const PasswordRequirements: Story = {
-  render: (args, context: any) => {
-    const locale = context.globals?.locale ?? context.locale ?? 'en';
-    return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-      <BcPasswordInput
-        label={getText(locale, 'label')}
-        placeholder={getText(locale, 'placeholder')}
-        minLength={6}
-        requireUppercase={false}
-        requireLowercase={false}
-        requireNumber={false}
-        requireSpecial={false}
-        locale={locale}
-      />
-      <BcPasswordInput
-        label={getText(locale, 'label')}
-        placeholder={getText(locale, 'placeholder')}
-        minLength={8}
-        requireUppercase={true}
-        requireLowercase={true}
-        requireNumber={true}
-        requireSpecial={false}
-        locale={locale}
-      />
-      <BcPasswordInput
-        label={getText(locale, 'label')}
-        placeholder={getText(locale, 'placeholder')}
-        minLength={12}
-        requireUppercase={true}
-        requireLowercase={true}
-        requireNumber={true}
-        requireSpecial={true}
-        locale={locale}
-      />
-    </div>
-    );
-  },
-};
+    const getTypeColor = (type: string) => {
+      switch (type.toLowerCase()) {
+        case "string":
+          return "#e3f2fd";
+        case "number":
+          return "#f3e5f5";
+        case "boolean":
+          return "#e8f5e8";
+        case "function":
+          return "#fff3e0";
+        case "object":
+          return "#ffebee";
+        case "array":
+          return "#f1f8e9";
+        default:
+          return "#f5f5f5";
+      }
+    };
 
-// With custom rules
-export const CustomRules: Story = {
-  render: (args, context: any) => {
-    const locale = context.globals?.locale ?? context.locale ?? 'en';
-    return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-      <BcPasswordInput
-        label={getText(locale, 'label')}
-        placeholder={getText(locale, 'placeholder')}
-        customRules={[
-          {
-            key: 'noCommonWords',
-            label: locale === 'tr' ? 'Yaygın kelimeler yok' : 'No common words',
-            test: (password) => !password.toLowerCase().includes('password'),
-          },
-          {
-            key: 'noSequential',
-            label: locale === 'tr' ? 'Ardışık karakterler yok' : 'No sequential characters',
-            test: (password) => !password.includes('123') && !password.includes('abc'),
-          },
-          {
-            key: 'noRepeating',
-            label: locale === 'tr' ? 'Tekrarlanan karakterler yok' : 'No repeating characters',
-            test: (password) => !/(.)\1{2,}/.test(password),
-          },
-        ]}
-        locale={locale}
-      />
-    </div>
-    );
-  },
-};
-
-// With zxcvbn strength
-export const ZxcvbnStrength: Story = {
-  render: (args, context: any) => {
-    const locale = context.globals?.locale ?? context.locale ?? 'en';
-    return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-      <BcPasswordInput
-        label={getText(locale, 'label')}
-        placeholder={getText(locale, 'placeholder')}
-        useZxcvbnStrength={true}
-        locale={locale}
-      />
-      <BcPasswordInput
-        label={getText(locale, 'label')}
-        placeholder={getText(locale, 'placeholder')}
-        useZxcvbnStrength={false}
-        locale={locale}
-      />
-    </div>
-    );
-  },
-};
-
-// With async validation
-export const AsyncValidation: Story = {
-  render: (args, context: any) => {
-    const locale = context.globals?.locale ?? context.locale ?? 'en';
-    const validatePassword = async (password: string) => {
-      // Simulate API call with abort signal
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 1000);
-      
-      try {
-        await new Promise((resolve, reject) => {
-          const timeout = setTimeout(resolve, 1000);
-          controller.signal.addEventListener('abort', () => {
-            clearTimeout(timeout);
-            reject(new Error('AbortError'));
-          });
-        });
-        
-        if (password.length < 8) {
-          return { 
-            isValid: false, 
-            message: locale === 'tr' ? 'Şifre en az 8 karakter olmalı' : 'Password must be at least 8 characters' 
-          };
-        }
-        
-        if (!password.match(/[A-Z]/)) {
-          return { 
-            isValid: false, 
-            message: locale === 'tr' ? 'Şifre büyük harf içermeli' : 'Password must contain uppercase letter' 
-          };
-        }
-        
-        if (!password.match(/[a-z]/)) {
-          return { 
-            isValid: false, 
-            message: locale === 'tr' ? 'Şifre küçük harf içermeli' : 'Password must contain lowercase letter' 
-          };
-        }
-        
-        if (!password.match(/[0-9]/)) {
-          return { 
-            isValid: false, 
-            message: locale === 'tr' ? 'Şifre rakam içermeli' : 'Password must contain number' 
-          };
-        }
-        
-        return { 
-          isValid: true, 
-          message: locale === 'tr' ? 'Şifre geçerli' : 'Password is valid' 
-        };
-      } catch (error) {
-        if (error instanceof Error && error.message === 'AbortError') {
-          throw error; // Re-throw AbortError
-        }
-        throw error;
-      } finally {
-        clearTimeout(timeoutId);
+    const getTypeIcon = (type: string) => {
+      switch (type.toLowerCase()) {
+        case "string":
+          return "🔤";
+        case "number":
+          return "#️⃣";
+        case "boolean":
+          return "☑️";
+        case "function":
+          return "⚙️";
+        case "object":
+          return "📦";
+        case "array":
+          return "📋";
+        default:
+          return "❓";
       }
     };
 
     return (
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-        <BcPasswordInput
-          label={getText(locale, 'label')}
-          placeholder={getText(locale, 'placeholder')}
-          enableAsyncValidation={true}
-          validatePassword={validatePassword}
-          showValidationStatus={true}
-          validationDebounceMs={500}
-          locale={locale}
-        />
-      </div>
-    );
-  },
-};
-
-// With monitoring
-export const Monitoring: Story = {
-  render: (args, context: any) => {
-    const locale = context.globals?.locale ?? context.locale ?? 'en';
-    const monitoring = {
-      onChange: (value: string) => console.log('onChange', value),
-      onStrengthChange: (strength: number) => console.log('onStrengthChange', strength),
-      onError: (error: Error) => console.log('onError', error),
-      onPerformance: (metrics: any) => console.log('onPerformance', metrics),
-    };
-
-    return (
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-        <BcPasswordInput
-          label={getText(locale, 'label')}
-          placeholder={getText(locale, 'placeholder')}
-          monitoring={monitoring}
-          locale={locale}
-        />
-      </div>
-    );
-  },
-};
-
-// With different states
-export const States: Story = {
-  render: (args, context: any) => {
-    const locale = context.globals?.locale ?? context.locale ?? 'en';
-    return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-      <BcPasswordInput
-        label={getText(locale, 'label')}
-        placeholder={getText(locale, 'placeholder')}
-        locale={locale}
-      />
-      <BcPasswordInput
-        label={getText(locale, 'label')}
-        placeholder={getText(locale, 'placeholder')}
-        disabled={true}
-        locale={locale}
-      />
-      <BcPasswordInput
-        label={getText(locale, 'label')}
-        placeholder={getText(locale, 'placeholder')}
-        loading={true}
-        locale={locale}
-      />
-      <BcPasswordInput
-        label={getText(locale, 'label')}
-        placeholder={getText(locale, 'placeholder')}
-        showClearButton={true}
-        locale={locale}
-      />
-    </div>
-    );
-  },
-};
-
-// With different button configurations
-export const ButtonConfigurations: Story = {
-  render: (args, context: any) => {
-    const locale = context.globals?.locale ?? context.locale ?? 'en';
-    return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-      <BcPasswordInput
-        label={getText(locale, 'label')}
-        placeholder={getText(locale, 'placeholder')}
-        showPasswordToggle={true}
-        showCopyButton={true}
-        showClearButton={true}
-        locale={locale}
-      />
-      <BcPasswordInput
-        label={getText(locale, 'label')}
-        placeholder={getText(locale, 'placeholder')}
-        showPasswordToggle={false}
-        showCopyButton={true}
-        showClearButton={true}
-        locale={locale}
-      />
-      <BcPasswordInput
-        label={getText(locale, 'label')}
-        placeholder={getText(locale, 'placeholder')}
-        showPasswordToggle={true}
-        showCopyButton={false}
-        showClearButton={true}
-        locale={locale}
-      />
-      <BcPasswordInput
-        label={getText(locale, 'label')}
-        placeholder={getText(locale, 'placeholder')}
-        showPasswordToggle={false}
-        showCopyButton={false}
-        showClearButton={false}
-        locale={locale}
-      />
-    </div>
-    );
-  },
-};
-
-// Internationalization
-export const Internationalization: Story = {
-  render: () => (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-      <BcPasswordInput
-        label={getText('en', 'label')}
-        placeholder={getText('en', 'placeholder')}
-        locale="en"
-      />
-      <BcPasswordInput
-        label={getText('tr', 'label')}
-        placeholder={getText('tr', 'placeholder')}
-        locale="tr"
-      />
-      <BcPasswordInput
-        label={getText('en', 'label')}
-        placeholder={getText('en', 'placeholder')}
-        translations={{
-          label: getText('tr', 'label'),
-          placeholder: getText('tr', 'placeholder'),
-          showPassword: getText('tr', 'showPassword'),
-          hidePassword: getText('tr', 'hidePassword'),
-          copyPassword: getText('tr', 'copyPassword'),
-          copied: getText('tr', 'copied'),
+      <div
+        style={{
+          padding: 24,
+          background: "#f8f9fa",
+          borderRadius: 8,
+          border: "1px solid #e9ecef",
         }}
-        locale="tr"
-      />
-    </div>
-  ),
-};
-
-// Responsive design
-export const Responsive: Story = {
-  render: (args, context: any) => {
-    const locale = context.globals?.locale ?? context.locale ?? 'en';
-    return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 16, width: '100%', maxWidth: '600px' }}>
-      <BcPasswordInput
-        label={getText(locale, 'label')}
-        placeholder={getText(locale, 'placeholder')}
-        responsiveWidth={true}
-        locale={locale}
-      />
-      <BcPasswordInput
-        label={getText(locale, 'label')}
-        placeholder={getText(locale, 'placeholder')}
-        responsiveWidth={false}
-        locale={locale}
-      />
-    </div>
-    );
-  },
-};
-
-// Edge cases
-export const EdgeCases: Story = {
-  render: (args, context: any) => {
-    const locale = context.globals?.locale ?? context.locale ?? 'en';
-    return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-      <BcPasswordInput
-        label={getText(locale, 'label')}
-        placeholder={getText(locale, 'placeholder')}
-        value=""
-        locale={locale}
-      />
-      <BcPasswordInput
-        label={getText(locale, 'label')}
-        placeholder={getText(locale, 'placeholder')}
-        value={'a'.repeat(100)}
-        locale={locale}
-      />
-      <BcPasswordInput
-        label={getText(locale, 'label')}
-        placeholder={getText(locale, 'placeholder')}
-        value="Test123!@#$%^&*()_+-=[]{}|;:,.<>?"
-        locale={locale}
-      />
-      <BcPasswordInput
-        label={getText(locale, 'label')}
-        placeholder={getText(locale, 'placeholder')}
-        value="Test123!🚀🌟💫"
-        locale={locale}
-      />
-    </div>
-    );
-  },
-};
-
-// Performance test
-export const PerformanceTest: Story = {
-  render: (args, context: any) => {
-    const locale = context.globals?.locale ?? context.locale ?? 'en';
-    const startTime = performance.now();
-    
-    return (
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-        <div style={{ fontSize: '14px', color: '#666' }}>
-          {locale === 'tr' ? 'Render süresi' : 'Render time'}: {Math.round(performance.now() - startTime)}ms
-        </div>
-        <BcPasswordInput
-          label={getText(locale, 'label')}
-          placeholder={getText(locale, 'placeholder')}
-          locale={locale}
-        />
-      </div>
-    );
-  },
-};
-
-// Form integration
-export const FormIntegration: Story = {
-  render: (args, context: any) => {
-    const locale = context.globals?.locale ?? context.locale ?? 'en';
-    const handleSubmit = (e: React.FormEvent) => {
-      e.preventDefault();
-      const formData = new FormData(e.target as HTMLFormElement);
-      console.log('formSubmit', Object.fromEntries(formData));
-    };
-
-    return (
-      <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-        <BcPasswordInput
-          name="password"
-          label={getText(locale, 'label')}
-          placeholder={getText(locale, 'placeholder')}
-          required
-          locale={locale}
-        />
-        <BcPasswordInput
-          name="confirmPassword"
-          label={getText(locale, 'label') + (locale === 'tr' ? ' (Onayla)' : ' (Confirm)')}
-          placeholder={getText(locale, 'placeholder') + (locale === 'tr' ? ' (Onayla)' : ' (Confirm)')}
-          required
-          locale={locale}
-        />
-        <button type="submit" style={{ padding: '10px', backgroundColor: '#1976d2', color: 'white', border: 'none', borderRadius: '4px' }}>
-          {locale === 'tr' ? 'Gönder' : 'Submit'}
-        </button>
-      </form>
-    );
-  },
-};
-
-// RTL, High Contrast, Disabled
-export const RTLHighContrastDisabled: Story = {
-  render: (args, context: any) => {
-    const locale = context.globals?.locale ?? context.locale ?? 'en';
-    return (
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-        <BcPasswordInput
-          label={getText(locale, 'label')}
-          placeholder={getText(locale, 'placeholder')}
-          enableRTL={true}
-          locale={locale}
-        />
-        <BcPasswordInput
-          label={getText(locale, 'label')}
-          placeholder={getText(locale, 'placeholder')}
-          enableHighContrast={true}
-          locale={locale}
-        />
-        <BcPasswordInput
-          label={getText(locale, 'label')}
-          placeholder={getText(locale, 'placeholder')}
-          disabled={true}
-          defaultValue="disabled123"
-          locale={locale}
-        />
-      </div>
-    );
-  },
-};
-
-// Advanced Features
-export const AdvancedFeatures: Story = {
-  render: (args, context: any) => {
-    const locale = context.globals?.locale ?? context.locale ?? 'en';
-    return (
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-        <BcPasswordInput
-          label={getText(locale, 'label')}
-          placeholder={getText(locale, 'placeholder')}
-          showStrengthBar={true}
-          useZxcvbnStrength={true}
-          showPasswordToggle={true}
-          showCopyButton={true}
-          showClearButton={true}
-          locale={locale}
-        />
-        <BcPasswordInput
-          label={getText(locale, 'label')}
-          placeholder={getText(locale, 'placeholder')}
-          enableAsyncValidation={true}
-          showValidationStatus={true}
-          validatePassword={async (password) => {
-            await new Promise(resolve => setTimeout(resolve, 1000));
-            return { isValid: password.length >= 8, message: password.length >= 8 ? 'Valid' : 'Too short' };
+      >
+        <div
+          style={{
+            marginBottom: 16,
+            padding: "12px 16px",
+            background: "#e3f2fd",
+            borderRadius: 6,
+            border: "1px solid #bbdefb",
           }}
-          locale={locale}
-        />
-      </div>
-    );
-  },
-};
-
-// Custom Rules Advanced
-export const CustomRulesAdvanced: Story = {
-  render: (args, context: any) => {
-    const locale = context.globals?.locale ?? context.locale ?? 'en';
-    return (
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-        <BcPasswordInput
-          label={getText(locale, 'label')}
-          placeholder={getText(locale, 'placeholder')}
-          customRules={[
-            {
-              key: 'noCommonWords',
-              label: locale === 'tr' ? 'Yaygın kelimeler yok' : 'No common words',
-              test: (password) => !password.toLowerCase().includes('password') && !password.toLowerCase().includes('123456'),
-            },
-            {
-              key: 'noSequential',
-              label: locale === 'tr' ? 'Ardışık karakterler yok' : 'No sequential characters',
-              test: (password) => !password.includes('123') && !password.includes('abc') && !password.includes('qwe'),
-            },
-            {
-              key: 'noRepeating',
-              label: locale === 'tr' ? 'Tekrarlanan karakterler yok' : 'No repeating characters',
-              test: (password) => !/(.)\1{2,}/.test(password),
-            },
-            {
-              key: 'noPersonalInfo',
-              label: locale === 'tr' ? 'Kişisel bilgi yok' : 'No personal information',
-              test: (password) => !password.toLowerCase().includes('john') && !password.toLowerCase().includes('doe'),
-            },
-          ]}
-          locale={locale}
-        />
-      </div>
-    );
-  },
-};
-
-// Monitoring and Analytics
-export const MonitoringAnalytics: Story = {
-  render: (args, context: any) => {
-    const locale = context.globals?.locale ?? context.locale ?? 'en';
-    const monitoring = {
-      onChange: (value: string) => console.log('Password changed:', value.length, 'characters'),
-      onStrengthChange: (strength: number) => console.log('Strength changed:', strength),
-      onError: (error: Error) => console.error('Password error:', error),
-      onPerformance: (metrics: any) => console.log('Performance metrics:', metrics),
-    };
-
-    return (
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-        <BcPasswordInput
-          label={getText(locale, 'label')}
-          placeholder={getText(locale, 'placeholder')}
-          monitoring={monitoring}
-          showStrengthBar={true}
-          locale={locale}
-        />
-        <div style={{ fontSize: '12px', color: '#666', marginTop: '8px' }}>
-          {locale === 'tr' ? 'Konsola bakın - tüm etkileşimler loglanıyor' : 'Check console - all interactions are logged'}
+        >
+          <p
+            style={{
+              margin: 0,
+              color: "#1976d2",
+              fontSize: "14px",
+              lineHeight: "1.5",
+            }}
+          >
+            {getText(locale, "missingPropsTableStoryDescription")}
+          </p>
+        </div>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            marginBottom: 24,
+          }}
+        >
+          <h2
+            style={{
+              margin: 0,
+              fontSize: "24px",
+              fontWeight: "bold",
+              color: "#495057",
+            }}
+          >
+            📋 {getText(locale, "missingPropsTableTitle")}
+          </h2>
+          <div style={{ display: "flex", gap: 8 }}>
+            <button
+              onClick={() => setCurrentPage(1)}
+              style={{
+                padding: "8px 16px",
+                border: "1px solid #ccc",
+                background: locale === "en" ? "#007bff" : "white",
+                color: locale === "en" ? "white" : "black",
+                borderRadius: "4px",
+                cursor: "pointer",
+              }}
+            >
+              English
+            </button>
+            <button
+              onClick={() => setCurrentPage(1)}
+              style={{
+                padding: "8px 16px",
+                border: "1px solid #ccc",
+                background: locale === "tr" ? "#007bff" : "white",
+                color: locale === "tr" ? "white" : "black",
+                borderRadius: "4px",
+                cursor: "pointer",
+              }}
+            >
+              Türkçe
+            </button>
+          </div>
+        </div>
+        
+        <div style={{ marginBottom: 20 }}>
+          <BcTextField
+            {...args}
+            placeholder={getText(locale, "missingPropsSearchPlaceholder") || "Search props..."}
+            value={searchTerm}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setSearchTerm(e.target.value)}
+            locale={locale}
+            style={{
+              width: "100%",
+            }}
+          />
+        </div>
+        
+        <div
+          style={{
+            background: "white",
+            borderRadius: 8,
+            overflow: "hidden",
+            boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
+          }}
+        >
+          <table style={{ width: "100%", borderCollapse: "collapse" }}>
+            <thead>
+              <tr
+                style={{
+                  background: "#f8f9fa",
+                  borderBottom: "2px solid #dee2e6",
+                }}
+              >
+                <th
+                  style={{
+                    padding: "16px",
+                    textAlign: "left",
+                    fontWeight: "600",
+                    color: "#495057",
+                  }}
+                >
+                  {getText(locale, "missingPropsPropName") || "Prop Name"}
+                </th>
+                <th
+                  style={{
+                    padding: "15px",
+                    textAlign: "left",
+                    fontWeight: "600",
+                    color: "#495057",
+                  }}
+                >
+                  {getText(locale, "missingPropsType") || "Type"}
+                </th>
+                <th
+                  style={{
+                    padding: "16px",
+                    textAlign: "left",
+                    fontWeight: "600",
+                    color: "#495057",
+                  }}
+                >
+                  {getText(locale, "missingPropsCategory") || "Category"}
+                </th>
+                <th
+                  style={{
+                    padding: "16px",
+                    textAlign: "left",
+                    fontWeight: "600",
+                    color: "#495057",
+                  }}
+                >
+                  {getText(locale, "missingPropsDescription") || "Description"}
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {currentProps.map((prop, index) => (
+                <tr
+                  key={prop.name}
+                  style={{ borderBottom: "1px solid #dee2e6" }}
+                >
+                  <td
+                    style={{
+                      padding: "16px",
+                      fontWeight: "500",
+                      color: "#212529",
+                    }}
+                  >
+                    <code
+                      style={{
+                        background: "#f8f9fa",
+                        padding: "4px 8px",
+                        borderRadius: "4px",
+                        fontSize: "14px",
+                      }}
+                    >
+                      {prop.name}
+                    </code>
+                  </td>
+                  <td style={{ padding: "14px" }}>
+                    <span
+                      style={{
+                        display: "inline-flex",
+                        alignItems: "center",
+                        gap: "6px",
+                        padding: "4px 12px",
+                        borderRadius: "20px",
+                        fontSize: "12px",
+                        fontWeight: "500",
+                        background: getTypeColor(prop.type),
+                        color: "#495057",
+                      }}
+                    >
+                      {getTypeIcon(prop.type)} {prop.type}
+                    </span>
+                  </td>
+                  <td style={{ padding: "16px", color: "#6c757d" }}>
+                    {prop.category}
+                  </td>
+                  <td style={{ padding: "16px", color: "#6c757d" }}>
+                    {prop.description}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            marginTop: 20,
+          }}
+        >
+          <div style={{ color: "#6c757d", fontSize: "14px" }}>
+            {getText(locale, "missingPropsShowing") || "Showing"} {filteredProps.length}{" "}
+            {getText(locale, "missingPropsProps") || "props"} ({startIndex + 1}-
+            {Math.min(endIndex, filteredProps.length)})
+          </div>
+          <div style={{ display: "flex", gap: 8 }}>
+            <button
+              onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
+              disabled={currentPage === 1}
+              style={{
+                padding: "8px 16px",
+                border: "1px solid #ccc",
+                background: currentPage === 1 ? "#f8f9fa" : "white",
+                color: currentPage === 1 ? "#6c757d" : "#495057",
+                borderRadius: "4px",
+                cursor: currentPage === 1 ? "not-allowed" : "pointer",
+              }}
+            >
+              {getText(locale, "missingPropsPrevious") || "Previous"}
+            </button>
+            <span
+              style={{
+                padding: "8px 16px",
+                color: "#495057",
+                display: "flex",
+                alignItems: "center",
+              }}
+            >
+              {currentPage} / {totalPages}
+            </span>
+            <button
+              onClick={() =>
+                setCurrentPage(Math.min(totalPages, currentPage + 1))
+              }
+              disabled={currentPage === totalPages}
+              style={{
+                padding: "8px 16px",
+                border: "1px solid #ccc",
+                background: currentPage === totalPages ? "#f8f9fa" : "white",
+                color: currentPage === totalPages ? "#6c757d" : "#495057",
+                borderRadius: "4px",
+                cursor: currentPage === totalPages ? "not-allowed" : "pointer",
+              }}
+            >
+              {getText(locale, "missingPropsNext") || "Next"}
+            </button>
+          </div>
         </div>
       </div>
     );
   },
-};
-
-// Accessibility Features
-export const AccessibilityFeatures: Story = {
-  render: (args, context: any) => {
-    const locale = context.globals?.locale ?? context.locale ?? 'en';
-    return (
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-        <BcPasswordInput
-          label={getText(locale, 'label')}
-          placeholder={getText(locale, 'placeholder')}
-          showStrengthBar={true}
-          helperText={locale === 'tr' ? 'Ekran okuyucu için optimize edilmiş' : 'Optimized for screen readers'}
-          locale={locale}
-        />
-        <BcPasswordInput
-          label={getText(locale, 'label')}
-          placeholder={getText(locale, 'placeholder')}
-          enableHighContrast={true}
-          helperText={locale === 'tr' ? 'Yüksek kontrast modu' : 'High contrast mode'}
-          locale={locale}
-        />
-        <BcPasswordInput
-          label={getText(locale, 'label')}
-          placeholder={getText(locale, 'placeholder')}
-          enableReducedMotion={true}
-          helperText={locale === 'tr' ? 'Azaltılmış animasyon' : 'Reduced motion'}
-          locale={locale}
-        />
-      </div>
-    );
-  },
-};
-
-// Theme Integration
-export const ThemeIntegration: Story = {
-  render: (args, context: any) => {
-    const locale = context.globals?.locale ?? context.locale ?? 'en';
-    return (
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-        <BcPasswordInput
-          label={getText(locale, 'label')}
-          placeholder={getText(locale, 'placeholder')}
-          color="primary"
-          appearance="premium"
-          locale={locale}
-        />
-        <BcPasswordInput
-          label={getText(locale, 'label')}
-          placeholder={getText(locale, 'placeholder')}
-          color="secondary"
-          appearance="soft"
-          locale={locale}
-        />
-        <BcPasswordInput
-          label={getText(locale, 'label')}
-          placeholder={getText(locale, 'placeholder')}
-          color="success"
-          appearance="glass"
-          locale={locale}
-        />
-        <BcPasswordInput
-          label={getText(locale, 'label')}
-          placeholder={getText(locale, 'placeholder')}
-          color="error"
-          appearance="minimal"
-          locale={locale}
-        />
-      </div>
-    );
-  },
-};
-
-// Password Generator Feature
-export const PasswordGenerator: Story = {
-  render: (args, context: any) => {
-    const locale = context.globals?.locale ?? context.locale ?? 'en';
-    return (
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-        <BcPasswordInput
-          label={getText(locale, 'label')}
-          placeholder={getText(locale, 'placeholder')}
-          enablePasswordGenerator={true}
-          showStrengthBar={true}
-          useZxcvbnStrength={true}
-          locale={locale}
-        />
-        <div style={{ fontSize: 12, color: '#666' }}>
-          💡 {getText(locale, 'passwordGeneratorDescription')}
-        </div>
-      </div>
-    );
-  },
-};
-
-// Breach Check Feature
-export const BreachCheck: Story = {
-  render: (args, context: any) => {
-    const locale = context.globals?.locale ?? context.locale ?? 'en';
-    return (
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-        <BcPasswordInput
-          label={getText(locale, 'label')}
-          placeholder={getText(locale, 'placeholder')}
-          enableBreachCheck={true}
-          showStrengthBar={true}
-          locale={locale}
-        />
-        <div style={{ fontSize: 12, color: '#666' }}>
-          🔍 {getText(locale, 'breachCheckDescription')}
-        </div>
-      </div>
-    );
-  },
-};
-
-// Advanced Scoring Feature
-export const AdvancedScoring: Story = {
-  render: (args, context: any) => {
-    const locale = context.globals?.locale ?? context.locale ?? 'en';
-    return (
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-        <BcPasswordInput
-          label={getText(locale, 'label')}
-          placeholder={getText(locale, 'placeholder')}
-          enableAdvancedScoring={true}
-          showStrengthBar={true}
-          locale={locale}
-        />
-        <div style={{ fontSize: 12, color: '#666' }}>
-          📊 {getText(locale, 'advancedScoringDescription')}
-        </div>
-      </div>
-    );
-  },
-};
-
-// Keyboard Shortcuts Feature
-export const KeyboardShortcuts: Story = {
-  render: (args, context: any) => {
-    const locale = context.globals?.locale ?? context.locale ?? 'en';
-    return (
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-        <BcPasswordInput
-          label={getText(locale, 'label')}
-          placeholder={getText(locale, 'placeholder')}
-          enableKeyboardShortcuts={true}
-          showStrengthBar={true}
-          locale={locale}
-        />
-        <div style={{ fontSize: 12, color: '#666' }}>
-          ⌨️ {getText(locale, 'keyboardShortcutsDescription')}
-        </div>
-      </div>
-    );
-  },
-};
-
-// Mobile Optimizations Feature
-export const MobileOptimizations: Story = {
-  render: (args, context: any) => {
-    const locale = context.globals?.locale ?? context.locale ?? 'en';
-    return (
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-        <BcPasswordInput
-          label={getText(locale, 'label')}
-          placeholder={getText(locale, 'placeholder')}
-          enableMobileOptimizations={true}
-          showStrengthBar={true}
-          locale={locale}
-        />
-        <div style={{ fontSize: 12, color: '#666' }}>
-          📱 {getText(locale, 'mobileOptimizationsDescription')}
-        </div>
-      </div>
-    );
-  },
-};
-
-// Advanced i18n Feature
-export const AdvancedI18n: Story = {
-  render: (args, context: any) => {
-    const locale = context.globals?.locale ?? context.locale ?? 'en';
-    return (
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-        <BcPasswordInput
-          label={getText(locale, 'label')}
-          placeholder={getText(locale, 'placeholder')}
-          enableAdvancedI18n={true}
-          showStrengthBar={true}
-          locale={locale}
-        />
-        <div style={{ fontSize: 12, color: '#666' }}>
-          🌍 {getText(locale, 'advancedI18nDescription')}
-        </div>
-      </div>
-    );
-  },
-};
-
-// All Advanced Features Combined
-export const AllAdvancedFeatures: Story = {
-  render: (args, context: any) => {
-    const locale = context.globals?.locale ?? context.locale ?? 'en';
-    return (
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 16 }}>
-        <BcPasswordInput
-          label={getText(locale, 'label')}
-          placeholder={getText(locale, 'placeholder')}
-          enablePasswordGenerator={true}
-          enableBreachCheck={true}
-          enableKeyboardShortcuts={true}
-          enableAdvancedScoring={true}
-          enableThemeAwareStyles={true}
-          enableAdvancedMonitoring={true}
-          enableMobileOptimizations={true}
-          enableAdvancedI18n={true}
-          showStrengthBar={true}
-          useZxcvbnStrength={true}
-          showPasswordToggle={true}
-          showCopyButton={true}
-          showClearButton={true}
-          locale={locale}
-        />
-        <div style={{ fontSize: 12, color: '#666' }}>
-          🚀 {getText(locale, 'allAdvancedFeaturesDescription')}
-        </div>
-      </div>
-    );
+  parameters: {
+    docs: {
+      description: {
+        story: getText(defaultLocale, "missingPropsTableStoryDescription"),
+      },
+    },
   },
 }; 
+
+// With strength indicator
+export const WithStrengthIndicator: Story = {
+  args: {
+    label: getText(defaultLocale, "label"),
+    placeholder: getText(defaultLocale, "placeholder"),
+    showPasswordToggle: true,
+    enablePasswordGeneration: false,
+    enableStrengthIndicator: true,
+    showStrengthMeter: true,
+    showRequirements: true,
+  },
+};
+
+// With password generation
+export const WithPasswordGeneration: Story = {
+  args: {
+    label: getText(defaultLocale, "label"),
+    placeholder: getText(defaultLocale, "placeholder"),
+    showPasswordToggle: true,
+    enablePasswordGeneration: true,
+    enableStrengthIndicator: true,
+    showStrengthMeter: true,
+    showRequirements: true,
+  },
+};
+
+// With security features
+export const WithSecurityFeatures: Story = {
+  args: {
+    label: getText(defaultLocale, "label"),
+    placeholder: getText(defaultLocale, "placeholder"),
+    showPasswordToggle: true,
+    enablePasswordGeneration: true,
+    enableStrengthIndicator: true,
+    showStrengthMeter: true,
+    showRequirements: true,
+  },
+};
+
+// With clear button
+export const WithClearButton: Story = {
+  args: {
+    label: getText(defaultLocale, "label"),
+    placeholder: getText(defaultLocale, "placeholder"),
+    showPasswordToggle: true,
+    enablePasswordGeneration: false,
+    enableStrengthIndicator: false,
+    showStrengthMeter: false,
+    enablePasswordValidation: false,
+    showRequirements: false,
+    showClearButton: true,
+  },
+};
+
+// Interactive example
+export const InteractiveExample: Story = {
+  render: (args) => {
+    const [password, setPassword] = useState('');
+    const [strength, setStrength] = useState('');
+    const locale = args.locale || defaultLocale;
+
+    const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+      setPassword(e.target.value);
+    };
+
+    const handleStrengthChange = (strength: string, score: number) => {
+      setStrength(`${strength} (${score}%)`);
+    };
+
+    return (
+      <Paper sx={{ p: 3, maxWidth: 500 }}>
+        <Typography variant="h5" gutterBottom>
+          {getText(locale, "componentTitle")}
+        </Typography>
+        <Typography variant="body2" color="text.secondary" gutterBottom>
+          {getText(locale, "helperText")}
+        </Typography>
+        <BcPasswordInput
+          label={getText(locale, "label")}
+          placeholder={getText(locale, "placeholder")}
+          value={password}
+          onChange={handlePasswordChange}
+          onStrengthChange={handleStrengthChange}
+          showPasswordToggle={true}
+          enablePasswordGeneration={true}
+          enableStrengthIndicator={true}
+          showStrengthMeter={true}
+          showRequirements={true}
+          showClearButton={true}
+        />
+        {strength && (
+          <Box sx={{ mt: 2 }}>
+            <Typography variant="body2" color="text.secondary">
+              {getText(locale, "strengthBar")}: {strength}
+            </Typography>
+          </Box>
+        )}
+      </Paper>
+    );
+  },
+};
+
+// Appearance Examples - Görünüm Örnekleri
+export const AppearanceExamples: Story = {
+  render: (args, context: { globals?: { locale?: string }; locale?: string }) => {
+    const locale = context.globals?.locale ?? context.locale ?? "en";
+    const [selectedAppearance, setSelectedAppearance] = React.useState<string>("premium");
+
+    const appearances = [
+      { value: "premium", label: "Premium", description: "Lüks ve modern görünüm" },
+      { value: "soft", label: "Soft", description: "Yumuşak ve rahat görünüm" },
+      { value: "glass", label: "Glass", description: "Cam efekti ile şeffaf görünüm" },
+      { value: "minimal", label: "Minimal", description: "Sade ve minimal tasarım" },
+      { value: "neumorph", label: "Neumorph", description: "Neumorphism tasarım stili" },
+      { value: "underline", label: "Underline", description: "Alt çizgili basit görünüm" },
+      { value: "dark", label: "Dark", description: "Koyu tema uyumlu görünüm" },
+      { value: "borderless", label: "Borderless", description: "Çerçevesiz temiz görünüm" },
+    ];
+
+    return (
+      <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
+        <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+          <h2 style={{ margin: 0, fontSize: "24px", fontWeight: "bold", color: "#495057" }}>
+            🎨 {getText(locale, "appearanceExamplesTitle") || "Appearance Examples"}
+          </h2>
+          <p style={{ margin: 0, color: "#6c757d", fontSize: "14px" }}>
+            {getText(locale, "appearanceExamplesDescription") || "BcPasswordInput component'inin farklı görünüm stillerini keşfedin"}
+          </p>
+        </div>
+
+        <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+          <label style={{ fontWeight: "600", color: "#495057" }}>
+            {getText(locale, "selectAppearance") || "Select Appearance:"}
+          </label>
+          <select
+            value={selectedAppearance}
+            onChange={(e) => setSelectedAppearance(e.target.value)}
+            style={{
+              padding: "8px 12px",
+              border: "1px solid #ccc",
+              borderRadius: "4px",
+              fontSize: "14px",
+              maxWidth: "300px"
+            }}
+          >
+            {appearances.map((appearance) => (
+              <option key={appearance.value} value={appearance.value}>
+                {appearance.label} - {appearance.description}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
+          {appearances.map((appearance) => (
+            <div
+              key={appearance.value}
+              style={{
+                padding: "20px",
+                border: selectedAppearance === appearance.value ? "2px solid #1976d2" : "1px solid #e0e0e0",
+                borderRadius: "8px",
+                backgroundColor: selectedAppearance === appearance.value ? "#f3f8ff" : "#ffffff",
+                transition: "all 0.2s ease",
+              }}
+            >
+              <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                  <h3 style={{ margin: 0, fontSize: "18px", fontWeight: "600", color: "#495057" }}>
+                    {appearance.label}
+                  </h3>
+                  {selectedAppearance === appearance.value && (
+                    <span style={{ 
+                      padding: "2px 8px", 
+                      backgroundColor: "#1976d2", 
+                      color: "white", 
+                      borderRadius: "12px", 
+                      fontSize: "12px" 
+                    }}>
+                      Selected
+                    </span>
+                  )}
+                </div>
+                <p style={{ margin: 0, color: "#6c757d", fontSize: "14px" }}>
+                  {appearance.description}
+                </p>
+                <BcPasswordInput
+                  {...args}
+                  appearance={appearance.value as "premium" | "soft" | "glass" | "minimal" | "neumorph" | "underline" | "dark" | "borderless"}
+                  label={getText(locale, "appearanceExampleLabel") || "Password Input"}
+                  placeholder={getText(locale, "appearanceExamplePlaceholder") || "Enter your password..."}
+                  helperText={getText(locale, "appearanceExampleHelperText") || `This is the ${appearance.label.toLowerCase()} appearance style`}
+                  showClearButton={true}
+                  showPasswordToggle={true}
+                  enablePasswordGeneration={true}
+                  enableStrengthIndicator={true}
+                  showStrengthMeter={true}
+                  showRequirements={true}
+                  locale={locale}
+                />
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <div style={{ 
+          padding: "16px", 
+          backgroundColor: "#e3f2fd", 
+          borderRadius: "8px", 
+          border: "1px solid #bbdefb" 
+        }}>
+          <h4 style={{ margin: "0 0 8px 0", color: "#1976d2", fontSize: "16px" }}>
+            💡 {getText(locale, "appearanceTipsTitle") || "Usage Tips"}
+          </h4>
+          <ul style={{ margin: 0, paddingLeft: "20px", color: "#1976d2", fontSize: "14px" }}>
+            <li>{getText(locale, "appearanceTip1") || "Premium: Use for important forms and premium features"}</li>
+            <li>{getText(locale, "appearanceTip2") || "Soft: Great for user-friendly interfaces and forms"}</li>
+            <li>{getText(locale, "appearanceTip3") || "Glass: Perfect for modern, overlay-style designs"}</li>
+            <li>{getText(locale, "appearanceTip4") || "Minimal: Ideal for clean, distraction-free interfaces"}</li>
+            <li>{getText(locale, "appearanceTip5") || "Neumorph: Use for contemporary, tactile designs"}</li>
+            <li>{getText(locale, "appearanceTip6") || "Underline: Best for simple, space-efficient layouts"}</li>
+            <li>{getText(locale, "appearanceTip7") || "Dark: Perfect for dark theme applications"}</li>
+            <li>{getText(locale, "appearanceTip8") || "Borderless: Great for seamless, integrated designs"}</li>
+          </ul>
+        </div>
+      </div>
+    );
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: "BcPasswordInput component'inin tüm appearance seçeneklerini gösteren interaktif örnekler. Her görünüm stilinin nasıl göründüğünü ve ne zaman kullanılması gerektiğini keşfedin.",
+      },
+    },
+  },
+};
+

@@ -10,13 +10,13 @@ export interface ValidationRule {
   enabled: boolean;
   priority: number;
   dependencies?: string[];
-  customValidator?: (value: string, context?: any) => Promise<boolean>;
+  customValidator?: (value: string, context?: unknown) => Promise<boolean>;
 }
 
 export interface ValidationContext {
   fieldName?: string;
-  formData?: Record<string, any>;
-  userContext?: Record<string, any>;
+  formData?: Record<string, unknown>;
+  userContext?: Record<string, unknown>;
   locale?: string;
 }
 

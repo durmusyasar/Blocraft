@@ -3,8 +3,8 @@ import { useState, useCallback, useMemo, useEffect } from 'react';
 export interface PlaceholderContext {
   fieldName?: string;
   fieldType?: string;
-  userContext?: Record<string, any>;
-  formContext?: Record<string, any>;
+  userContext?: Record<string, unknown>;
+  formContext?: Record<string, unknown>;
   locale?: string;
   timeOfDay?: 'morning' | 'afternoon' | 'evening' | 'night';
   dayOfWeek?: 'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday' | 'saturday' | 'sunday';
@@ -327,7 +327,7 @@ export const useSmartPlaceholder = ({
       } else {
         // Replace placeholders
         placeholder = placeholder
-          .replace(/{name}/g, fullContext.userContext?.name || 'there')
+          .replace(/{name}/g, (fullContext.userContext?.name as string) || 'there')
           .replace(/{fieldName}/g, fullContext.fieldName || 'information')
           .replace(/{fieldType}/g, fullContext.fieldType || 'field')
           .replace(/{locale}/g, fullContext.locale || 'en');

@@ -47,16 +47,16 @@ export interface ComplianceOptions {
     enableVoiceControl: boolean;
     enableEyeTracking: boolean;
   };
-  complianceRules?: Record<string, any>;
-  compliancePolicies?: Record<string, any>;
-  complianceChecks?: Record<string, any>;
-  complianceReports?: Record<string, any>;
-  complianceAudits?: Record<string, any>;
-  complianceViolations?: Record<string, any>;
-  complianceRemediations?: Record<string, any>;
-  complianceTraining?: Record<string, any>;
-  complianceCertifications?: Record<string, any>;
-  complianceAssessments?: Record<string, any>;
+  complianceRules?: Record<string, unknown>;
+  compliancePolicies?: Record<string, unknown>;
+  complianceChecks?: Record<string, unknown>;
+  complianceReports?: Record<string, unknown>;
+  complianceAudits?: Record<string, unknown>;
+  complianceViolations?: Record<string, unknown>;
+  complianceRemediations?: Record<string, unknown>;
+  complianceTraining?: Record<string, unknown>;
+  complianceCertifications?: Record<string, unknown>;
+  complianceAssessments?: Record<string, unknown>;
   complianceMetrics?: {
     collectMetrics: boolean;
     metricsInterval: number;
@@ -64,7 +64,7 @@ export interface ComplianceOptions {
     customMetrics: string[];
   };
   complianceErrorHandling?: {
-    onError: (error: Error, context: any) => void;
+    onError: (error: Error, context: unknown) => void;
     fallbackBehavior: 'disable' | 'ignore' | 'retry' | 'replace';
     maxRetries: number;
     retryDelay: number;
@@ -154,7 +154,7 @@ export interface ComplianceState {
     target: string;
     action: string;
     result: 'success' | 'failure' | 'warning';
-    details: any;
+    details: unknown;
   }>;
   complianceViolations: Array<{
     id: string;
@@ -175,8 +175,8 @@ export interface ComplianceState {
     timestamp: number;
     auditor: string;
     scope: string;
-    findings: any[];
-    recommendations: any[];
+    findings: unknown[];
+    recommendations: unknown[];
     status: 'pending' | 'in_progress' | 'completed';
   }>;
   complianceReports: Array<{
@@ -185,7 +185,7 @@ export interface ComplianceState {
     standard: string;
     timestamp: number;
     period: string;
-    data: any;
+    data: unknown;
     status: 'draft' | 'review' | 'approved' | 'published';
   }>;
   complianceMetrics: {
@@ -208,13 +208,13 @@ export interface ComplianceState {
     id: string;
     error: Error;
     timestamp: number;
-    context: any;
+    context: unknown;
   }>;
   complianceAnalytics: {
     usage: Record<string, number>;
     performance: Record<string, number[]>;
     errors: Record<string, number>;
-    userBehavior: Record<string, any>;
+    userBehavior: Record<string, unknown>;
   };
   complianceDebugging: {
     logs: Array<{
@@ -222,15 +222,15 @@ export interface ComplianceState {
       level: string;
       message: string;
       timestamp: number;
-      context: any;
+      context: unknown;
     }>;
     traces: Array<{
       id: string;
-      trace: any;
+      trace: unknown;
       timestamp: number;
     }>;
   };
-  complianceCache: Record<string, any>;
+  complianceCache: Record<string, unknown>;
   complianceSecurity: {
     violations: Array<{
       id: string;
@@ -248,35 +248,35 @@ export interface ComplianceState {
 }
 
 export interface ComplianceActions {
-  checkCompliance: (standard: string, data: any) => { compliant: boolean; violations: string[] };
-  validateGDPR: (data: any) => { compliant: boolean; violations: string[] };
-  validateCCPA: (data: any) => { compliant: boolean; violations: string[] };
-  validateHIPAA: (data: any) => { compliant: boolean; violations: string[] };
-  validateSOX: (data: any) => { compliant: boolean; violations: string[] };
-  validatePCI: (data: any) => { compliant: boolean; violations: string[] };
+  checkCompliance: (standard: string, data: unknown) => { compliant: boolean; violations: string[] };
+  validateGDPR: (data: unknown) => { compliant: boolean; violations: string[] };
+  validateCCPA: (data: unknown) => { compliant: boolean; violations: string[] };
+  validateHIPAA: (data: unknown) => { compliant: boolean; violations: string[] };
+  validateSOX: (data: unknown) => { compliant: boolean; violations: string[] };
+  validatePCI: (data: unknown) => { compliant: boolean; violations: string[] };
   validateAccessibility: (element: HTMLElement) => { compliant: boolean; violations: string[] };
   validateWCAG: (element: HTMLElement) => { compliant: boolean; violations: string[] };
   validateSection508: (element: HTMLElement) => { compliant: boolean; violations: string[] };
   validateADA: (element: HTMLElement) => { compliant: boolean; violations: string[] };
-  anonymizeData: (data: any) => any;
-  manageConsent: (userId: string, consent: any) => void;
-  recordAuditEvent: (type: string, standard: string, source: string, target: string, action: string, result: string, details: any) => void;
-  generateComplianceReport: (standard: string, period: string) => any;
+  anonymizeData: (data: unknown) => unknown;
+  manageConsent: (userId: string, consent: unknown) => void;
+  recordAuditEvent: (type: string, standard: string, source: string, target: string, action: string, result: string, details: unknown) => void;
+  generateComplianceReport: (standard: string, period: string) => unknown;
   scheduleComplianceAudit: (type: string, standard: string, auditor: string, scope: string) => void;
   remediateViolation: (violationId: string, remediation: string) => void;
-  getComplianceEvents: (filter?: any) => any[];
-  getComplianceViolations: (filter?: any) => any[];
-  getComplianceAudits: (filter?: any) => any[];
-  getComplianceReports: (filter?: any) => any[];
-  getComplianceMetrics: () => any;
+  getComplianceEvents: (filter?: unknown) => unknown[];
+  getComplianceViolations: (filter?: unknown) => unknown[];
+  getComplianceAudits: (filter?: unknown) => unknown[];
+  getComplianceReports: (filter?: unknown) => unknown[];
+  getComplianceMetrics: () => unknown;
   clearComplianceMetrics: () => void;
-  getComplianceAnalytics: () => any;
+  getComplianceAnalytics: () => unknown;
   clearComplianceAnalytics: () => void;
-  getComplianceLogs: () => any[];
+  getComplianceLogs: () => unknown[];
   clearComplianceLogs: () => void;
-  getComplianceTraces: () => any[];
+  getComplianceTraces: () => unknown[];
   clearComplianceTraces: () => void;
-  getComplianceCache: () => any;
+  getComplianceCache: () => unknown;
   clearComplianceCache: () => void;
   exportComplianceData: () => string;
   importComplianceData: (data: string) => void;
@@ -348,7 +348,7 @@ export function useCompliance(options: ComplianceOptions = {}) {
       customMetrics: [],
     },
     complianceErrorHandling = {
-      onError: (error: Error, context: any) => {
+      onError: (error: Error, context: unknown) => {
         console.error('Compliance error:', error, context);
       },
       fallbackBehavior: 'disable',
@@ -458,38 +458,38 @@ export function useCompliance(options: ComplianceOptions = {}) {
   const errorIdCounter = useRef(0);
 
   // Validate GDPR
-  const validateGDPR = useCallback((data: any): { compliant: boolean; violations: string[] } => {
+  const validateGDPR = useCallback((data: unknown): { compliant: boolean; violations: string[] } => {
     if (!enableGDPR) return { compliant: true, violations: [] };
 
     const violations: string[] = [];
 
     // Check data minimization
-    if (privacySettings.enableDataMinimization && data && Object.keys(data).length > 10) {
+    if (privacySettings.enableDataMinimization && data && Object.keys(data as Record<string, unknown>).length > 10) {
       violations.push('Data minimization: Too much personal data collected');
     }
 
     // Check purpose limitation
-    if (privacySettings.enablePurposeLimitation && data && !data.purpose) {
+    if (privacySettings.enablePurposeLimitation && data && !(data as Record<string, unknown>).purpose) {
       violations.push('Purpose limitation: No purpose specified for data collection');
     }
 
     // Check storage limitation
-    if (privacySettings.enableStorageLimitation && data && data.retentionPeriod > dataRetentionPeriod) {
+    if (privacySettings.enableStorageLimitation && data && (data as Record<string, unknown>).retentionPeriod as number > dataRetentionPeriod) {
       violations.push('Storage limitation: Data retention period exceeds limit');
     }
 
     // Check accuracy
-    if (privacySettings.enableAccuracy && data && data.accuracy === false) {
+    if (privacySettings.enableAccuracy && data && (data as Record<string, unknown>).accuracy === false) {
       violations.push('Accuracy: Data accuracy not verified');
     }
 
     // Check integrity
-    if (privacySettings.enableIntegrity && data && data.integrity === false) {
+    if (privacySettings.enableIntegrity && data && (data as Record<string, unknown>).integrity === false) {
       violations.push('Integrity: Data integrity not maintained');
     }
 
     // Check confidentiality
-    if (privacySettings.enableConfidentiality && data && data.confidentiality === false) {
+    if (privacySettings.enableConfidentiality && data && (data as Record<string, unknown>).confidentiality === false) {
       violations.push('Confidentiality: Data confidentiality not protected');
     }
 
@@ -497,23 +497,23 @@ export function useCompliance(options: ComplianceOptions = {}) {
   }, [enableGDPR, privacySettings, dataRetentionPeriod]);
 
   // Validate CCPA
-  const validateCCPA = useCallback((data: any): { compliant: boolean; violations: string[] } => {
+  const validateCCPA = useCallback((data: unknown): { compliant: boolean; violations: string[] } => {
     if (!enableCCPA) return { compliant: true, violations: [] };
 
     const violations: string[] = [];
 
     // Check right to know
-    if (data && !data.disclosure) {
+    if (data && !(data as Record<string, unknown>).disclosure) {
       violations.push('Right to know: No disclosure of data collection');
     }
 
     // Check right to delete
-    if (data && !data.deletion) {
+    if (data && !(data as Record<string, unknown>).deletion) {
       violations.push('Right to delete: No deletion mechanism provided');
     }
 
     // Check right to opt-out
-    if (data && !data.optOut) {
+    if (data && !(data as Record<string, unknown>).optOut) {
       violations.push('Right to opt-out: No opt-out mechanism provided');
     }
 
@@ -521,23 +521,23 @@ export function useCompliance(options: ComplianceOptions = {}) {
   }, [enableCCPA]);
 
   // Validate HIPAA
-  const validateHIPAA = useCallback((data: any): { compliant: boolean; violations: string[] } => {
+  const validateHIPAA = useCallback((data: unknown): { compliant: boolean; violations: string[] } => {
     if (!enableHIPAA) return { compliant: true, violations: [] };
 
     const violations: string[] = [];
 
     // Check administrative safeguards
-    if (data && !data.administrativeSafeguards) {
+    if (data && !(data as Record<string, unknown>).administrativeSafeguards) {
       violations.push('Administrative safeguards: No administrative safeguards in place');
     }
 
     // Check physical safeguards
-    if (data && !data.physicalSafeguards) {
+    if (data && !(data as Record<string, unknown>).physicalSafeguards) {
       violations.push('Physical safeguards: No physical safeguards in place');
     }
 
     // Check technical safeguards
-    if (data && !data.technicalSafeguards) {
+    if (data && !(data as Record<string, unknown>).technicalSafeguards) {
       violations.push('Technical safeguards: No technical safeguards in place');
     }
 
@@ -545,23 +545,23 @@ export function useCompliance(options: ComplianceOptions = {}) {
   }, [enableHIPAA]);
 
   // Validate SOX
-  const validateSOX = useCallback((data: any): { compliant: boolean; violations: string[] } => {
+  const validateSOX = useCallback((data: unknown): { compliant: boolean; violations: string[] } => {
     if (!enableSOX) return { compliant: true, violations: [] };
 
     const violations: string[] = [];
 
     // Check internal controls
-    if (data && !data.internalControls) {
+    if (data && !(data as Record<string, unknown>).internalControls) {
       violations.push('Internal controls: No internal controls in place');
     }
 
     // Check audit trail
-    if (data && !data.auditTrail) {
+    if (data && !(data as Record<string, unknown>).auditTrail) {
       violations.push('Audit trail: No audit trail maintained');
     }
 
     // Check data integrity
-    if (data && !data.dataIntegrity) {
+    if (data && !(data as Record<string, unknown>).dataIntegrity) {
       violations.push('Data integrity: Data integrity not maintained');
     }
 
@@ -569,23 +569,23 @@ export function useCompliance(options: ComplianceOptions = {}) {
   }, [enableSOX]);
 
   // Validate PCI
-  const validatePCI = useCallback((data: any): { compliant: boolean; violations: string[] } => {
+  const validatePCI = useCallback((data: unknown): { compliant: boolean; violations: string[] } => {
     if (!enablePCI) return { compliant: true, violations: [] };
 
     const violations: string[] = [];
 
     // Check cardholder data protection
-    if (data && !data.cardholderDataProtection) {
+    if (data && !(data as Record<string, unknown>).cardholderDataProtection) {
       violations.push('Cardholder data protection: No protection for cardholder data');
     }
 
     // Check network security
-    if (data && !data.networkSecurity) {
+    if (data && !(data as Record<string, unknown>).networkSecurity) {
       violations.push('Network security: No network security measures');
     }
 
     // Check access control
-    if (data && !data.accessControl) {
+    if (data && !(data as Record<string, unknown>).accessControl) {
       violations.push('Access control: No access control measures');
     }
 
@@ -593,7 +593,7 @@ export function useCompliance(options: ComplianceOptions = {}) {
   }, [enablePCI]);
 
   // Record audit event
-  const recordAuditEvent = useCallback((type: string, standard: string, source: string, target: string, action: string, result: string, details: any) => {
+  const recordAuditEvent = useCallback((type: string, standard: string, source: string, target: string, action: string, result: string, details: unknown) => {
     if (!enableCompliance || !enableAuditTrail) return;
 
     const event = {
@@ -620,7 +620,7 @@ export function useCompliance(options: ComplianceOptions = {}) {
   }, [enableCompliance, enableAuditTrail]);
 
   // Check compliance
-  const checkCompliance = useCallback((standard: string, data: any): { compliant: boolean; violations: string[] } => {
+  const checkCompliance = useCallback((standard: string, data: unknown): { compliant: boolean; violations: string[] } => {
     if (!enableCompliance) return { compliant: true, violations: [] };
 
     const violations: string[] = [];
@@ -679,7 +679,7 @@ export function useCompliance(options: ComplianceOptions = {}) {
   }, [enableCompliance, enableGDPR, enableCCPA, enableHIPAA, enableSOX, enablePCI, enableAuditTrail, validateGDPR, validateCCPA, validateHIPAA, validateSOX, validatePCI, recordAuditEvent, enableComplianceErrorHandling, complianceErrorHandling]);
 
   // Log compliance event
-  const logComplianceEvent = useCallback((level: string, message: string, context?: any) => {
+  const logComplianceEvent = useCallback((level: string, message: string, context?: unknown) => {
     if (!enableComplianceLogging) return;
 
     const log = {
@@ -779,23 +779,23 @@ export function useCompliance(options: ComplianceOptions = {}) {
   }, [enableADA]);
 
   // Anonymize data
-  const anonymizeData = useCallback((data: any): any => {
+  const anonymizeData = useCallback((data: unknown): unknown => {
     if (!enableCompliance || !enableDataAnonymization) return data;
 
     try {
       // Simple data anonymization (in real implementation, use proper anonymization)
-      const anonymized = { ...data };
+      const anonymized = { ...(data as Record<string, unknown>) };
       
       // Remove or mask personal identifiers
-      if (anonymized.email) {
+      if (anonymized.email && typeof anonymized.email === 'string') {
         anonymized.email = anonymized.email.replace(/(.{2}).*(@.*)/, '$1***$2');
       }
       
-      if (anonymized.phone) {
+      if (anonymized.phone && typeof anonymized.phone === 'string') {
         anonymized.phone = anonymized.phone.replace(/(.{3}).*(.{3})/, '$1***$2');
       }
       
-      if (anonymized.name) {
+      if (anonymized.name && typeof anonymized.name === 'string') {
         anonymized.name = anonymized.name.replace(/(.{1}).*/, '$1***');
       }
 
@@ -813,7 +813,7 @@ export function useCompliance(options: ComplianceOptions = {}) {
   }, [enableCompliance, enableDataAnonymization, enableComplianceLogging, logComplianceEvent, enableComplianceErrorHandling, complianceErrorHandling]);
 
   // Manage consent
-  const manageConsent = useCallback((userId: string, consent: any) => {
+  const manageConsent = useCallback((userId: string, consent: unknown) => {
     if (!enableCompliance || !enableConsentManagement) return;
 
     try {
@@ -834,7 +834,7 @@ export function useCompliance(options: ComplianceOptions = {}) {
 
 
   // Generate compliance report
-  const generateComplianceReport = useCallback((standard: string, period: string): any => {
+  const generateComplianceReport = useCallback((standard: string, period: string): unknown => {
     if (!enableCompliance || !enableComplianceReporting) return null;
 
     try {
@@ -936,40 +936,44 @@ export function useCompliance(options: ComplianceOptions = {}) {
   }, [enableCompliance, enableComplianceLogging, logComplianceEvent, enableComplianceErrorHandling, complianceErrorHandling]);
 
   // Get compliance events
-  const getComplianceEvents = useCallback((filter?: any) => {
+  const getComplianceEvents = useCallback((filter?: unknown) => {
     if (filter) {
+      const filterObj = filter as Record<string, unknown>;
       return state.complianceEvents.filter(event =>
-        Object.keys(filter).every(key => event[key as keyof typeof event] === filter[key])
+        Object.keys(filterObj).every(key => event[key as keyof typeof event] === filterObj[key])
       );
     }
     return state.complianceEvents;
   }, [state.complianceEvents]);
 
   // Get compliance violations
-  const getComplianceViolations = useCallback((filter?: any) => {
+  const getComplianceViolations = useCallback((filter?: unknown) => {
     if (filter) {
+      const filterObj = filter as Record<string, unknown>;
       return state.complianceViolations.filter(violation =>
-        Object.keys(filter).every(key => violation[key as keyof typeof violation] === filter[key])
+        Object.keys(filterObj).every(key => violation[key as keyof typeof violation] === filterObj[key])
       );
     }
     return state.complianceViolations;
   }, [state.complianceViolations]);
 
   // Get compliance audits
-  const getComplianceAudits = useCallback((filter?: any) => {
+  const getComplianceAudits = useCallback((filter?: unknown) => {
     if (filter) {
+      const filterObj = filter as Record<string, unknown>;
       return state.complianceAudits.filter(audit =>
-        Object.keys(filter).every(key => audit[key as keyof typeof audit] === filter[key])
+        Object.keys(filterObj).every(key => audit[key as keyof typeof audit] === filterObj[key])
       );
     }
     return state.complianceAudits;
   }, [state.complianceAudits]);
 
   // Get compliance reports
-  const getComplianceReports = useCallback((filter?: any) => {
+  const getComplianceReports = useCallback((filter?: unknown) => {
     if (filter) {
+      const filterObj = filter as Record<string, unknown>;
       return state.complianceReports.filter(report =>
-        Object.keys(filter).every(key => report[key as keyof typeof report] === filter[key])
+        Object.keys(filterObj).every(key => report[key as keyof typeof report] === filterObj[key])
       );
     }
     return state.complianceReports;

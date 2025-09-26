@@ -31,11 +31,11 @@ export interface AdvancedThemingOptions {
   themeVersioning?: boolean;
   themeMigration?: boolean;
   themeValidation?: boolean;
-  customThemes?: Record<string, any>;
-  themePresets?: Record<string, any>;
-  themeVariants?: Record<string, any>;
+  customThemes?: Record<string, unknown>;
+  themePresets?: Record<string, unknown>;
+  themeVariants?: Record<string, unknown>;
   themeInheritance?: Record<string, string[]>;
-  themeComposition?: Record<string, any>;
+  themeComposition?: Record<string, unknown>;
   themeOptimization?: {
     enableMinification: boolean;
     enableTreeShaking: boolean;
@@ -95,7 +95,7 @@ export interface AdvancedThemingOptions {
     customMetrics: string[];
   };
   themeErrorHandling?: {
-    onError: (error: Error, context: any) => void;
+    onError: (error: Error, context: unknown) => void;
     fallbackBehavior: 'disable' | 'ignore' | 'retry' | 'replace';
     maxRetries: number;
     retryDelay: number;
@@ -117,7 +117,7 @@ export interface AdvancedThemingState {
   isDynamicThemingEnabled: boolean;
   isThemeSwitchingEnabled: boolean;
   currentTheme: string;
-  currentThemeData: any;
+  currentThemeData: unknown;
   availableThemes: string[];
   themeHistory: Array<{
     id: string;
@@ -127,7 +127,7 @@ export interface AdvancedThemingState {
     success: boolean;
     error?: Error;
   }>;
-  themeCache: Record<string, any>;
+  themeCache: Record<string, unknown>;
   themeMetrics: {
     totalThemeSwitches: number;
     successfulThemeSwitches: number;
@@ -140,13 +140,13 @@ export interface AdvancedThemingState {
     id: string;
     error: Error;
     timestamp: number;
-    context: any;
+    context: unknown;
   }>;
   themeAnalytics: {
     usage: Record<string, number>;
     performance: Record<string, number[]>;
     errors: Record<string, number>;
-    userBehavior: Record<string, any>;
+    userBehavior: Record<string, unknown>;
   };
   themeDebugging: {
     logs: Array<{
@@ -154,11 +154,11 @@ export interface AdvancedThemingState {
       level: string;
       message: string;
       timestamp: number;
-      context: any;
+      context: unknown;
     }>;
     traces: Array<{
       id: string;
-      trace: any;
+      trace: unknown;
       timestamp: number;
     }>;
   };
@@ -180,27 +180,27 @@ export interface AdvancedThemingState {
 
 export interface AdvancedThemingActions {
   switchTheme: (themeName: string) => Promise<void>;
-  createTheme: (name: string, themeData: any) => void;
-  updateTheme: (name: string, themeData: any) => void;
+  createTheme: (name: string, themeData: unknown) => void;
+  updateTheme: (name: string, themeData: unknown) => void;
   deleteTheme: (name: string) => void;
   duplicateTheme: (sourceName: string, targetName: string) => void;
   exportTheme: (name: string) => string;
   importTheme: (name: string, themeData: string) => void;
-  getTheme: (name: string) => any;
+  getTheme: (name: string) => unknown;
   getAvailableThemes: () => string[];
   getCurrentTheme: () => string;
-  getCurrentThemeData: () => any;
-  getThemeHistory: () => any[];
+  getCurrentThemeData: () => unknown;
+  getThemeHistory: () => unknown[];
   clearThemeHistory: () => void;
-  getThemeMetrics: () => any;
+  getThemeMetrics: () => unknown;
   clearThemeMetrics: () => void;
-  getThemeAnalytics: () => any;
+  getThemeAnalytics: () => unknown;
   clearThemeAnalytics: () => void;
-  getThemeLogs: () => any[];
+  getThemeLogs: () => unknown[];
   clearThemeLogs: () => void;
-  getThemeTraces: () => any[];
+  getThemeTraces: () => unknown[];
   clearThemeTraces: () => void;
-  getThemeCache: () => any;
+  getThemeCache: () => unknown;
   clearThemeCache: () => void;
   exportAllThemes: () => string;
   importAllThemes: (themesData: string) => void;
@@ -306,7 +306,7 @@ export function useAdvancedTheming(options: AdvancedThemingOptions = {}) {
       customMetrics: [],
     },
     themeErrorHandling = {
-      onError: (error: Error, context: any) => {
+      onError: (error: Error, context: unknown) => {
         console.error('Theme error:', error, context);
       },
       fallbackBehavior: 'disable',
@@ -364,7 +364,7 @@ export function useAdvancedTheming(options: AdvancedThemingOptions = {}) {
   const errorIdCounter = useRef(0);
 
   // Log theme event
-  const logThemeEvent = useCallback((level: string, message: string, context?: any) => {
+  const logThemeEvent = useCallback((level: string, message: string, context?: unknown) => {
     if (!enableThemeLogging) return;
 
     const log = {
@@ -389,7 +389,7 @@ export function useAdvancedTheming(options: AdvancedThemingOptions = {}) {
     }
   }, [enableThemeLogging, themeDebugging]);
 
-  const applyThemeToDOM = useCallback((themeName: string, themeData: any) => {
+  const applyThemeToDOM = useCallback((themeName: string, themeData: unknown) => {
     // Apply theme to DOM
     document.documentElement.setAttribute('data-theme', themeName);
     
@@ -400,40 +400,45 @@ export function useAdvancedTheming(options: AdvancedThemingOptions = {}) {
   }, [muiTheme]);
 
   // Helper functions
-  const optimizeTheme = useCallback((themeData: any, optimization: any) => {
+  const optimizeTheme = useCallback((themeData: unknown, optimization: unknown) => {
     // Apply theme optimization
-    if (optimization.enableMinification) {
+    const opt = optimization as Record<string, unknown>;
+    if (opt.enableMinification) {
       console.log('Theme minification applied');
     }
     return themeData;
   }, []);
 
-  const compressTheme = useCallback((themeData: any, compression: any) => {
+  const compressTheme = useCallback((themeData: unknown, compression: unknown) => {
     // Apply theme compression
-    if (compression.enableCompression) {
-      console.log(`Theme compressed with ${compression.compressionAlgorithm}`);
+    const comp = compression as Record<string, unknown>;
+    if (comp.enableCompression) {
+      console.log(`Theme compressed with ${comp.compressionAlgorithm}`);
     }
     return themeData;
   }, []);
 
-  const encryptTheme = useCallback((themeData: any, encryption: any) => {
+  const encryptTheme = useCallback((themeData: unknown, encryption: unknown) => {
     // Apply theme encryption
-    if (encryption.enableEncryption) {
-      console.log(`Theme encrypted with ${encryption.encryptionAlgorithm}`);
+    const enc = encryption as Record<string, unknown>;
+    if (enc.enableEncryption) {
+      console.log(`Theme encrypted with ${enc.encryptionAlgorithm}`);
     }
     return themeData;
   }, []);
 
-  const validateThemeSecurity = useCallback((themeData: any, security: any) => {
+  const validateThemeSecurity = useCallback((themeData: unknown, security: unknown) => {
     // Validate theme security
-    if (security.enableSecurity) {
-      console.log(`Theme security validated with ${security.securityPolicy} policy`);
+    const sec = security as Record<string, unknown>;
+    if (sec.enableSecurity) {
+      console.log(`Theme security validated with ${sec.securityPolicy} policy`);
     }
   }, []);
 
-  const cacheTheme = useCallback((themeName: string, themeData: any, caching: any) => {
+  const cacheTheme = useCallback((themeName: string, themeData: unknown, caching: unknown) => {
     // Cache theme
-    if (caching.cacheStrategy === 'localStorage') {
+    const cache = caching as Record<string, unknown>;
+    if (cache.cacheStrategy === 'localStorage') {
       localStorage.setItem(`theme-${themeName}`, JSON.stringify(themeData));
     }
   }, []);
@@ -461,29 +466,29 @@ export function useAdvancedTheming(options: AdvancedThemingOptions = {}) {
 
       // Apply theme composition
       if (enableThemeComposition && themeComposition[themeName]) {
-        const composition = themeComposition[themeName];
+        const composition = themeComposition[themeName] as Record<string, unknown>;
         themeData = { ...themeData, ...composition };
       }
 
       // Apply theme variants
       if (enableThemeVariants && themeVariants[themeName]) {
-        const variants = themeVariants[themeName];
+        const variants = themeVariants[themeName] as Record<string, unknown>;
         themeData = { ...themeData, ...variants };
       }
 
       // Apply theme optimization
       if (enableThemeOptimization) {
-        themeData = optimizeTheme(themeData, themeOptimization);
+        themeData = optimizeTheme(themeData, themeOptimization) as Record<string, unknown>;
       }
 
       // Apply theme compression
       if (enableThemeCompression && themeCompression.enableCompression) {
-        themeData = compressTheme(themeData, themeCompression);
+        themeData = compressTheme(themeData, themeCompression) as Record<string, unknown>;
       }
 
       // Apply theme encryption
       if (enableThemeEncryption && themeEncryption.enableEncryption) {
-        themeData = encryptTheme(themeData, themeEncryption);
+        themeData = encryptTheme(themeData, themeEncryption) as Record<string, unknown>;
       }
 
       // Apply theme security
@@ -591,7 +596,7 @@ export function useAdvancedTheming(options: AdvancedThemingOptions = {}) {
   }, [enableAdvancedTheming, enableThemeSwitching, customThemes, themePresets, enableThemeInheritance, themeInheritance, enableThemeComposition, themeComposition, enableThemeVariants, themeVariants, enableThemeOptimization, enableThemeCompression, themeCompression, enableThemeEncryption, themeEncryption, enableThemeSecurity, applyThemeToDOM, enableThemeCaching, themeCaching, enableThemeMetrics, enableThemeAnalytics, enableThemeLogging, optimizeTheme, themeOptimization, compressTheme, encryptTheme, validateThemeSecurity, themeSecurity, cacheTheme, logThemeEvent, enableThemeErrorHandling, themeErrorHandling]);
 
   // Create theme
-  const createTheme = useCallback((name: string, themeData: any) => {
+  const createTheme = useCallback((name: string, themeData: unknown) => {
     if (!enableAdvancedTheming || !enableCustomThemes) return;
 
     setState(prev => ({
@@ -610,7 +615,7 @@ export function useAdvancedTheming(options: AdvancedThemingOptions = {}) {
   }, [enableAdvancedTheming, enableCustomThemes, enableThemeLogging, enableThemePresets, logThemeEvent, themePresets]);
 
   // Update theme
-  const updateTheme = useCallback((name: string, themeData: any) => {
+  const updateTheme = useCallback((name: string, themeData: unknown) => {
     if (!enableAdvancedTheming || !enableCustomThemes) return;
 
     if (enableThemeLogging) {

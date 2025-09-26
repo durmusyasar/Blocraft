@@ -202,25 +202,26 @@ export const usePhoneSuggestions = ({
 
   // Kişi arama (Web Contacts API)
   const searchContacts = useCallback(async (query: string): Promise<PhoneSuggestion[]> => {
-    if (!enableContactIntegration || !(navigator as any).contacts) return [];
+    if (!enableContactIntegration || !(navigator as unknown as { contacts?: unknown }).contacts) return [];
 
     try {
-      const contacts = await (navigator as any).contacts.select(['name', 'tel'], { multiple: true });
+      const contacts = await ((navigator as unknown as { contacts?: { select: (fields: string[], options: { multiple: boolean }) => Promise<unknown[]> } }).contacts?.select(['name', 'tel'], { multiple: true })) || [];
       const suggestions: PhoneSuggestion[] = [];
 
-      contacts.forEach((contact: any) => {
-        if (contact.tel && contact.tel.length > 0) {
-          contact.tel.forEach((tel: any) => {
+      contacts.forEach((contact: unknown) => {
+        const contactData = contact as { name?: string; tel?: Array<{ value?: string }> };
+        if (contactData.tel && contactData.tel.length > 0) {
+          contactData.tel.forEach((tel) => {
             if (tel.value && tel.value.includes(query)) {
               const countryData = countryList.find(c => c.code === country);
               const formattedPhone = formatPhoneNumber(tel.value, countryData?.mask || '(999) 999-9999');
               
               suggestions.push({
-                id: `contact-${contact.name}-${tel.value}`,
+                id: `contact-${contactData.name}-${tel.value}`,
                 phone: tel.value,
                 formattedPhone,
                 country,
-                label: `${contact.name} - ${formattedPhone}`,
+                label: `${contactData.name} - ${formattedPhone}`,
                 type: 'contact',
               });
             }
@@ -259,7 +260,7 @@ export const usePhoneSuggestions = ({
           formattedPhone,
           country: countryCode,
           label: `Yaygın: ${formattedPhone}`,
-          type: 'common' as any,
+          type: 'similar',
         });
       }
     });

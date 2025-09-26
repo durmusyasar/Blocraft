@@ -6,7 +6,7 @@ export interface SuggestionItem {
   type: 'recent' | 'favorite' | 'trending' | 'recommended' | 'custom';
   category?: string;
   icon?: string;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
   timestamp?: number;
   frequency?: number;
 }
@@ -37,7 +37,7 @@ export interface UseSmartSuggestionsReturn {
   recommendations: SuggestionItem[];
   isLoading: boolean;
   searchSuggestions: (query: string) => void;
-  addToHistory: (text: string, metadata?: Record<string, any>) => void;
+  addToHistory: (text: string, metadata?: Record<string, unknown>) => void;
   addToFavorites: (suggestion: SuggestionItem) => void;
   removeFromFavorites: (suggestionId: string) => void;
   clearHistory: () => void;
@@ -223,7 +223,7 @@ export const useSmartSuggestions = ({
   ]);
 
   // Add to history
-  const addToHistory = useCallback((text: string, metadata?: Record<string, any>) => {
+  const addToHistory = useCallback((text: string, metadata?: Record<string, unknown>) => {
     if (!enableRecentHistory || !enableSmartSuggestions) return;
     
     const newItem: SuggestionItem = {

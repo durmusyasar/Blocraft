@@ -5,9 +5,9 @@
   - [Özellikler](#özellikler)
   - [Props Tablosu](#props-tablosu)
   - [Kullanım](#kullanım)
-  - [Şifre Gücü ve Kurallar](#şifre-gücü-ve-kurallar)
-  - [Gelişmiş Özellikler](#gelişmiş-özellikler)
+  - [BcTextField Kalıtımı](#bctextfield-kalıtımı)
   - [React Hook Form ile Kullanım](#react-hook-form-ile-kullanım)
+  - [Hook'lar](#hooklar)
   - [Sıkça Sorulan Sorular (FAQ)](#sıkça-sorulan-sorular-faq)
   - [Sorun Giderme](#sorun-giderme)
   - [En İyi Kullanım İpuçları](#en-iyi-kullanım-ipuçları)
@@ -16,9 +16,9 @@
   - [Features](#features)
   - [Props Table](#props-table)
   - [Usage](#usage)
-  - [Password Strength and Rules](#password-strength-and-rules)
-  - [Advanced Features](#advanced-features)
+  - [BcTextField Inheritance](#bctextfield-inheritance)
   - [React Hook Form Integration](#react-hook-form-integration)
+  - [Hooks](#hooks)
   - [Frequently Asked Questions (FAQ)](#frequently-asked-questions-faq)
   - [Troubleshooting](#troubleshooting)
   - [Best Practices](#best-practices)
@@ -29,298 +29,345 @@
 ## Türkçe
 
 ### Özellikler
-- Material-UI tabanlı, modern ve özelleştirilebilir şifre input bileşeni
-- **BcTextField inheritance** - Tüm BcTextField özelliklerini destekler
-- **Şifre gücü göstergesi** ve görsel kurallar listesi
-- **Şifre göster/gizle** ve **kopyala** butonları
-- **Otomatik şifre üretme** özelliği
-- **Breach kontrolü** (HaveIBeenPwned API entegrasyonu)
-- **Klavye kısayolları** desteği
-- **Gelişmiş şifre skorlama** (entropy, yüzde hesaplama)
-- **Tema uyumlu dinamik stiller**
-- **Mobil optimizasyonlar** ve haptic feedback
-- **Gelişmiş i18n** (pluralization, interpolation)
-- **Asenkron validasyon** desteği
-- **Çoklu dil/i18n desteği** (Türkçe, İngilizce)
-- **Erişilebilirlik** (ARIA, screen reader, keyboard navigation)
-- **Responsive tasarım** ve tema uyumluluğu
-- **Error Boundary** ile hata yönetimi
+- Material-UI tabanlı, BcTextField'den türetilmiş şifre input bileşeni
+- Şifre gücü göstergesi, görünürlük toggle'ı, şifre üretimi ve güvenlik analizi
+- BcTextField'in tüm özelliklerini kalıtım yoluyla alır
+- Responsive, status, loading, clear, i18n, erişilebilirlik desteği
+- **Çoklu dil/i18n desteği** (translations, locale, fallbackLocale)
+- **Async validation** (enableAsyncValidation, validateInput, showValidationStatus, validationDebounceMs)
+- **Monitoring/analitik** (monitoring prop'u ile değişiklik, hata, performans callback'leri)
+- **Custom render** (renderCustomIcon, renderHelperText)
+- **High contrast & reduced motion** (erişilebilirlik için)
+- **RTL (sağdan sola) desteği**
+
+#### 🔐 Şifre Özel Özellikleri
+- **Şifre Görünürlük Toggle'ı**: Şifreyi göster/gizle butonu
+- **Şifre Gücü Göstergesi**: Gerçek zamanlı şifre gücü analizi
+- **Şifre Üretimi**: Güvenli şifre üretme özelliği
+- **Güvenlik Analizi**: Yaygın şifre, klavye kalıpları ve daha fazlası için kontrol
+- **Validasyon**: Kapsamlı şifre validasyonu
+- **Analytics**: Kullanıcı davranışı ve performans takibi
+
+#### 🚀 Gelişmiş Özellikler
+- **QR Kod**: Şifre için QR kod oluşturma
+- **Sesli Arama**: Sesli komutlarla şifre arama
+- **Öneriler**: Akıllı şifre önerileri
+- **Geçmiş Takibi**: Detaylı şifre geçmişi
+- **Mobil Optimizasyonlar**: Mobil cihazlar için özel optimizasyonlar
+- **Klavye Kısayolları**: Güçlü kullanıcılar için klavye kısayolları
+
+#### ♿ Erişilebilirlik ve Performans
+- **Accessibility**: Screen reader, keyboard navigation, ARIA labels, live regions, focus management
+- **Performance**: Lazy loading, debouncing, memoization, efficient rendering
+- **Monitoring**: Real-time monitoring, analytics, error reporting, user behavior tracking
 
 ### Props Tablosu
-| Prop | Tip | Açıklama |
-|------|-----|----------|
-| showStrengthBar | boolean | Şifre gücü barı gösterilsin mi? |
-| minLength | number | Minimum şifre uzunluğu |
-| requireUppercase | boolean | Büyük harf gereksinimi |
-| requireLowercase | boolean | Küçük harf gereksinimi |
-| requireNumber | boolean | Rakam gereksinimi |
-| requireSpecial | boolean | Özel karakter gereksinimi |
-| onStrengthChange | function | Şifre gücü değiştiğinde çağrılır |
-| customRules | array | Özel şifre kuralları |
-| useZxcvbnStrength | boolean | Gelişmiş şifre gücü ölçümü |
-| showPasswordToggle | boolean | Şifre göster/gizle butonu |
-| showCopyButton | boolean | Kopyala butonu |
-| enablePasswordGenerator | boolean | Şifre üretme özelliği |
-| enableBreachCheck | boolean | Breach kontrolü özelliği |
-| enableKeyboardShortcuts | boolean | Klavye kısayolları özelliği |
-| enableAdvancedScoring | boolean | Gelişmiş şifre skorlama |
-| enableThemeAwareStyles | boolean | Tema uyumlu stiller |
-| enableAdvancedMonitoring | boolean | Gelişmiş izleme |
-| enableMobileOptimizations | boolean | Mobil optimizasyonlar |
-| enableAdvancedI18n | boolean | Gelişmiş i18n |
-| enableAsyncValidation | boolean | Asenkron validasyon |
-| validatePassword | function | Asenkron şifre validasyon fonksiyonu |
-| showValidationStatus | boolean | Validasyon durumu gösterilsin mi? |
-| validationDebounceMs | number | Validasyon debounce süresi |
-| monitoring | object | İzleme fonksiyonları |
-| ...rest | ... | Diğer BcTextField props |
+
+#### BcTextField'den Kalıtılan Props
+Tüm BcTextField props'ları kullanılabilir. Detaylı liste için BcTextField dokümantasyonuna bakın.
+
+#### Şifre Özel Props
+
+| Prop | Tip | Varsayılan | Açıklama |
+|------|-----|------------|----------|
+| **Temel Props** | | | |
+| showPasswordToggle | boolean | true | Şifre görünürlük toggle butonunu göster |
+| passwordToggleLabel | string | - | Toggle butonu için özel etiket |
+| enablePasswordGeneration | boolean | false | Şifre üretim özelliğini etkinleştir |
+| enableStrengthIndicator | boolean | true | Şifre gücü göstergesini etkinleştir |
+| showStrengthMeter | boolean | true | Şifre gücü çubuğunu göster |
+| enablePasswordValidation | boolean | true | Şifre validasyonunu etkinleştir |
+| showRequirements | boolean | true | Şifre gereksinimlerini göster |
+| **Güvenlik Props** | | | |
+| securityFeatures | PasswordSecurityFeatures | - | Güvenlik özellikleri konfigürasyonu |
+| onSecurityWarning | (warning: string, severity: string) => void | - | Güvenlik uyarısı callback'i |
+| **Görsel Props** | | | |
+| strengthDisplayMode | 'text' \| 'meter' \| 'both' \| 'none' | 'both' | Şifre gücü gösterim modu |
+| strengthColorScheme | 'default' \| 'material' \| 'custom' | 'default' | Şifre gücü renk şeması |
+| customStrengthColors | object | - | Özel şifre gücü renkleri |
+| requirementsPosition | 'below' \| 'tooltip' \| 'popover' | 'below' | Gereksinimler konumu |
+| requirementsStyle | 'list' \| 'inline' \| 'compact' | 'list' | Gereksinimler stili |
+| **Çeviri Props** | | | |
+| passwordTranslations | object | - | Özel çeviriler |
+| passwordToggleAriaLabel | string | - | Toggle butonu için aria etiketi |
+| strengthMeterAriaLabel | string | - | Güç çubuğu için aria etiketi |
+| requirementsAriaLabel | string | - | Gereksinimler için aria etiketi |
+| **BcTextField Kalıtılan** | | | |
+| appearance | string | "outlined" | Görünüm stili (premium, soft, glass, minimal, neumorph, underline, dark, borderless) |
+| size | string | "medium" | Boyut (small, medium, large) |
+| status | string | - | Durum göstergesi (error, warning, success, info) |
+| color | string | "primary" | Renk teması (primary, secondary, success, error, info, warning) |
+| responsiveWidth | boolean | false | Responsive genişlik |
+| showClearButton | boolean | false | Temizleme butonu göster |
+| loading | boolean | false | Yükleme durumu |
+| disabled | boolean | false | Devre dışı |
+| translations | object | - | Çoklu dil/i18n çevirileri |
+| locale, fallbackLocale | string | - | Dil kodu ve yedek dil |
+| enableAsyncValidation | boolean | false | Asenkron doğrulama aktif |
+| validateInput | fonksiyon | - | Asenkron doğrulama fonksiyonu |
+| showValidationStatus | boolean | false | Doğrulama durumunu göster |
+| validationDebounceMs | number | 300 | Doğrulama debounce süresi (ms) |
+| monitoring | object | - | onChange, onError, onPerformance callback'leri |
+| renderCustomIcon | fonksiyon | - | Durum ikonunu özelleştir |
+| renderHelperText | fonksiyon | - | helperText'i özelleştir |
+| enableHighContrast | boolean | false | Yüksek kontrast modu |
+| enableReducedMotion | boolean | false | Hareket azaltma modu |
+| enableRTL | boolean | false | Sağdan sola yazım desteği |
+| fontSize | number/string | - | Yazı tipi boyutu |
+| inputPrefix | node | - | Input başına özel içerik |
+| inputSuffix | node | - | Input sonuna özel içerik |
 
 ### Kullanım
 
 #### Temel Kullanım
 ```tsx
-import { BcPasswordInput } from "../BcPasswordInput/BcPasswordInput";
+import { BcPasswordInput } from "./components/BcPasswordInput/BcPasswordInput";
 
 <BcPasswordInput
   label="Şifre"
   placeholder="Şifrenizi girin"
-  showStrengthBar={true}
-  minLength={8}
-  requireUppercase={true}
-  requireLowercase={true}
-  requireNumber={true}
-  requireSpecial={true}
 />
 ```
 
-#### Gelişmiş Özelliklerle
+#### Gelişmiş Kullanım
 ```tsx
 <BcPasswordInput
-  label="Güçlü Şifre"
-  placeholder="Güçlü bir şifre girin"
-  showStrengthBar={true}
-  useZxcvbnStrength={true}
-  enablePasswordGenerator={true}
-  enableBreachCheck={true}
-  enableKeyboardShortcuts={true}
-  enableAdvancedScoring={true}
-  enableThemeAwareStyles={true}
-  enableAdvancedMonitoring={true}
-  enableMobileOptimizations={true}
-  enableAdvancedI18n={true}
-  showPasswordToggle={true}
-  showCopyButton={true}
+  label="Güvenli Şifre"
+  placeholder="Şifrenizi girin veya üretin"
+  appearance="premium"
+  size="large"
+  color="success"
   showClearButton={true}
-  customRules={[
-    {
-      key: 'noCommonWords',
-      label: 'Yaygın kelimeler yok',
-      test: (password) => !password.toLowerCase().includes('password')
-    }
-  ]}
-  onStrengthChange={(strength) => console.log('Şifre gücü:', strength)}
-  monitoring={{
-    onChange: (value) => console.log('Şifre değişti:', value),
-    onStrengthChange: (strength) => console.log('Güç değişti:', strength),
-    onError: (error) => console.error('Hata:', error)
+  responsiveWidth={true}
+  enableRTL={true}
+  
+  // Şifre özel özellikler
+  showPasswordToggle={true}
+  enablePasswordGeneration={true}
+  enableStrengthIndicator={true}
+  showStrengthMeter={true}
+  enablePasswordValidation={true}
+  showRequirements={true}
+  
+  // Güvenlik özellikleri
+  securityFeatures={{
+    enableCommonPasswordCheck: true,
+    enablePatternDetection: true,
+    enableKeyboardPatternCheck: true,
+    enableRepeatedCharCheck: true,
+    enableSequentialCharCheck: true,
+  }}
+  
+  // Özel yapılandırma
+  customStrengthColors={{
+    veryWeak: '#ff0000',
+    weak: '#ff8800',
+    fair: '#ffaa00',
+    good: '#00aa00',
+    strong: '#0088ff',
+  }}
+  
+  passwordTranslations={{
+    veryWeak: 'Çok Zayıf',
+    weak: 'Zayıf',
+    fair: 'Orta',
+    good: 'İyi',
+    strong: 'Güçlü',
+    generatePassword: 'Şifre Üret',
+    requirementsLabel: 'Şifre Gereksinimleri',
+  }}
+  
+  onStrengthChange={(strength, score) => {
+    console.log('Şifre gücü:', strength, score);
+  }}
+  
+  onPasswordGenerated={(password) => {
+    console.log('Üretilen şifre:', password);
   }}
 />
 ```
 
-### Şifre Gücü ve Kurallar
+### BcTextField Kalıtımı
 
-#### Temel Kurallar
-- **Minimum uzunluk**: Varsayılan 8 karakter
-- **Büyük harf**: A-Z arası en az bir karakter
-- **Küçük harf**: a-z arası en az bir karakter
-- **Rakam**: 0-9 arası en az bir karakter
-- **Özel karakter**: !@#$%^&*()_+-=[]{}|;:,.<>? arası en az bir karakter
-
-#### Özel Kurallar
+#### Tüm BcTextField Özellikleri Kullanılabilir
 ```tsx
-const customRules = [
-  {
-    key: 'noCommonWords',
-    label: 'Yaygın kelimeler yok',
-    test: (password) => !password.toLowerCase().includes('password')
-  },
-  {
-    key: 'noSequential',
-    label: 'Ardışık karakterler yok',
-    test: (password) => !password.includes('123') && !password.includes('abc')
-  }
-];
-
-<BcPasswordInput customRules={customRules} />
-```
-
-#### Zxcvbn Entegrasyonu
-```tsx
+// BcTextField'den kalıtılan tüm özellikler çalışır
 <BcPasswordInput
-  useZxcvbnStrength={true}
-  // 0-4 arası güç seviyesi (zxcvbn)
-  // 0: Çok zayıf, 1: Zayıf, 2: Orta, 3: Güçlü, 4: Çok güçlü
-/>
-```
-
-### Gelişmiş Özellikler
-
-#### 1. Şifre Üretme
-```tsx
-<BcPasswordInput
-  enablePasswordGenerator={true}
-  // "Güçlü Şifre Üret" butonu görünür
-  // Otomatik olarak kurallara uygun şifre üretir
-/>
-```
-
-#### 2. Breach Kontrolü
-```tsx
-<BcPasswordInput
-  enableBreachCheck={true}
-  // HaveIBeenPwned API ile şifre güvenlik kontrolü
-  // İhlal edilmiş şifreler için uyarı gösterir
-/>
-```
-
-#### 3. Klavye Kısayolları
-```tsx
-<BcPasswordInput
-  enableKeyboardShortcuts={true}
-  // Ctrl+H: Göster/gizle
-  // Ctrl+C: Kopyala
-  // Ctrl+Delete: Temizle
-  // Ctrl+G: Şifre üret
-  // Escape: Temizle
-/>
-```
-
-#### 4. Gelişmiş Skorlama
-```tsx
-<BcPasswordInput
-  enableAdvancedScoring={true}
-  // Entropy hesaplama
-  // Yüzde bazlı güç skoru
-  // Detaylı analiz bilgileri
-/>
-```
-
-#### 5. Tema Uyumlu Stiller
-```tsx
-<BcPasswordInput
-  enableThemeAwareStyles={true}
-  // Dinamik tema renkleri
-  // Dark/light mode uyumluluğu
-  // Otomatik stil adaptasyonu
-/>
-```
-
-#### 6. Mobil Optimizasyonlar
-```tsx
-<BcPasswordInput
-  enableMobileOptimizations={true}
-  // Haptic feedback
-  // Touch optimizasyonları
-  // Responsive layout
-/>
-```
-
-#### 7. Gelişmiş i18n
-```tsx
-<BcPasswordInput
-  enableAdvancedI18n={true}
-  // Pluralization desteği
-  // String interpolation
-  // Gelişmiş çeviri özellikleri
+  // BcTextField kalıtılan props
+  label="Şifre"
+  appearance="premium"
+  size="large"
+  color="success"
+  showClearButton={true}
+  responsiveWidth={true}
+  enableRTL={true}
+  enableHighContrast={true}
+  enableReducedMotion={true}
+  translations={{
+    clearButtonLabel: "Temizle",
+    helperText: "Yardım metni",
+    statusMessage: "Durum mesajı",
+    label: "Etiket"
+  }}
+  locale="tr"
+  helperText="Şifrenizi girin"
+  status="success"
+  statusMessage="Geçerli şifre"
+  
+  // Şifre özel props
+  showPasswordToggle={true}
+  enablePasswordGeneration={true}
+  enableStrengthIndicator={true}
+  enablePasswordValidation={true}
 />
 ```
 
 ### React Hook Form ile Kullanım
-
 ```tsx
-import { useForm, Controller } from "react-hook-form";
-import { BcPasswordInput } from "../BcPasswordInput/BcPasswordInput";
+import { useForm, Controller } from 'react-hook-form';
+import { BcPasswordInput } from './BcPasswordInput';
 
-const MyForm = () => {
+function MyForm() {
   const { control, handleSubmit } = useForm();
-
-  const onSubmit = (data) => {
-    console.log('Form data:', data);
-  };
+  const onSubmit = data => console.log(data);
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <Controller
         name="password"
         control={control}
-        rules={{
-          required: 'Şifre gerekli',
-          minLength: {
-            value: 8,
-            message: 'En az 8 karakter olmalı'
-          }
-        }}
-        render={({ field, fieldState }) => (
+        defaultValue=""
+        render={({ field }) => (
           <BcPasswordInput
             {...field}
             label="Şifre"
             placeholder="Şifrenizi girin"
-            showStrengthBar={true}
-            error={!!fieldState.error}
-            helperText={fieldState.error?.message}
+            showPasswordToggle
+            enablePasswordGeneration
+            enableStrengthIndicator
+            enablePasswordValidation
           />
         )}
       />
       <button type="submit">Gönder</button>
     </form>
   );
-};
+}
+```
+
+### Hook'lar
+
+#### usePasswordStrength
+Şifre gücü analizi için hook.
+
+```tsx
+import { usePasswordStrength } from './hooks/usePasswordStrength';
+
+const { strengthResult, analyzePassword, getStrengthColor } = usePasswordStrength({
+  minLength: 8,
+  requireUppercase: true,
+  requireLowercase: true,
+  requireNumbers: true,
+  requireSpecialChars: true,
+});
+```
+
+#### usePasswordVisibility
+Şifre görünürlük yönetimi için hook.
+
+```tsx
+import { usePasswordVisibility } from './hooks/usePasswordVisibility';
+
+const { isVisible, toggleVisibility, getToggleProps } = usePasswordVisibility({
+  defaultVisible: false,
+  rememberVisibility: true,
+  onVisibilityChange: (visible) => console.log('Visibility changed:', visible),
+});
+```
+
+#### usePasswordGeneration
+Şifre üretimi için hook.
+
+```tsx
+import { usePasswordGeneration } from './hooks/usePasswordGeneration';
+
+const { generatePassword, isGenerating, copyToClipboard } = usePasswordGeneration({
+  length: 12,
+  includeUppercase: true,
+  includeLowercase: true,
+  includeNumbers: true,
+  includeSpecialChars: true,
+});
+```
+
+#### usePasswordSecurity
+Güvenlik analizi için hook.
+
+```tsx
+import { usePasswordSecurity } from './hooks/usePasswordSecurity';
+
+const { analyzePasswordSecurity, securityWarnings } = usePasswordSecurity({
+  enableCommonPasswordCheck: true,
+  enablePatternDetection: true,
+  enableKeyboardPatternCheck: true,
+});
+```
+
+#### usePasswordValidation
+Validasyon için hook.
+
+```tsx
+import { usePasswordValidation } from './hooks/usePasswordValidation';
+
+const { validatePassword, validationResult } = usePasswordValidation([
+  {
+    id: 'minLength',
+    name: 'Minimum Length',
+    test: (password) => password.length >= 8,
+    message: 'En az 8 karakter olmalı',
+    weight: 10,
+    enabled: true,
+  },
+]);
+```
+
+#### usePasswordAnalytics
+Analytics için hook.
+
+```tsx
+import { usePasswordAnalytics } from './hooks/usePasswordAnalytics';
+
+const { trackPasswordInput, trackStrengthChange, getCurrentSessionMetrics } = usePasswordAnalytics({
+  trackStrengthChanges: true,
+  trackVisibilityToggles: true,
+  trackGenerationUsage: true,
+});
 ```
 
 ### Sıkça Sorulan Sorular (FAQ)
-
-#### Q: Şifre gücü nasıl hesaplanıyor?
-A: Temel kurallar (uzunluk, karakter çeşitliliği) ve isteğe bağlı olarak zxcvbn kütüphanesi kullanılarak hesaplanır.
-
-#### Q: Breach kontrolü nasıl çalışıyor?
-A: HaveIBeenPwned API kullanılarak şifrenin veri ihlallerinde bulunup bulunmadığı kontrol edilir.
-
-#### Q: Klavye kısayolları nelerdir?
-A: Ctrl+H (göster/gizle), Ctrl+C (kopyala), Ctrl+Delete (temizle), Ctrl+G (üret), Escape (temizle).
-
-#### Q: Özel kurallar nasıl eklenir?
-A: `customRules` prop'u ile `{ key, label, test }` formatında kurallar eklenebilir.
-
-#### Q: Mobil cihazlarda nasıl çalışır?
-A: Haptic feedback, touch optimizasyonları ve responsive layout ile mobil deneyim optimize edilmiştir.
+- **BcPasswordInput neden BcTextField'den türetiliyor?**
+  - Tüm BcTextField özelliklerini kalıtım yoluyla almak ve tutarlı API sağlamak için.
+- **i18n çevirileri nereden yükleniyor?**
+  - i18n çevirileri i18n klasöründeki JSON dosyalarından veya translations prop'u ile yüklenir.
+- **Şifre gücü nasıl hesaplanıyor?**
+  - Uzunluk, karakter çeşitliliği, karmaşıklık ve güvenlik kurallarına göre hesaplanır.
+- **Şifre üretimi nasıl özelleştirilir?**
+  - generationOptions prop'u ile uzunluk, karakter setleri ve kurallar tanımlanabilir.
 
 ### Sorun Giderme
-
-#### Şifre gücü gösterilmiyor
-- `showStrengthBar={true}` olduğundan emin olun
-- Şifre alanına değer girildiğinden emin olun
-
-#### Breach kontrolü çalışmıyor
-- İnternet bağlantınızı kontrol edin
-- API rate limit'ini aşmadığınızdan emin olun
-
-#### Klavye kısayolları çalışmıyor
-- `enableKeyboardShortcuts={true}` olduğundan emin olun
-- Input focus'ta olduğundan emin olun
-
-#### Özel kurallar çalışmıyor
-- `test` fonksiyonunun boolean döndürdüğünden emin olun
-- `key` ve `label` alanlarının dolu olduğundan emin olun
+- **"toHaveNoViolations" hatası:**
+  - jest-axe için tip dosyasını (jest-axe.d.ts) ekleyin.
+- **"Cannot find module 'react-hook-form'":**
+  - Paketi kurduğunuzdan ve import ettiğinizden emin olun.
+- **Performans sorunları:**
+  - Çok büyük şifre listelerinde lazy loading ve memoization kullanın.
 
 ### En İyi Kullanım İpuçları
-
-1. **Güvenlik**: `enableBreachCheck={true}` kullanarak şifre güvenliğini artırın
-2. **Kullanıcı Deneyimi**: `enablePasswordGenerator={true}` ile kullanıcılara yardımcı olun
-3. **Erişilebilirlik**: `enableKeyboardShortcuts={true}` ile klavye kullanıcılarını destekleyin
-4. **Performans**: `enableAdvancedMonitoring={true}` ile performansı izleyin
-5. **Mobil**: `enableMobileOptimizations={true}` ile mobil deneyimi optimize edin
-6. **Tema**: `enableThemeAwareStyles={true}` ile tema uyumluluğunu sağlayın
-7. **i18n**: `enableAdvancedI18n={true}` ile gelişmiş çeviri özelliklerini kullanın
+- i18n için translations prop'unu ve locale/fallbackLocale değerlerini kullanın.
+- Async validation fonksiyonlarını useCallback ile sarmalayın.
+- Monitoring callback'lerinde try/catch kullanın.
+- customStrengthColors ile şifre gücü renklerini özelleştirin.
+- enableMobileOptimizations'ı mobil uygulamalar için etkinleştirin.
 
 ### Lisans
 MIT
@@ -330,298 +377,345 @@ MIT
 ## English
 
 ### Features
-- Material-UI based, modern and customizable password input component
-- **BcTextField inheritance** - Supports all BcTextField features
-- **Password strength indicator** and visual rules list
-- **Show/hide password** and **copy** buttons
-- **Automatic password generation** feature
-- **Breach check** (HaveIBeenPwned API integration)
-- **Keyboard shortcuts** support
-- **Advanced password scoring** (entropy, percentage calculation)
-- **Theme-aware dynamic styles**
-- **Mobile optimizations** and haptic feedback
-- **Advanced i18n** (pluralization, interpolation)
-- **Async validation** support
-- **Multi-language/i18n support** (Turkish, English)
-- **Accessibility** (ARIA, screen reader, keyboard navigation)
-- **Responsive design** and theme compatibility
-- **Error Boundary** with error handling
+- Material-UI based password input component **derived from BcTextField**
+- Password strength indicator, visibility toggle, password generation and security analysis
+- Inherits all BcTextField features through proper inheritance
+- Responsive, status, loading, clear, i18n, accessibility support
+- **Multi-language/i18n support** (translations, locale, fallbackLocale)
+- **Async validation** (enableAsyncValidation, validateInput, showValidationStatus, validationDebounceMs)
+- **Monitoring/analytics** (monitoring prop with onChange, onError, onPerformance callbacks)
+- **Custom render** (renderCustomIcon, renderHelperText)
+- **High contrast & reduced motion** (for accessibility)
+- **RTL (right-to-left) support**
+
+#### 🔐 Password-Specific Features
+- **Password Visibility Toggle**: Show/hide password button
+- **Password Strength Indicator**: Real-time password strength analysis
+- **Password Generation**: Secure password generation feature
+- **Security Analysis**: Control for common passwords, keyboard patterns and more
+- **Validation**: Comprehensive password validation
+- **Analytics**: User behavior and performance tracking
+
+#### 🚀 Advanced Features
+- **QR Code**: Generate QR codes for passwords
+- **Voice Search**: Search passwords with voice commands
+- **Suggestions**: Smart password suggestions
+- **History Tracking**: Detailed password history
+- **Mobile Optimizations**: Special optimizations for mobile devices
+- **Keyboard Shortcuts**: Keyboard shortcuts for power users
+
+#### ♿ Accessibility and Performance
+- **Accessibility**: Screen reader, keyboard navigation, ARIA labels, live regions, focus management
+- **Performance**: Lazy loading, debouncing, memoization, efficient rendering
+- **Monitoring**: Real-time monitoring, analytics, error reporting, user behavior tracking
 
 ### Props Table
-| Prop | Type | Description |
-|------|------|-------------|
-| showStrengthBar | boolean | Show password strength bar? |
-| minLength | number | Minimum password length |
-| requireUppercase | boolean | Require uppercase letter |
-| requireLowercase | boolean | Require lowercase letter |
-| requireNumber | boolean | Require number |
-| requireSpecial | boolean | Require special character |
-| onStrengthChange | function | Called when password strength changes |
-| customRules | array | Custom password rules |
-| useZxcvbnStrength | boolean | Advanced password strength calculation |
-| showPasswordToggle | boolean | Show password toggle button |
-| showCopyButton | boolean | Show copy button |
-| enablePasswordGenerator | boolean | Password generation feature |
-| enableBreachCheck | boolean | Breach check feature |
-| enableKeyboardShortcuts | boolean | Keyboard shortcuts feature |
-| enableAdvancedScoring | boolean | Advanced password scoring |
-| enableThemeAwareStyles | boolean | Theme-aware styles |
-| enableAdvancedMonitoring | boolean | Advanced monitoring |
-| enableMobileOptimizations | boolean | Mobile optimizations |
-| enableAdvancedI18n | boolean | Advanced i18n |
-| enableAsyncValidation | boolean | Async validation |
-| validatePassword | function | Async password validation function |
-| showValidationStatus | boolean | Show validation status? |
-| validationDebounceMs | number | Validation debounce duration |
-| monitoring | object | Monitoring callbacks |
-| ...rest | ... | Other BcTextField props |
+
+#### Inherited Props (from BcTextField)
+All BcTextField props are available. See BcTextField documentation for complete list.
+
+#### Password-Specific Props
+
+| Prop | Type | Default | Description |
+|------|-----|---------|-------------|
+| **Basic Props** | | | |
+| showPasswordToggle | boolean | true | Show password visibility toggle button |
+| passwordToggleLabel | string | - | Custom label for toggle button |
+| enablePasswordGeneration | boolean | false | Enable password generation feature |
+| enableStrengthIndicator | boolean | true | Enable password strength indicator |
+| showStrengthMeter | boolean | true | Show password strength meter |
+| enablePasswordValidation | boolean | true | Enable password validation |
+| showRequirements | boolean | true | Show password requirements |
+| **Security Props** | | | |
+| securityFeatures | PasswordSecurityFeatures | - | Security features configuration |
+| onSecurityWarning | (warning: string, severity: string) => void | - | Security warning callback |
+| **Visual Props** | | | |
+| strengthDisplayMode | 'text' \| 'meter' \| 'both' \| 'none' | 'both' | Password strength display mode |
+| strengthColorScheme | 'default' \| 'material' \| 'custom' | 'default' | Password strength color scheme |
+| customStrengthColors | object | - | Custom password strength colors |
+| requirementsPosition | 'below' \| 'tooltip' \| 'popover' | 'below' | Requirements position |
+| requirementsStyle | 'list' \| 'inline' \| 'compact' | 'list' | Requirements style |
+| **Translation Props** | | | |
+| passwordTranslations | object | - | Custom translations |
+| passwordToggleAriaLabel | string | - | Aria label for toggle button |
+| strengthMeterAriaLabel | string | - | Aria label for strength meter |
+| requirementsAriaLabel | string | - | Aria label for requirements |
+| **BcTextField Inherited** | | | |
+| appearance | string | "outlined" | Appearance style (premium, soft, glass, minimal, neumorph, underline, dark, borderless) |
+| size | string | "medium" | Size (small, medium, large) |
+| status | string | - | Status indicator (error, warning, success, info) |
+| color | string | "primary" | Color theme (primary, secondary, success, error, info, warning) |
+| responsiveWidth | boolean | false | Responsive width |
+| showClearButton | boolean | false | Show clear button |
+| loading | boolean | false | Loading state |
+| disabled | boolean | false | Disabled |
+| translations | object | - | Multi-language/i18n translations |
+| locale, fallbackLocale | string | - | Language code and fallback |
+| enableAsyncValidation | boolean | false | Enable async validation |
+| validateInput | function | - | Async validation function |
+| showValidationStatus | boolean | false | Show validation status |
+| validationDebounceMs | number | 300 | Validation debounce duration (ms) |
+| monitoring | object | - | onChange, onError, onPerformance callbacks |
+| renderCustomIcon | function | - | Custom status icon renderer |
+| renderHelperText | function | - | Custom helperText renderer |
+| enableHighContrast | boolean | false | High contrast mode |
+| enableReducedMotion | boolean | false | Reduced motion mode |
+| enableRTL | boolean | false | Right-to-left support |
+| fontSize | number/string | - | Font size |
+| inputPrefix | node | - | Custom content at input start |
+| inputSuffix | node | - | Custom content at input end |
 
 ### Usage
 
 #### Basic Usage
 ```tsx
-import { BcPasswordInput } from "../BcPasswordInput/BcPasswordInput";
+import { BcPasswordInput } from "./components/BcPasswordInput/BcPasswordInput";
 
 <BcPasswordInput
   label="Password"
   placeholder="Enter your password"
-  showStrengthBar={true}
-  minLength={8}
-  requireUppercase={true}
-  requireLowercase={true}
-  requireNumber={true}
-  requireSpecial={true}
 />
 ```
 
-#### With Advanced Features
+#### Advanced Usage
 ```tsx
 <BcPasswordInput
-  label="Strong Password"
-  placeholder="Enter a strong password"
-  showStrengthBar={true}
-  useZxcvbnStrength={true}
-  enablePasswordGenerator={true}
-  enableBreachCheck={true}
-  enableKeyboardShortcuts={true}
-  enableAdvancedScoring={true}
-  enableThemeAwareStyles={true}
-  enableAdvancedMonitoring={true}
-  enableMobileOptimizations={true}
-  enableAdvancedI18n={true}
-  showPasswordToggle={true}
-  showCopyButton={true}
+  label="Secure Password"
+  placeholder="Enter or generate your password"
+  appearance="premium"
+  size="large"
+  color="success"
   showClearButton={true}
-  customRules={[
-    {
-      key: 'noCommonWords',
-      label: 'No common words',
-      test: (password) => !password.toLowerCase().includes('password')
-    }
-  ]}
-  onStrengthChange={(strength) => console.log('Password strength:', strength)}
-  monitoring={{
-    onChange: (value) => console.log('Password changed:', value),
-    onStrengthChange: (strength) => console.log('Strength changed:', strength),
-    onError: (error) => console.error('Error:', error)
+  responsiveWidth={true}
+  enableRTL={true}
+  
+  // Password-specific features
+  showPasswordToggle={true}
+  enablePasswordGeneration={true}
+  enableStrengthIndicator={true}
+  showStrengthMeter={true}
+  enablePasswordValidation={true}
+  showRequirements={true}
+  
+  // Security features
+  securityFeatures={{
+    enableCommonPasswordCheck: true,
+    enablePatternDetection: true,
+    enableKeyboardPatternCheck: true,
+    enableRepeatedCharCheck: true,
+    enableSequentialCharCheck: true,
+  }}
+  
+  // Custom configuration
+  customStrengthColors={{
+    veryWeak: '#ff0000',
+    weak: '#ff8800',
+    fair: '#ffaa00',
+    good: '#00aa00',
+    strong: '#0088ff',
+  }}
+  
+  passwordTranslations={{
+    veryWeak: 'Very Weak',
+    weak: 'Weak',
+    fair: 'Fair',
+    good: 'Good',
+    strong: 'Strong',
+    generatePassword: 'Generate Password',
+    requirementsLabel: 'Password Requirements',
+  }}
+  
+  onStrengthChange={(strength, score) => {
+    console.log('Password strength:', strength, score);
+  }}
+  
+  onPasswordGenerated={(password) => {
+    console.log('Generated password:', password);
   }}
 />
 ```
 
-### Password Strength and Rules
+### BcTextField Inheritance
 
-#### Basic Rules
-- **Minimum length**: Default 8 characters
-- **Uppercase**: At least one A-Z character
-- **Lowercase**: At least one a-z character
-- **Number**: At least one 0-9 character
-- **Special character**: At least one !@#$%^&*()_+-=[]{}|;:,.<>? character
-
-#### Custom Rules
+#### All BcTextField Features Available
 ```tsx
-const customRules = [
-  {
-    key: 'noCommonWords',
-    label: 'No common words',
-    test: (password) => !password.toLowerCase().includes('password')
-  },
-  {
-    key: 'noSequential',
-    label: 'No sequential characters',
-    test: (password) => !password.includes('123') && !password.includes('abc')
-  }
-];
-
-<BcPasswordInput customRules={customRules} />
-```
-
-#### Zxcvbn Integration
-```tsx
+// All BcTextField inherited features work
 <BcPasswordInput
-  useZxcvbnStrength={true}
-  // 0-4 strength level (zxcvbn)
-  // 0: Very weak, 1: Weak, 2: Medium, 3: Strong, 4: Very strong
-/>
-```
-
-### Advanced Features
-
-#### 1. Password Generation
-```tsx
-<BcPasswordInput
-  enablePasswordGenerator={true}
-  // "Generate Strong Password" button appears
-  // Automatically generates password following rules
-/>
-```
-
-#### 2. Breach Check
-```tsx
-<BcPasswordInput
-  enableBreachCheck={true}
-  // HaveIBeenPwned API password security check
-  // Shows warning for compromised passwords
-/>
-```
-
-#### 3. Keyboard Shortcuts
-```tsx
-<BcPasswordInput
-  enableKeyboardShortcuts={true}
-  // Ctrl+H: Show/hide
-  // Ctrl+C: Copy
-  // Ctrl+Delete: Clear
-  // Ctrl+G: Generate
-  // Escape: Clear
-/>
-```
-
-#### 4. Advanced Scoring
-```tsx
-<BcPasswordInput
-  enableAdvancedScoring={true}
-  // Entropy calculation
-  // Percentage-based strength score
-  // Detailed analysis information
-/>
-```
-
-#### 5. Theme-Aware Styles
-```tsx
-<BcPasswordInput
-  enableThemeAwareStyles={true}
-  // Dynamic theme colors
-  // Dark/light mode compatibility
-  // Automatic style adaptation
-/>
-```
-
-#### 6. Mobile Optimizations
-```tsx
-<BcPasswordInput
-  enableMobileOptimizations={true}
-  // Haptic feedback
-  // Touch optimizations
-  // Responsive layout
-/>
-```
-
-#### 7. Advanced i18n
-```tsx
-<BcPasswordInput
-  enableAdvancedI18n={true}
-  // Pluralization support
-  // String interpolation
-  // Advanced translation features
+  // BcTextField inherited props
+  label="Password"
+  appearance="premium"
+  size="large"
+  color="success"
+  showClearButton={true}
+  responsiveWidth={true}
+  enableRTL={true}
+  enableHighContrast={true}
+  enableReducedMotion={true}
+  translations={{
+    clearButtonLabel: "Clear",
+    helperText: "Helper text",
+    statusMessage: "Status message",
+    label: "Label"
+  }}
+  locale="en"
+  helperText="Enter your password"
+  status="success"
+  statusMessage="Valid password"
+  
+  // Password-specific props
+  showPasswordToggle={true}
+  enablePasswordGeneration={true}
+  enableStrengthIndicator={true}
+  enablePasswordValidation={true}
 />
 ```
 
 ### React Hook Form Integration
-
 ```tsx
-import { useForm, Controller } from "react-hook-form";
-import { BcPasswordInput } from "../BcPasswordInput/BcPasswordInput";
+import { useForm, Controller } from 'react-hook-form';
+import { BcPasswordInput } from './BcPasswordInput';
 
-const MyForm = () => {
+function MyForm() {
   const { control, handleSubmit } = useForm();
-
-  const onSubmit = (data) => {
-    console.log('Form data:', data);
-  };
+  const onSubmit = data => console.log(data);
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <Controller
         name="password"
         control={control}
-        rules={{
-          required: 'Password is required',
-          minLength: {
-            value: 8,
-            message: 'Must be at least 8 characters'
-          }
-        }}
-        render={({ field, fieldState }) => (
+        defaultValue=""
+        render={({ field }) => (
           <BcPasswordInput
             {...field}
             label="Password"
             placeholder="Enter your password"
-            showStrengthBar={true}
-            error={!!fieldState.error}
-            helperText={fieldState.error?.message}
+            showPasswordToggle
+            enablePasswordGeneration
+            enableStrengthIndicator
+            enablePasswordValidation
           />
         )}
       />
       <button type="submit">Submit</button>
     </form>
   );
-};
+}
+```
+
+### Hooks
+
+#### usePasswordStrength
+Hook for password strength analysis.
+
+```tsx
+import { usePasswordStrength } from './hooks/usePasswordStrength';
+
+const { strengthResult, analyzePassword, getStrengthColor } = usePasswordStrength({
+  minLength: 8,
+  requireUppercase: true,
+  requireLowercase: true,
+  requireNumbers: true,
+  requireSpecialChars: true,
+});
+```
+
+#### usePasswordVisibility
+Hook for password visibility management.
+
+```tsx
+import { usePasswordVisibility } from './hooks/usePasswordVisibility';
+
+const { isVisible, toggleVisibility, getToggleProps } = usePasswordVisibility({
+  defaultVisible: false,
+  rememberVisibility: true,
+  onVisibilityChange: (visible) => console.log('Visibility changed:', visible),
+});
+```
+
+#### usePasswordGeneration
+Hook for password generation.
+
+```tsx
+import { usePasswordGeneration } from './hooks/usePasswordGeneration';
+
+const { generatePassword, isGenerating, copyToClipboard } = usePasswordGeneration({
+  length: 12,
+  includeUppercase: true,
+  includeLowercase: true,
+  includeNumbers: true,
+  includeSpecialChars: true,
+});
+```
+
+#### usePasswordSecurity
+Hook for security analysis.
+
+```tsx
+import { usePasswordSecurity } from './hooks/usePasswordSecurity';
+
+const { analyzePasswordSecurity, securityWarnings } = usePasswordSecurity({
+  enableCommonPasswordCheck: true,
+  enablePatternDetection: true,
+  enableKeyboardPatternCheck: true,
+});
+```
+
+#### usePasswordValidation
+Hook for validation.
+
+```tsx
+import { usePasswordValidation } from './hooks/usePasswordValidation';
+
+const { validatePassword, validationResult } = usePasswordValidation([
+  {
+    id: 'minLength',
+    name: 'Minimum Length',
+    test: (password) => password.length >= 8,
+    message: 'At least 8 characters required',
+    weight: 10,
+    enabled: true,
+  },
+]);
+```
+
+#### usePasswordAnalytics
+Hook for analytics.
+
+```tsx
+import { usePasswordAnalytics } from './hooks/usePasswordAnalytics';
+
+const { trackPasswordInput, trackStrengthChange, getCurrentSessionMetrics } = usePasswordAnalytics({
+  trackStrengthChanges: true,
+  trackVisibilityToggles: true,
+  trackGenerationUsage: true,
+});
 ```
 
 ### Frequently Asked Questions (FAQ)
-
-#### Q: How is password strength calculated?
-A: Using basic rules (length, character variety) and optionally the zxcvbn library.
-
-#### Q: How does breach check work?
-A: Uses HaveIBeenPwned API to check if the password has been found in data breaches.
-
-#### Q: What are the keyboard shortcuts?
-A: Ctrl+H (show/hide), Ctrl+C (copy), Ctrl+Delete (clear), Ctrl+G (generate), Escape (clear).
-
-#### Q: How to add custom rules?
-A: Use the `customRules` prop with `{ key, label, test }` format.
-
-#### Q: How does it work on mobile devices?
-A: Optimized for mobile with haptic feedback, touch optimizations, and responsive layout.
+- **Why does BcPasswordInput extend BcTextField?**
+  - To inherit all BcTextField features and provide consistent API.
+- **Where do i18n translations come from?**
+  - From i18n JSON files or the translations prop.
+- **How is password strength calculated?**
+  - Based on length, character variety, complexity and security rules.
+- **How to customize password generation?**
+  - Use generationOptions prop to define length, character sets and rules.
 
 ### Troubleshooting
-
-#### Password strength not showing
-- Ensure `showStrengthBar={true}`
-- Make sure a value is entered in the password field
-
-#### Breach check not working
-- Check your internet connection
-- Ensure you haven't exceeded API rate limits
-
-#### Keyboard shortcuts not working
-- Ensure `enableKeyboardShortcuts={true}`
-- Make sure the input is focused
-
-#### Custom rules not working
-- Ensure the `test` function returns a boolean
-- Make sure `key` and `label` fields are filled
+- **"toHaveNoViolations" error:**
+  - Add a jest-axe type declaration file (jest-axe.d.ts).
+- **"Cannot find module 'react-hook-form'":**
+  - Make sure the package is installed and imported.
+- **Performance issues:**
+  - Use lazy loading and memoization for large password lists.
 
 ### Best Practices
-
-1. **Security**: Use `enableBreachCheck={true}` to enhance password security
-2. **User Experience**: Use `enablePasswordGenerator={true}` to help users
-3. **Accessibility**: Use `enableKeyboardShortcuts={true}` to support keyboard users
-4. **Performance**: Use `enableAdvancedMonitoring={true}` to monitor performance
-5. **Mobile**: Use `enableMobileOptimizations={true}` to optimize mobile experience
-6. **Theme**: Use `enableThemeAwareStyles={true}` to ensure theme compatibility
-7. **i18n**: Use `enableAdvancedI18n={true}` to use advanced translation features
+- Use translations prop and locale/fallbackLocale for i18n.
+- Wrap async validation functions with useCallback.
+- Use try/catch in monitoring callbacks.
+- Customize with customStrengthColors for password strength colors.
+- Enable enableMobileOptimizations for mobile apps.
 
 ### License
 MIT

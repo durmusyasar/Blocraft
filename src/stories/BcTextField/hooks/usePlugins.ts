@@ -8,10 +8,10 @@ export interface Plugin {
   author: string;
   category: "input" | "validation" | "ui" | "integration" | "custom";
   enabled: boolean;
-  config: Record<string, any>;
+  config: Record<string, unknown>;
   dependencies: string[];
   hooks: {
-    onMount?: (element: HTMLElement, config: any) => void;
+    onMount?: (element: HTMLElement, config: unknown) => void;
     onUnmount?: (element: HTMLElement) => void;
     onFocus?: (element: HTMLElement, event: FocusEvent) => void;
     onBlur?: (element: HTMLElement, event: FocusEvent) => void;
@@ -20,14 +20,14 @@ export interface Plugin {
     onKeyUp?: (element: HTMLElement, event: KeyboardEvent) => void;
     onMouseEnter?: (element: HTMLElement, event: MouseEvent) => void;
     onMouseLeave?: (element: HTMLElement, event: MouseEvent) => void;
-    onRender?: (element: HTMLElement, props: any) => React.ReactNode;
+    onRender?: (element: HTMLElement, props: unknown) => React.ReactNode;
     onValidate?: (
       value: string,
-      config: any
+      config: unknown
     ) => { isValid: boolean; message?: string };
-    onTransform?: (value: string, config: any) => string;
-    onSuggest?: (value: string, config: any) => string[];
-    onComplete?: (value: string, config: any) => string;
+    onTransform?: (value: string, config: unknown) => string;
+    onSuggest?: (value: string, config: unknown) => string[];
+    onComplete?: (value: string, config: unknown) => string;
   };
   metadata: {
     minVersion: string;
@@ -62,7 +62,7 @@ export interface PluginOptions {
   pluginTimeout?: number;
   pluginRetries?: number;
   pluginDelay?: number;
-  pluginConfig?: Record<string, any>;
+  pluginConfig?: Record<string, unknown>;
   customPlugins?: Plugin[];
   pluginRegistry?: string;
   pluginPermissions?: Record<string, string[]>;
@@ -99,7 +99,7 @@ export interface PluginOptions {
     customMetrics: string[];
   };
   pluginErrorHandling?: {
-    onError: (error: Error, plugin: Plugin, context: any) => void;
+    onError: (error: Error, plugin: Plugin, context: unknown) => void;
     fallbackBehavior: "disable" | "ignore" | "retry" | "replace";
     maxRetries: number;
     retryDelay: number;
@@ -154,7 +154,7 @@ export interface PluginState {
     pluginId: string;
     error: Error;
     timestamp: number;
-    context: any;
+    context: unknown;
   }>;
   pluginMetrics: Record<
     string,
@@ -167,7 +167,7 @@ export interface PluginState {
       lastUsed: number;
     }
   >;
-  pluginCache: Record<string, any>;
+  pluginCache: Record<string, unknown>;
   pluginPermissions: Record<string, string[]>;
   pluginSecurity: {
     violations: Array<{
@@ -189,7 +189,7 @@ export interface PluginState {
     usage: Record<string, number>;
     performance: Record<string, number[]>;
     errors: Record<string, number>;
-    userBehavior: Record<string, any>;
+    userBehavior: Record<string, unknown>;
   };
   pluginDebugging: {
     breakpoints: Record<string, boolean>;
@@ -199,12 +199,12 @@ export interface PluginState {
       level: string;
       message: string;
       timestamp: number;
-      context: any;
+      context: unknown;
     }>;
     traces: Array<{
       id: string;
       pluginId: string;
-      trace: any;
+      trace: unknown;
       timestamp: number;
     }>;
   };
@@ -230,15 +230,15 @@ export interface PluginActions {
   executePluginHook: (
     pluginId: string,
     hookName: string,
-    ...args: any[]
-  ) => any;
+    ...args: unknown[]
+  ) => unknown;
   validatePlugin: (plugin: Plugin) => { isValid: boolean; errors: string[] };
   checkPluginDependencies: (plugin: Plugin) => {
     satisfied: boolean;
     missing: string[];
   };
-  updatePluginConfig: (pluginId: string, config: Record<string, any>) => void;
-  getPluginMetrics: (pluginId: string) => any;
+  updatePluginConfig: (pluginId: string, config: Record<string, unknown>) => void;
+  getPluginMetrics: (pluginId: string) => unknown;
   clearPluginCache: (pluginId?: string) => void;
   setPluginPermissions: (pluginId: string, permissions: string[]) => void;
   checkPluginPermissions: (pluginId: string, permission: string) => boolean;
@@ -256,14 +256,14 @@ export interface PluginActions {
     pluginId: string,
     level: string,
     message: string,
-    context?: any
+    context?: unknown
   ) => void;
-  tracePluginExecution: (pluginId: string, trace: any) => void;
+  tracePluginExecution: (pluginId: string, trace: unknown) => void;
   setPluginBreakpoint: (pluginId: string, enabled: boolean) => void;
-  getPluginLogs: (pluginId?: string) => any[];
-  getPluginTraces: (pluginId?: string) => any[];
-  updatePluginAnalytics: (pluginId: string, data: any) => void;
-  getPluginAnalytics: (pluginId?: string) => any;
+  getPluginLogs: (pluginId?: string) => unknown[];
+  getPluginTraces: (pluginId?: string) => unknown[];
+  updatePluginAnalytics: (pluginId: string, data: unknown) => void;
+  getPluginAnalytics: (pluginId?: string) => unknown;
   checkForPluginUpdates: () => Promise<Plugin[]>;
   installPluginUpdate: (pluginId: string) => Promise<void>;
   rollbackPluginUpdate: (pluginId: string) => Promise<void>;
@@ -333,7 +333,7 @@ export function usePlugins(options: PluginOptions = {}) {
       customMetrics: [],
     },
     pluginErrorHandling = {
-      onError: (error: Error, plugin: Plugin, context: any) => {
+      onError: (error: Error, plugin: Plugin, context: unknown) => {
         console.error(`Plugin ${plugin.id} error:`, error, context);
       },
       fallbackBehavior: "disable",
@@ -421,7 +421,7 @@ export function usePlugins(options: PluginOptions = {}) {
 
   // Log plugin event
   const logPluginEvent = useCallback(
-    (pluginId: string, level: string, message: string, context?: any) => {
+    (pluginId: string, level: string, message: string, context?: unknown) => {
       if (!enablePluginLogging) return;
 
       const log = {
@@ -823,7 +823,7 @@ export function usePlugins(options: PluginOptions = {}) {
 
   // Execute plugin hook
   const executePluginHook = useCallback(
-    (pluginId: string, hookName: string, ...args: any[]) => {
+    (pluginId: string, hookName: string, ...args: unknown[]) => {
       if (!enablePlugins || !enablePluginSystem) return;
 
       const plugin = state.loadedPlugins[pluginId];
@@ -833,7 +833,7 @@ export function usePlugins(options: PluginOptions = {}) {
       try {
         const startTime = performance.now();
         const hook = plugin.hooks[hookName as keyof typeof plugin.hooks];
-        const result = hook ? (hook as any)(...args) : undefined;
+        const result = hook ? (hook as (...args: unknown[]) => unknown)(...args) : undefined;
         const endTime = performance.now();
         const executionTime = endTime - startTime;
 
@@ -921,7 +921,7 @@ export function usePlugins(options: PluginOptions = {}) {
 
   // Update plugin config
   const updatePluginConfig = useCallback(
-    (pluginId: string, config: Record<string, any>) => {
+    (pluginId: string, config: Record<string, unknown>) => {
       if (!enablePlugins || !enablePluginSystem) return;
 
       setState((prev) => ({
@@ -1054,7 +1054,7 @@ export function usePlugins(options: PluginOptions = {}) {
 
   // Trace plugin execution
   const tracePluginExecution = useCallback(
-    (pluginId: string, trace: any) => {
+    (pluginId: string, trace: unknown) => {
       if (!enablePluginDebugging || !pluginDebugging.enableTracing) return;
 
       setState((prev) => ({
@@ -1123,7 +1123,7 @@ export function usePlugins(options: PluginOptions = {}) {
 
   // Update plugin analytics
   const updatePluginAnalytics = useCallback(
-    (pluginId: string, data: any) => {
+    (pluginId: string, data: unknown) => {
       if (!enablePluginAnalytics) return;
 
       // Use pluginAnalytics configuration
@@ -1258,13 +1258,13 @@ export function usePlugins(options: PluginOptions = {}) {
       updatePluginAnalytics,
       getPluginAnalytics,
       checkForPluginUpdates: async () => [],
-      installPluginUpdate: async () => {},
-      rollbackPluginUpdate: async () => {},
+      installPluginUpdate: async () => { /* Placeholder */ },
+      rollbackPluginUpdate: async () => { /* Placeholder */ },
       exportPluginConfig: () => JSON.stringify(state.loadedPlugins),
       importPluginConfig: (config: string) => {
         try {
           const plugins = JSON.parse(config);
-          Object.values(plugins).forEach((plugin: any) => loadPlugin(plugin));
+          Object.values(plugins).forEach((plugin: unknown) => loadPlugin(plugin as Plugin));
         } catch (error) {
           console.error("Failed to import plugin config:", error);
         }

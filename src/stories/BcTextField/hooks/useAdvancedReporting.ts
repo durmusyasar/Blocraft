@@ -38,9 +38,9 @@ export interface AdvancedReportingOptions {
   enableReportErrorHandling?: boolean;
   enableReportFallbacks?: boolean;
   reportFormats?: string[];
-  reportTemplates?: Record<string, any>;
-  reportSchedules?: Record<string, any>;
-  reportDistribution?: Record<string, any>;
+  reportTemplates?: Record<string, unknown>;
+  reportSchedules?: Record<string, unknown>;
+  reportDistribution?: Record<string, unknown>;
   reportSecurity?: {
     enableSecurity: boolean;
     securityPolicy: 'strict' | 'moderate' | 'permissive';
@@ -57,8 +57,8 @@ export interface AdvancedReportingOptions {
     compressionLevel: number;
     compressionAlgorithm: 'gzip' | 'brotli' | 'deflate';
   };
-  reportCaching?: Record<string, any>;
-  reportOptimization?: Record<string, any>;
+  reportCaching?: Record<string, unknown>;
+  reportOptimization?: Record<string, unknown>;
   reportMonitoring?: {
     enableMonitoring: boolean;
     monitoringInterval: number;
@@ -89,7 +89,7 @@ export interface AdvancedReportingOptions {
     customMetrics: string[];
   };
   reportErrorHandling?: {
-    onError: (error: Error, context: any) => void;
+    onError: (error: Error, context: unknown) => void;
     fallbackBehavior: 'disable' | 'ignore' | 'retry' | 'replace';
     maxRetries: number;
     retryDelay: number;
@@ -138,9 +138,9 @@ export interface AdvancedReportingState {
   isReportErrorHandlingEnabled: boolean;
   isReportFallbacksEnabled: boolean;
   currentReportFormats: string[];
-  reportTemplates: Record<string, any>;
-  reportSchedules: Record<string, any>;
-  reportDistribution: Record<string, any>;
+  reportTemplates: Record<string, unknown>;
+  reportSchedules: Record<string, unknown>;
+  reportDistribution: Record<string, unknown>;
   reportSecurity: {
     enableSecurity: boolean;
     securityPolicy: 'strict' | 'moderate' | 'permissive';
@@ -157,8 +157,8 @@ export interface AdvancedReportingState {
     compressionLevel: number;
     compressionAlgorithm: 'gzip' | 'brotli' | 'deflate';
   };
-  reportCaching: Record<string, any>;
-  reportOptimization: Record<string, any>;
+  reportCaching: Record<string, unknown>;
+  reportOptimization: Record<string, unknown>;
   reportMonitoring: {
     enableMonitoring: boolean;
     monitoringInterval: number;
@@ -189,7 +189,7 @@ export interface AdvancedReportingState {
     customMetrics: string[];
   };
   reportErrorHandling: {
-    onError: (error: Error, context: any) => void;
+    onError: (error: Error, context: unknown) => void;
     fallbackBehavior: 'disable' | 'ignore' | 'retry' | 'replace';
     maxRetries: number;
     retryDelay: number;
@@ -205,7 +205,7 @@ export interface AdvancedReportingState {
     description: string;
     format: string;
     template: string;
-    data: any;
+    data: unknown;
     status: 'draft' | 'generating' | 'ready' | 'published' | 'archived';
     createdAt: number;
     updatedAt: number;
@@ -214,7 +214,7 @@ export interface AdvancedReportingState {
     version: number;
     size: number;
     checksum: string;
-    metadata: any;
+    metadata: unknown;
   }>;
   reportMetricsData: {
     totalReports: number;
@@ -233,13 +233,13 @@ export interface AdvancedReportingState {
     id: string;
     error: Error;
     timestamp: number;
-    context: any;
+    context: unknown;
   }>;
   reportAnalyticsData: {
     usage: Record<string, number>;
     performance: Record<string, number[]>;
     errors: Record<string, number>;
-    userBehavior: Record<string, any>;
+    userBehavior: Record<string, unknown>;
   };
   reportDebuggingData: {
     logs: Array<{
@@ -247,15 +247,15 @@ export interface AdvancedReportingState {
       level: string;
       message: string;
       timestamp: number;
-      context: any;
+      context: unknown;
     }>;
     traces: Array<{
       id: string;
-      trace: any;
+      trace: unknown;
       timestamp: number;
     }>;
   };
-  reportCache: Record<string, any>;
+  reportCache: Record<string, unknown>;
   reportSecurityData: {
     violations: Array<{
       id: string;
@@ -273,19 +273,19 @@ export interface AdvancedReportingState {
 }
 
 export interface AdvancedReportingActions {
-  generateReport: (type: string, name: string, description: string, format: string, template: string, data: any) => Promise<string>;
-  scheduleReport: (reportId: string, schedule: any) => void;
+  generateReport: (type: string, name: string, description: string, format: string, template: string, data: unknown) => Promise<string>;
+  scheduleReport: (reportId: string, schedule: unknown) => void;
   exportReport: (reportId: string, format: string) => Promise<string>;
   emailReport: (reportId: string, recipients: string[]) => Promise<void>;
   publishReport: (reportId: string) => void;
   archiveReport: (reportId: string) => void;
   deleteReport: (reportId: string) => void;
-  getReport: (reportId: string) => any;
-  getReports: () => any[];
-  getReportMetrics: () => any;
-  getReportAnalytics: () => any;
-  getReportDebugging: () => any;
-  getReportSecurity: () => any;
+  getReport: (reportId: string) => unknown;
+  getReports: () => unknown[];
+  getReportMetrics: () => unknown;
+  getReportAnalytics: () => unknown;
+  getReportDebugging: () => unknown;
+  getReportSecurity: () => unknown;
   clearReportCache: () => void;
   clearReportErrors: () => void;
   clearReportLogs: () => void;
@@ -388,7 +388,7 @@ export function useAdvancedReporting(options: AdvancedReportingOptions = {}): {
       customMetrics: [],
     },
     reportErrorHandling = {
-      onError: () => {},
+      onError: () => { /* Placeholder */ },
       fallbackBehavior: 'disable',
       maxRetries: 3,
       retryDelay: 1000,
@@ -403,7 +403,7 @@ export function useAdvancedReporting(options: AdvancedReportingOptions = {}): {
   const errorIdCounter = useRef(0);
 
   // Log Report Event
-  const logReportEvent = useCallback((level: string, message: string, context?: any) => {
+  const logReportEvent = useCallback((level: string, message: string, context?: unknown) => {
     if (!enableReportLogging) return;
 
     const log = {
@@ -515,7 +515,7 @@ export function useAdvancedReporting(options: AdvancedReportingOptions = {}): {
     description: string,
     format: string,
     template: string,
-    data: any
+    data: unknown
   ): Promise<string> => {
     if (!enableReporting) return '';
 
@@ -625,7 +625,7 @@ export function useAdvancedReporting(options: AdvancedReportingOptions = {}): {
   }, [enableReporting, enableReportLogging, logReportEvent]);
 
   // Schedule Report
-  const scheduleReport = useCallback((reportId: string, schedule: any) => {
+  const scheduleReport = useCallback((reportId: string, schedule: unknown) => {
     if (!enableReporting || !enableScheduledReporting) return;
 
     setState(prev => ({

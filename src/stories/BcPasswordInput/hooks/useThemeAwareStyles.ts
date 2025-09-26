@@ -65,8 +65,6 @@ export function useThemeAwareStyles() {
     return {
       backgroundColor: theme.palette.background.paper,
       color: theme.palette.text.primary,
-      border: `1px solid ${theme.palette.divider}`,
-      borderRadius: theme.shape.borderRadius,
       transition: theme.transitions.create(['border-color', 'box-shadow']),
       '&:hover': {
         borderColor: theme.palette.primary.main,

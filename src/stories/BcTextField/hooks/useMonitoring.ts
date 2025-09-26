@@ -21,10 +21,10 @@ export interface MonitoringState {
     id: string;
     type: string;
     timestamp: number;
-    data: any;
+    data: unknown;
     severity: 'low' | 'medium' | 'high' | 'critical';
   }>;
-  analytics: Record<string, any>;
+  analytics: Record<string, unknown>;
   errors: Array<{
     id: string;
     message: string;
@@ -33,21 +33,21 @@ export interface MonitoringState {
     severity: 'warning' | 'error' | 'critical';
   }>;
   performance: Record<string, number>;
-  userBehavior: Record<string, any>;
-  security: Record<string, any>;
-  customEvents: Record<string, any>;
+  userBehavior: Record<string, unknown>;
+  security: Record<string, unknown>;
+  customEvents: Record<string, unknown>;
 }
 
 export interface MonitoringActions {
   startMonitoring: () => void;
   stopMonitoring: () => void;
-  logEvent: (type: string, data: any, severity?: 'low' | 'medium' | 'high' | 'critical') => void;
+  logEvent: (type: string, data: unknown, severity?: 'low' | 'medium' | 'high' | 'critical') => void;
   logError: (error: Error, severity?: 'warning' | 'error' | 'critical') => void;
-  logAnalytics: (key: string, value: any) => void;
+  logAnalytics: (key: string, value: unknown) => void;
   logPerformance: (key: string, value: number) => void;
-  logUserBehavior: (key: string, value: any) => void;
-  logSecurity: (key: string, value: any) => void;
-  logCustomEvent: (type: string, data: any) => void;
+  logUserBehavior: (key: string, value: unknown) => void;
+  logSecurity: (key: string, value: unknown) => void;
+  logCustomEvent: (type: string, data: unknown) => void;
   clearEvents: () => void;
   clearErrors: () => void;
   clearAnalytics: () => void;
@@ -163,7 +163,7 @@ export function useMonitoring(options: MonitoringOptions = {}) {
     }
   }, []);
 
-  const logEvent = useCallback((type: string, data: any, severity: 'low' | 'medium' | 'high' | 'critical' = 'low') => {
+  const logEvent = useCallback((type: string, data: unknown, severity: 'low' | 'medium' | 'high' | 'critical' = 'low') => {
     if (!state.isMonitoring || !enableRealTimeMonitoring) return;
 
     const event = {
@@ -197,7 +197,7 @@ export function useMonitoring(options: MonitoringOptions = {}) {
     }));
   }, [state.isMonitoring, enableErrorReporting]);
 
-  const logAnalytics = useCallback((key: string, value: any) => {
+  const logAnalytics = useCallback((key: string, value: unknown) => {
     if (!state.isMonitoring || !enableAnalytics) return;
 
     setState(prev => ({
@@ -221,7 +221,7 @@ export function useMonitoring(options: MonitoringOptions = {}) {
     }));
   }, [state.isMonitoring, enablePerformanceMonitoring]);
 
-  const logUserBehavior = useCallback((key: string, value: any) => {
+  const logUserBehavior = useCallback((key: string, value: unknown) => {
     if (!state.isMonitoring || !enableUserBehaviorTracking) return;
 
     setState(prev => ({
@@ -233,7 +233,7 @@ export function useMonitoring(options: MonitoringOptions = {}) {
     }));
   }, [state.isMonitoring, enableUserBehaviorTracking]);
 
-  const logSecurity = useCallback((key: string, value: any) => {
+  const logSecurity = useCallback((key: string, value: unknown) => {
     if (!state.isMonitoring || !enableSecurityMonitoring) return;
 
     setState(prev => ({
@@ -245,7 +245,7 @@ export function useMonitoring(options: MonitoringOptions = {}) {
     }));
   }, [state.isMonitoring, enableSecurityMonitoring]);
 
-  const logCustomEvent = useCallback((type: string, data: any) => {
+  const logCustomEvent = useCallback((type: string, data: unknown) => {
     if (!state.isMonitoring || !enableCustomEvents || !customEventTypes.includes(type)) return;
 
     setState(prev => ({

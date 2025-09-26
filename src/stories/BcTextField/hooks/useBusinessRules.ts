@@ -9,37 +9,37 @@ export interface BusinessRule {
   enabled: boolean;
   conditions: BusinessRuleCondition[];
   actions: BusinessRuleAction[];
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 }
 
 export interface BusinessRuleCondition {
   field: string;
   operator: 'equals' | 'not_equals' | 'contains' | 'not_contains' | 'greater_than' | 'less_than' | 'in' | 'not_in' | 'regex' | 'custom';
-  value: any;
-  customFunction?: (value: any, context: any) => boolean;
+  value: unknown;
+  customFunction?: (value: unknown, context: unknown) => boolean;
 }
 
 export interface BusinessRuleAction {
   type: 'validation' | 'transformation' | 'notification' | 'calculation' | 'custom';
   field?: string;
-  value?: any;
+  value?: unknown;
   message?: string;
-  customFunction?: (value: any, context: any) => any;
+  customFunction?: (value: unknown, context: unknown) => unknown;
 }
 
 export interface BusinessRuleContext {
-  formData: Record<string, any>;
-  userContext: Record<string, any>;
-  systemContext: Record<string, any>;
+  formData: Record<string, unknown>;
+  userContext: Record<string, unknown>;
+  systemContext: Record<string, unknown>;
   locale: string;
 }
 
 export interface BusinessRuleResult {
   isValid: boolean;
   appliedRules: BusinessRule[];
-  transformations: Record<string, any>;
+  transformations: Record<string, unknown>;
   notifications: string[];
-  calculations: Record<string, any>;
+  calculations: Record<string, unknown>;
   errors: string[];
   warnings: string[];
   info: string[];
@@ -55,7 +55,7 @@ export interface UseBusinessRulesProps {
   evaluationDebounceMs?: number;
   customRules?: BusinessRule[];
   businessContext?: BusinessRuleContext;
-  onRuleApplied?: (rule: BusinessRule, result: any) => void;
+  onRuleApplied?: (rule: BusinessRule, result: unknown) => void;
   onRuleFailed?: (rule: BusinessRule, error: Error) => void;
 }
 
@@ -153,7 +153,7 @@ export const useBusinessRules = ({
           field: 'password',
           operator: 'custom',
           value: null,
-          customFunction: (value: string) => value.length >= 8,
+          customFunction: (value: unknown) => String(value).length >= 8,
         },
       ],
       actions: [
@@ -202,7 +202,7 @@ export const useBusinessRules = ({
         {
           type: 'transformation',
           field: 'name',
-          customFunction: (value: string) => value.replace(/\b\w/g, (char) => char.toUpperCase()),
+          customFunction: (value: unknown) => String(value).replace(/\b\w/g, (char) => char.toUpperCase()),
         },
       ],
     },
@@ -224,10 +224,11 @@ export const useBusinessRules = ({
         {
           type: 'calculation',
           field: 'totalPrice',
-          customFunction: (value: any, context: any) => {
-            const quantity = context.formData.quantity || 0;
-            const unitPrice = context.formData.unitPrice || 0;
-            const discount = context.formData.discount || 0;
+          customFunction: (value: unknown, context: unknown) => {
+            const formData = (context as BusinessRuleContext).formData;
+            const quantity = Number(formData.quantity) || 0;
+            const unitPrice = Number(formData.unitPrice) || 0;
+            const discount = Number(formData.discount) || 0;
             return (quantity * unitPrice) * (1 - discount / 100);
           },
         },
@@ -241,7 +242,7 @@ export const useBusinessRules = ({
   }, [defaultRules, customRules]);
 
   // Evaluate condition
-  const evaluateCondition = useCallback((condition: BusinessRuleCondition, value: any, context: BusinessRuleContext): boolean => {
+  const evaluateCondition = useCallback((condition: BusinessRuleCondition, value: unknown, context: BusinessRuleContext): boolean => {
     try {
       switch (condition.operator) {
         case 'equals':
@@ -274,7 +275,7 @@ export const useBusinessRules = ({
   }, []);
 
   // Execute action
-  const executeAction = useCallback((action: BusinessRuleAction, value: any, context: BusinessRuleContext): any => {
+  const executeAction = useCallback((action: BusinessRuleAction, value: unknown, context: BusinessRuleContext): unknown => {
     try {
       switch (action.type) {
         case 'validation':
@@ -326,9 +327,9 @@ export const useBusinessRules = ({
     const evaluationContext = context || businessContext;
     const enabledRules = businessRules.filter(rule => rule.enabled);
     const appliedRules: BusinessRule[] = [];
-    const transformations: Record<string, any> = {};
+    const transformations: Record<string, unknown> = {};
     const notifications: string[] = [];
-    const calculations: Record<string, any> = {};
+    const calculations: Record<string, unknown> = {};
     const errors: string[] = [];
     const warnings: string[] = [];
     const info: string[] = [];
@@ -352,8 +353,8 @@ export const useBusinessRules = ({
             
             switch (action.type) {
               case 'validation':
-                if (result.message) {
-                  errors.push(result.message);
+                if ((result as Record<string, unknown>).message) {
+                  errors.push(String((result as Record<string, unknown>).message));
                 }
                 break;
               case 'transformation':
@@ -363,7 +364,7 @@ export const useBusinessRules = ({
                 break;
               case 'notification':
                 if (result) {
-                  notifications.push(result);
+                  notifications.push(String(result));
                 }
                 break;
               case 'calculation':
@@ -492,7 +493,7 @@ export const useBusinessRules = ({
     }, {} as Record<string, number>);
     
     const averageExecutionTime = businessRules.length > 0 
-      ? businessRules.reduce((sum, rule) => sum + (rule.metadata?.executionTime || 0), 0) / businessRules.length
+      ? businessRules.reduce((sum, rule) => sum + (Number(rule.metadata?.executionTime) || 0), 0) / businessRules.length
       : 0;
     
     return {

@@ -38,7 +38,7 @@ export function usePasswordScoring(password: string, options: PasswordScoringOpt
     const hasUppercase = /[A-Z]/.test(password);
     const hasLowercase = /[a-z]/.test(password);
     const hasNumber = /[0-9]/.test(password);
-    const hasSpecial = /[!@#$%^&*()_+\-=\[\]{}|;:,.<>?]/.test(password);
+    const hasSpecial = /[!@#$%^&*()_+\-=\\[\]{}|;:,.<>?]/.test(password);
 
     if (hasUppercase) score += 10;
     if (hasLowercase) score += 10;
@@ -98,7 +98,7 @@ function calculateEntropy(password: string): number {
   if (/[a-z]/.test(password)) charsetSize += 26;
   if (/[A-Z]/.test(password)) charsetSize += 26;
   if (/[0-9]/.test(password)) charsetSize += 10;
-  if (/[!@#$%^&*()_+\-=\[\]{}|;:,.<>?]/.test(password)) charsetSize += 32;
+  if (/[!@#$%^&*()_+\-=\\[\]{}|;:,.<>?]/.test(password)) charsetSize += 32;
 
   return Math.log2(Math.pow(charsetSize, password.length));
 }

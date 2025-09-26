@@ -16,38 +16,38 @@ export interface PhoneMonitoringOptions {
 
 export interface PhoneMonitoringReturn {
   analytics: {
-    trackEvent: (event: string, data?: any) => void;
+    trackEvent: (event: string, data?: unknown) => void;
     trackPageView: (page: string) => void;
-    trackUserAction: (action: string, details?: any) => void;
-    trackError: (error: Error, context?: any) => void;
+    trackUserAction: (action: string, details?: unknown) => void;
+    trackError: (error: Error, context?: unknown) => void;
     trackPerformance: (metric: string, value: number) => void;
   };
   monitoring: {
     startSession: () => void;
     endSession: () => void;
     trackSessionDuration: () => void;
-    trackUserInteraction: (type: string, data?: any) => void;
+    trackUserInteraction: (type: string, data?: unknown) => void;
     trackComponentMount: () => void;
     trackComponentUnmount: () => void;
-    trackPropsChange: (oldProps: any, newProps: any) => void;
+    trackPropsChange: (oldProps: unknown, newProps: unknown) => void;
   };
   errorTracking: {
-    captureException: (error: Error, context?: any) => void;
+    captureException: (error: Error, context?: unknown) => void;
     captureMessage: (message: string, level?: 'info' | 'warning' | 'error') => void;
-    setUserContext: (user: any) => void;
+    setUserContext: (user: unknown) => void;
     setTag: (key: string, value: string) => void;
     setLevel: (level: string) => void;
   };
   security: {
-    trackSuspiciousActivity: (activity: string, details?: any) => void;
+    trackSuspiciousActivity: (activity: string, details?: unknown) => void;
     trackSecurityEvent: (event: string, severity: 'low' | 'medium' | 'high' | 'critical') => void;
     validateInput: (input: string) => boolean;
     sanitizeInput: (input: string) => string;
   };
   customEvents: {
-    emit: (event: string, data?: any) => void;
-    on: (event: string, callback: (data?: any) => void) => void;
-    off: (event: string, callback?: (data?: any) => void) => void;
+    emit: (event: string, data?: unknown) => void;
+    on: (event: string, callback: (data?: unknown) => void) => void;
+    off: (event: string, callback?: (data?: unknown) => void) => void;
   };
 }
 
@@ -68,24 +68,41 @@ export const usePhoneMonitoring = (props: BcPhoneInputProps): PhoneMonitoringRet
   const sessionStartTime = useRef<number>(0);
   const eventListeners = useRef<Map<string, Set<Function>>>(new Map());
 
-  const trackEvent = useCallback((event: string, data?: any) => {
+  const trackEvent = useCallback((event: string, data?: unknown) => {
     if (enableAnalytics) {
       console.log(`Analytics Event: ${event}`, data);
       // Send to analytics service
       if (monitoringApiEndpoint) {
-        fetch(monitoringApiEndpoint, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${monitoringApiKey}`,
-          },
-          body: JSON.stringify({
-            event,
-            data,
-            timestamp: Date.now(),
-            component: 'BcPhoneInput',
-          }),
-        }).catch(console.error);
+        try {
+          const controller = new AbortController();
+          const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 saniye timeout
+          
+          fetch(monitoringApiEndpoint, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${monitoringApiKey}`,
+            },
+            body: JSON.stringify({
+              event,
+              data,
+              timestamp: Date.now(),
+              component: 'BcPhoneInput',
+            }),
+            signal: controller.signal,
+          }).then(() => {
+            clearTimeout(timeoutId);
+          }).catch((error) => {
+            clearTimeout(timeoutId);
+            if (error.name === 'AbortError') {
+              console.warn('Analytics request was aborted');
+            } else {
+              console.error('Analytics tracking failed:', error);
+            }
+          });
+        } catch (error) {
+          console.error('Analytics setup failed:', error);
+        }
       }
     }
   }, [enableAnalytics, monitoringApiEndpoint, monitoringApiKey]);
@@ -96,13 +113,13 @@ export const usePhoneMonitoring = (props: BcPhoneInputProps): PhoneMonitoringRet
     }
   }, [enableAnalytics, trackEvent]);
 
-  const trackUserAction = useCallback((action: string, details?: any) => {
+  const trackUserAction = useCallback((action: string, details?: unknown) => {
     if (enableUserBehaviorTracking) {
       trackEvent('user_action', { action, details });
     }
   }, [enableUserBehaviorTracking, trackEvent]);
 
-  const trackError = useCallback((error: Error, context?: any) => {
+  const trackError = useCallback((error: Error, context?: unknown) => {
     if (enableErrorReporting) {
       console.error('Phone Input Error:', error, context);
       trackEvent('error', {
@@ -140,7 +157,7 @@ export const usePhoneMonitoring = (props: BcPhoneInputProps): PhoneMonitoringRet
     }
   }, [enableRealTimeMonitoring, trackPerformance]);
 
-  const trackUserInteraction = useCallback((type: string, data?: any) => {
+  const trackUserInteraction = useCallback((type: string, data?: unknown) => {
     if (enableUserBehaviorTracking) {
       trackUserAction(`interaction_${type}`, data);
     }
@@ -158,13 +175,13 @@ export const usePhoneMonitoring = (props: BcPhoneInputProps): PhoneMonitoringRet
     }
   }, [enableMonitoring, trackEvent]);
 
-  const trackPropsChange = useCallback((oldProps: any, newProps: any) => {
+  const trackPropsChange = useCallback((oldProps: unknown, newProps: unknown) => {
     if (enableMonitoring) {
       trackEvent('props_change', { oldProps, newProps });
     }
   }, [enableMonitoring, trackEvent]);
 
-  const captureException = useCallback((error: Error, context?: any) => {
+  const captureException = useCallback((error: Error, context?: unknown) => {
     if (enableErrorReporting) {
       trackError(error, context);
     }
@@ -176,7 +193,7 @@ export const usePhoneMonitoring = (props: BcPhoneInputProps): PhoneMonitoringRet
     }
   }, [enableErrorReporting, trackEvent]);
 
-  const setUserContext = useCallback((user: any) => {
+  const setUserContext = useCallback((user: unknown) => {
     if (enableAnalytics) {
       trackEvent('user_context', { user });
     }
@@ -194,7 +211,7 @@ export const usePhoneMonitoring = (props: BcPhoneInputProps): PhoneMonitoringRet
     }
   }, [enableAnalytics, trackEvent]);
 
-  const trackSuspiciousActivity = useCallback((activity: string, details?: any) => {
+  const trackSuspiciousActivity = useCallback((activity: string, details?: unknown) => {
     if (enableSecurityMonitoring) {
       trackEvent('suspicious_activity', { activity, details });
     }
@@ -236,7 +253,7 @@ export const usePhoneMonitoring = (props: BcPhoneInputProps): PhoneMonitoringRet
     return input;
   }, [enableSecurityMonitoring]);
 
-  const emit = useCallback((event: string, data?: any) => {
+  const emit = useCallback((event: string, data?: unknown) => {
     if (enableCustomEvents) {
       const listeners = eventListeners.current.get(event);
       if (listeners) {
@@ -245,7 +262,7 @@ export const usePhoneMonitoring = (props: BcPhoneInputProps): PhoneMonitoringRet
     }
   }, [enableCustomEvents]);
 
-  const on = useCallback((event: string, callback: (data?: any) => void) => {
+  const on = useCallback((event: string, callback: (data?: unknown) => void) => {
     if (enableCustomEvents) {
       if (!eventListeners.current.has(event)) {
         eventListeners.current.set(event, new Set());
@@ -254,7 +271,7 @@ export const usePhoneMonitoring = (props: BcPhoneInputProps): PhoneMonitoringRet
     }
   }, [enableCustomEvents]);
 
-  const off = useCallback((event: string, callback?: (data?: any) => void) => {
+  const off = useCallback((event: string, callback?: (data?: unknown) => void) => {
     if (enableCustomEvents) {
       const listeners = eventListeners.current.get(event);
       if (listeners) {

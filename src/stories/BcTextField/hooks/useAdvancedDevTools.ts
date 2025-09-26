@@ -100,8 +100,8 @@ export interface AdvancedDevToolsState {
   currentDevToolsErrorHandling: boolean;
   currentDevToolsFallbacks: boolean;
   currentDevToolsReporting: boolean;
-  devToolsData: Record<string, any>;
-  devToolsCache: Record<string, any>;
+  devToolsData: Record<string, unknown>;
+  devToolsCache: Record<string, unknown>;
   devToolsMetrics: {
     totalDevToolsSessions: number;
     totalDevToolsCalls: number;
@@ -116,13 +116,13 @@ export interface AdvancedDevToolsState {
     id: string;
     error: Error;
     timestamp: number;
-    context: any;
+    context: unknown;
   }>;
   devToolsAnalytics: {
     usage: Record<string, number>;
     performance: Record<string, number[]>;
     errors: Record<string, number>;
-    userBehavior: Record<string, any>;
+    userBehavior: Record<string, unknown>;
   };
   devToolsDebugging: {
     logs: Array<{
@@ -130,11 +130,11 @@ export interface AdvancedDevToolsState {
       level: string;
       message: string;
       timestamp: number;
-      context: any;
+      context: unknown;
     }>;
     traces: Array<{
       id: string;
-      trace: any;
+      trace: unknown;
       timestamp: number;
     }>;
   };
@@ -168,21 +168,21 @@ export interface AdvancedDevToolsActions {
   profileNetwork: (componentId: string) => void;
   startProfiling: (componentId: string) => void;
   stopProfiling: (componentId: string) => void;
-  getProfilingData: (componentId: string) => any;
+  getProfilingData: (componentId: string) => unknown;
   clearProfilingData: (componentId: string) => void;
   exportProfilingData: (componentId: string) => string;
   importProfilingData: (componentId: string, data: string) => void;
-  getDevToolsData: () => any;
+  getDevToolsData: () => unknown;
   clearDevToolsData: () => void;
-  getDevToolsCache: () => any;
+  getDevToolsCache: () => unknown;
   clearDevToolsCache: () => void;
-  getDevToolsMetrics: () => any;
+  getDevToolsMetrics: () => unknown;
   clearDevToolsMetrics: () => void;
-  getDevToolsAnalytics: () => any;
+  getDevToolsAnalytics: () => unknown;
   clearDevToolsAnalytics: () => void;
-  getDevToolsLogs: () => any[];
+  getDevToolsLogs: () => unknown[];
   clearDevToolsLogs: () => void;
-  getDevToolsTraces: () => any[];
+  getDevToolsTraces: () => unknown[];
   clearDevToolsTraces: () => void;
   exportDevToolsData: () => string;
   importDevToolsData: (data: string) => void;
@@ -323,7 +323,7 @@ export function useAdvancedDevTools(options: AdvancedDevToolsOptions = {}) {
   const errorIdCounter = useRef(0);
 
   // Log DevTools Event
-  const logDevToolsEvent = useCallback((level: string, message: string, context?: any) => {
+  const logDevToolsEvent = useCallback((level: string, message: string, context?: unknown) => {
     if (!enableLogging) return;
 
     const log = {

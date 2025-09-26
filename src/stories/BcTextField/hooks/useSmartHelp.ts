@@ -4,8 +4,8 @@ export interface HelpContext {
   fieldName?: string;
   fieldType?: string;
   fieldValue?: string;
-  userContext?: Record<string, any>;
-  formContext?: Record<string, any>;
+  userContext?: Record<string, unknown>;
+  formContext?: Record<string, unknown>;
   locale?: string;
   userLevel?: 'beginner' | 'intermediate' | 'advanced';
   deviceType?: 'desktop' | 'tablet' | 'mobile';
@@ -23,7 +23,7 @@ export interface HelpItem {
   context: string[];
   conditions?: (context: HelpContext) => boolean;
   customFunction?: (context: HelpContext) => string;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 }
 
 export interface UseSmartHelpProps {

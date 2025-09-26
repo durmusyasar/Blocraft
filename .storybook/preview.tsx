@@ -2,7 +2,7 @@ import type { Preview } from '@storybook/react'
 import React from 'react';
 import enTexts from '../src/stories/i18n/i18n/en.json';
 import trTexts from '../src/stories/i18n/i18n/tr.json';
-import { DocsContainer } from "@storybook/addon-docs/blocks";
+import { DocsContainer } from "@storybook/blocks";
 
 export const globalTypes = {
   locale: {

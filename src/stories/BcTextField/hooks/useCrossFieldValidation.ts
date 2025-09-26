@@ -5,7 +5,7 @@ export interface CrossFieldRule {
   name: string;
   description: string;
   fields: string[];
-  condition: (values: Record<string, any>) => boolean;
+  condition: (values: Record<string, unknown>) => boolean;
   message: string;
   severity: 'error' | 'warning' | 'info';
   enabled: boolean;
@@ -13,13 +13,13 @@ export interface CrossFieldRule {
   dependencies?: string[];
   metadata?: {
     executionTime?: number;
-    [key: string]: any;
+    [key: string]: unknown;
   };
 }
 
 export interface CrossFieldContext {
-  formData: Record<string, any>;
-  fieldValues: Record<string, any>;
+  formData: Record<string, unknown>;
+  fieldValues: Record<string, unknown>;
   fieldErrors: Record<string, string[]>;
   fieldWarnings: Record<string, string[]>;
   fieldInfo: Record<string, string[]>;
@@ -46,7 +46,7 @@ export interface UseCrossFieldValidationProps {
   validationDebounceMs?: number;
   customRules?: CrossFieldRule[];
   crossFieldContext?: CrossFieldContext;
-  onRuleApplied?: (rule: CrossFieldRule, result: any) => void;
+  onRuleApplied?: (rule: CrossFieldRule, result: unknown) => void;
   onRuleFailed?: (rule: CrossFieldRule, error: Error) => void;
 }
 
@@ -54,8 +54,8 @@ export interface UseCrossFieldValidationReturn {
   crossFieldRules: CrossFieldRule[];
   validationResult: CrossFieldResult;
   isValidating: boolean;
-  validateCrossFields: (fieldName: string, value: any, context?: CrossFieldContext) => Promise<CrossFieldResult>;
-  validateCrossFieldsSync: (fieldName: string, value: any, context?: CrossFieldContext) => CrossFieldResult;
+  validateCrossFields: (fieldName: string, value: unknown, context?: CrossFieldContext) => Promise<CrossFieldResult>;
+  validateCrossFieldsSync: (fieldName: string, value: unknown, context?: CrossFieldContext) => CrossFieldResult;
   addRule: (rule: CrossFieldRule) => void;
   removeRule: (ruleId: string) => void;
   updateRule: (ruleId: string, updates: Partial<CrossFieldRule>) => void;
@@ -141,7 +141,7 @@ export const useCrossFieldValidation = ({
       fields: ['startDate', 'endDate'],
       condition: (values) => {
         if (!values.startDate || !values.endDate) return true;
-        return new Date(values.startDate) < new Date(values.endDate);
+        return new Date(String(values.startDate)) < new Date(String(values.endDate));
       },
       message: 'Start date must be before end date',
       severity: 'error',
@@ -155,7 +155,7 @@ export const useCrossFieldValidation = ({
       fields: ['birthDate'],
       condition: (values) => {
         if (!values.birthDate) return true;
-        const birthDate = new Date(values.birthDate);
+        const birthDate = new Date(String(values.birthDate));
         const today = new Date();
         const age = today.getFullYear() - birthDate.getFullYear();
         return age >= 18;
@@ -173,7 +173,7 @@ export const useCrossFieldValidation = ({
       condition: (values) => {
         if (!values.phone || !values.email) return true;
         // Simple consistency check - both should be provided
-        return values.phone.length > 0 && values.email.length > 0;
+        return String(values.phone).length > 0 && String(values.email).length > 0;
       },
       message: 'Please provide both phone and email',
       severity: 'warning',
@@ -189,7 +189,7 @@ export const useCrossFieldValidation = ({
         if (!values.username) return true;
         // Mock availability check
         const unavailableUsernames = ['admin', 'user', 'test', 'demo'];
-        return !unavailableUsernames.includes(values.username.toLowerCase());
+        return !unavailableUsernames.includes(String(values.username).toLowerCase());
       },
       message: 'Username is not available',
       severity: 'error',
@@ -208,8 +208,8 @@ export const useCrossFieldValidation = ({
         const email = values.email || '';
         
         // Password should not contain username or email
-        return !password.toLowerCase().includes(username.toLowerCase()) &&
-               !password.toLowerCase().includes(email.split('@')[0].toLowerCase());
+        return !String(password).toLowerCase().includes(String(username).toLowerCase()) &&
+               !String(password).toLowerCase().includes(String(email).split('@')[0].toLowerCase());
       },
       message: 'Password should not contain username or email',
       severity: 'warning',
@@ -223,7 +223,7 @@ export const useCrossFieldValidation = ({
       fields: ['street', 'city', 'state', 'zipCode'],
       condition: (values) => {
         const addressFields = ['street', 'city', 'state', 'zipCode'];
-        const filledFields = addressFields.filter(field => values[field] && values[field].trim().length > 0);
+        const filledFields = addressFields.filter(field => values[field] && String(values[field]).trim().length > 0);
         return filledFields.length === 0 || filledFields.length === addressFields.length;
       },
       message: 'Please provide complete address information',
@@ -239,7 +239,7 @@ export const useCrossFieldValidation = ({
   }, [defaultRules, customRules]);
 
   // Validate cross fields synchronously
-  const validateCrossFieldsSync = useCallback((fieldName: string, value: any, context?: CrossFieldContext): CrossFieldResult => {
+  const validateCrossFieldsSync = useCallback((fieldName: string, value: unknown, context?: CrossFieldContext): CrossFieldResult => {
     if (!enableCrossFieldValidation) {
       return {
         isValid: true,
@@ -346,7 +346,7 @@ export const useCrossFieldValidation = ({
   }, [enableCrossFieldValidation, crossFieldRules, crossFieldContext, onRuleApplied, onRuleFailed]);
 
   // Validate cross fields asynchronously
-  const validateCrossFields = useCallback(async (fieldName: string, value: any, context?: CrossFieldContext): Promise<CrossFieldResult> => {
+  const validateCrossFields = useCallback(async (fieldName: string, value: unknown, context?: CrossFieldContext): Promise<CrossFieldResult> => {
     if (!enableRealTimeValidation) {
       return validateCrossFieldsSync(fieldName, value, context);
     }

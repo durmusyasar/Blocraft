@@ -45,7 +45,7 @@ export interface AdvancedSecurityOptions {
     enableDAC: boolean;
     roles: string[];
     permissions: string[];
-    policies: Record<string, any>;
+    policies: Record<string, unknown>;
   };
   auditLogging?: {
     enableAuditLog: boolean;
@@ -58,7 +58,7 @@ export interface AdvancedSecurityOptions {
   threatDetection?: {
     enableThreatDetection: boolean;
     threatTypes: string[];
-    detectionRules: Record<string, any>;
+    detectionRules: Record<string, unknown>;
     alertThresholds: Record<string, number>;
     responseActions: string[];
   };
@@ -101,7 +101,7 @@ export interface AdvancedSecurityOptions {
     customMetrics: string[];
   };
   securityErrorHandling?: {
-    onError: (error: Error, context: any) => void;
+    onError: (error: Error, context: unknown) => void;
     fallbackBehavior: 'disable' | 'ignore' | 'retry' | 'replace';
     maxRetries: number;
     retryDelay: number;
@@ -163,7 +163,7 @@ export interface AdvancedSecurityState {
   accessControl: {
     roles: string[];
     permissions: string[];
-    policies: Record<string, any>;
+    policies: Record<string, unknown>;
   };
   securityEvents: Array<{
     id: string;
@@ -174,7 +174,7 @@ export interface AdvancedSecurityState {
     target: string;
     action: string;
     result: 'success' | 'failure' | 'blocked';
-    details: any;
+    details: unknown;
   }>;
   threats: Array<{
     id: string;
@@ -211,13 +211,13 @@ export interface AdvancedSecurityState {
     id: string;
     error: Error;
     timestamp: number;
-    context: any;
+    context: unknown;
   }>;
   securityAnalytics: {
     usage: Record<string, number>;
     performance: Record<string, number[]>;
     errors: Record<string, number>;
-    userBehavior: Record<string, any>;
+    userBehavior: Record<string, unknown>;
   };
   securityDebugging: {
     logs: Array<{
@@ -225,15 +225,15 @@ export interface AdvancedSecurityState {
       level: string;
       message: string;
       timestamp: number;
-      context: any;
+      context: unknown;
     }>;
     traces: Array<{
       id: string;
-      trace: any;
+      trace: unknown;
       timestamp: number;
     }>;
   };
-  securityCache: Record<string, any>;
+  securityCache: Record<string, unknown>;
   securityViolations: Array<{
     id: string;
     violation: string;
@@ -256,7 +256,7 @@ export interface AdvancedSecurityState {
       target: string;
       action: string;
       result: 'success' | 'failure' | 'blocked';
-      details: any;
+      details: unknown;
     }>;
   };
 }
@@ -269,23 +269,23 @@ export interface AdvancedSecurityActions {
   generateKey: () => string;
   validatePassword: (password: string) => { isValid: boolean; errors: string[] };
   checkAccess: (user: string, resource: string, action: string) => boolean;
-  logSecurityEvent: (type: string, severity: string, source: string, target: string, action: string, result: string, details: any) => void;
+  logSecurityEvent: (type: string, severity: string, source: string, target: string, action: string, result: string, details: unknown) => void;
   detectThreat: (type: string, source: string, target: string, description: string) => void;
   scanVulnerability: (component: string, type: string, description: string) => void;
   blockRequest: (request: string, reason: string) => void;
   reportViolation: (violation: string, severity: string) => void;
-  getSecurityEvents: (filter?: any) => any[];
-  getThreats: (filter?: any) => any[];
-  getVulnerabilities: (filter?: any) => any[];
-  getSecurityMetrics: () => any;
+  getSecurityEvents: (filter?: unknown) => unknown[];
+  getThreats: (filter?: unknown) => unknown[];
+  getVulnerabilities: (filter?: unknown) => unknown[];
+  getSecurityMetrics: () => unknown;
   clearSecurityMetrics: () => void;
-  getSecurityAnalytics: () => any;
+  getSecurityAnalytics: () => unknown;
   clearSecurityAnalytics: () => void;
-  getSecurityLogs: () => any[];
+  getSecurityLogs: () => unknown[];
   clearSecurityLogs: () => void;
-  getSecurityTraces: () => any[];
+  getSecurityTraces: () => unknown[];
   clearSecurityTraces: () => void;
-  getSecurityCache: () => any;
+  getSecurityCache: () => unknown;
   clearSecurityCache: () => void;
   exportSecurityData: () => string;
   importSecurityData: (data: string) => void;
@@ -455,14 +455,14 @@ export function useAdvancedSecurity(options: AdvancedSecurityOptions = {}) {
       customMetrics: [],
     },
     securityErrorHandling = enableSecurityErrorHandling ? {
-      onError: (error: Error, context: any) => {
+      onError: (error: Error, context: unknown) => {
         console.error('Security error:', error, context);
       },
       fallbackBehavior: 'disable',
       maxRetries: 3,
       retryDelay: 1000,
     } : {
-      onError: (error: Error, context: any) => {
+      onError: (error: Error, context: unknown) => {
         // Silent error handling
       },
       fallbackBehavior: 'disable',
@@ -571,7 +571,7 @@ export function useAdvancedSecurity(options: AdvancedSecurityOptions = {}) {
   const errorIdCounter = useRef(0);
 
   // Log security event
-  const logSecurityEvent = useCallback((type: string, severity: string, source: string, target: string, action: string, result: string, details: any) => {
+  const logSecurityEvent = useCallback((type: string, severity: string, source: string, target: string, action: string, result: string, details: unknown) => {
     if (!enableSecurity || !enableAuditLogging) return;
 
     const event = {
@@ -596,7 +596,7 @@ export function useAdvancedSecurity(options: AdvancedSecurityOptions = {}) {
   }, [enableSecurity, enableAuditLogging, auditLogging]);
 
   // Log security debug
-  const logSecurityDebug = useCallback((level: string, message: string, context?: any) => {
+  const logSecurityDebug = useCallback((level: string, message: string, context?: unknown) => {
     if (!enableSecurityLogging) return;
 
     const log = {
@@ -920,30 +920,30 @@ export function useAdvancedSecurity(options: AdvancedSecurityOptions = {}) {
   }, [enableSecurity, enableSecurityLogging, logSecurityDebug, securityAnalytics]);
 
   // Get security events
-  const getSecurityEvents = useCallback((filter?: any) => {
+  const getSecurityEvents = useCallback((filter?: unknown) => {
     if (filter) {
       return state.securityEvents.filter(event => 
-        Object.keys(filter).every(key => event[key as keyof typeof event] === filter[key])
+        Object.keys(filter).every(key => event[key as keyof typeof event] === (filter as Record<string, unknown>)[key])
       );
     }
     return state.securityEvents;
   }, [state.securityEvents]);
 
   // Get threats
-  const getThreats = useCallback((filter?: any) => {
+  const getThreats = useCallback((filter?: unknown) => {
     if (filter) {
       return state.threats.filter(threat => 
-        Object.keys(filter).every(key => threat[key as keyof typeof threat] === filter[key])
+        Object.keys(filter).every(key => threat[key as keyof typeof threat] === (filter as Record<string, unknown>)[key])
       );
     }
     return state.threats;
   }, [state.threats]);
 
   // Get vulnerabilities
-  const getVulnerabilities = useCallback((filter?: any) => {
+  const getVulnerabilities = useCallback((filter?: unknown) => {
     if (filter) {
       return state.vulnerabilities.filter(vulnerability => 
-        Object.keys(filter).every(key => vulnerability[key as keyof typeof vulnerability] === filter[key])
+        Object.keys(filter).every(key => vulnerability[key as keyof typeof vulnerability] === (filter as Record<string, unknown>)[key])
       );
     }
     return state.vulnerabilities;

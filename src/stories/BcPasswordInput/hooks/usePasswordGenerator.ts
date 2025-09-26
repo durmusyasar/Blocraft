@@ -49,29 +49,12 @@ export function usePasswordGenerator(options: PasswordGeneratorOptions): Passwor
     return password.split('').sort(() => Math.random() - 0.5).join('');
   }, [minLength, requireUppercase, requireLowercase, requireNumber, requireSpecial]);
 
-  const generateSecurePassword = useCallback(() => {
-    // Generate a longer, more secure password
-    const secureLength = Math.max(minLength + 4, 16);
-    const secureOptions = { ...options, minLength: secureLength };
-    
-    let password = '';
-    let attempts = 0;
-    const maxAttempts = 10;
-
-    do {
-      password = generatePassword();
-      attempts++;
-    } while (!validateGeneratedPassword(password) && attempts < maxAttempts);
-
-    return password;
-  }, [generatePassword, minLength]);
-
   const validateGeneratedPassword = useCallback((password: string) => {
     if (password.length < minLength) return false;
     if (requireUppercase && !/[A-Z]/.test(password)) return false;
     if (requireLowercase && !/[a-z]/.test(password)) return false;
     if (requireNumber && !/[0-9]/.test(password)) return false;
-    if (requireSpecial && !/[!@#$%^&*()_+\-=\[\]{}|;:,.<>?]/.test(password)) return false;
+    if (requireSpecial && !/[!@#$%^&*()_+\-=[\]{}|;:,.<>?]/.test(password)) return false;
     
     // Check custom rules
     if (customRules) {
@@ -82,6 +65,20 @@ export function usePasswordGenerator(options: PasswordGeneratorOptions): Passwor
 
     return true;
   }, [minLength, requireUppercase, requireLowercase, requireNumber, requireSpecial, customRules]);
+
+  const generateSecurePassword = useCallback(() => {
+    // Generate a longer, more secure password
+    let password = '';
+    let attempts = 0;
+    const maxAttempts = 10;
+
+    do {
+      password = generatePassword();
+      attempts++;
+    } while (!validateGeneratedPassword(password) && attempts < maxAttempts);
+
+    return password;
+  }, [generatePassword, validateGeneratedPassword]);
 
   return useMemo(() => ({
     generatePassword,

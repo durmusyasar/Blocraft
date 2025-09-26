@@ -38,11 +38,11 @@ export interface AIFeaturesOptions {
   aiTimeout?: number;
   aiRetries?: number;
   aiDelay?: number;
-  aiConfig?: Record<string, any>;
+  aiConfig?: Record<string, unknown>;
   aiContext?: {
-    userContext?: Record<string, any>;
-    formContext?: Record<string, any>;
-    systemContext?: Record<string, any>;
+    userContext?: Record<string, unknown>;
+    formContext?: Record<string, unknown>;
+    systemContext?: Record<string, unknown>;
     locale?: string;
     timezone?: string;
     deviceType?: string;
@@ -182,7 +182,7 @@ export interface AIFeaturesOptions {
     };
     errorHandling?: {
       enabled: boolean;
-      onError: (error: Error, context: any) => void;
+      onError: (error: Error, context: unknown) => void;
       fallbackBehavior: 'disable' | 'ignore' | 'retry' | 'replace';
       maxRetries: number;
       retryDelay: number;
@@ -237,31 +237,31 @@ export interface AIFeaturesState {
   isOptimizing: boolean;
   currentProvider: string;
   currentModel: string;
-  currentContext: any;
+  currentContext: unknown;
   aiData: {
     completions: string[];
     suggestions: string[];
-    validation: any;
-    formatting: any;
-    translation: any;
-    summarization: any;
-    sentiment: any;
-    entities: any[];
+    validation: unknown;
+    formatting: unknown;
+    translation: unknown;
+    summarization: unknown;
+    sentiment: unknown;
+    entities: unknown[];
     keywords: string[];
     categories: string[];
     tags: string[];
-    search: any[];
-    recommendations: any[];
-    personalization: any;
-    learning: any;
-    adaptation: any;
-    optimization: any;
+    search: unknown[];
+    recommendations: unknown[];
+    personalization: unknown;
+    learning: unknown;
+    adaptation: unknown;
+    optimization: unknown;
   };
   aiErrors: Array<{
     id: string;
     error: Error;
     timestamp: number;
-    context: any;
+    context: unknown;
   }>;
   aiMetrics: {
     processingTime: number;
@@ -277,7 +277,7 @@ export interface AIFeaturesState {
     usage: Record<string, number>;
     performance: Record<string, number[]>;
     errors: Record<string, number>;
-    userBehavior: Record<string, any>;
+    userBehavior: Record<string, unknown>;
   };
   aiDebugging: {
     logs: Array<{
@@ -285,15 +285,15 @@ export interface AIFeaturesState {
       level: string;
       message: string;
       timestamp: number;
-      context: any;
+      context: unknown;
     }>;
     traces: Array<{
       id: string;
-      trace: any;
+      trace: unknown;
       timestamp: number;
     }>;
   };
-  aiCache: Record<string, any>;
+  aiCache: Record<string, unknown>;
   aiSecurity: {
     violations: Array<{
       id: string;
@@ -311,35 +311,35 @@ export interface AIFeaturesState {
 }
 
 export interface AIFeaturesActions {
-  processText: (text: string, feature: string) => Promise<any>;
+  processText: (text: string, feature: string) => Promise<unknown>;
   getCompletions: (text: string) => Promise<string[]>;
   getSuggestions: (text: string) => Promise<string[]>;
-  validateText: (text: string) => Promise<any>;
+  validateText: (text: string) => Promise<unknown>;
   formatText: (text: string) => Promise<string>;
   translateText: (text: string, targetLanguage: string) => Promise<string>;
   summarizeText: (text: string) => Promise<string>;
-  analyzeSentiment: (text: string) => Promise<any>;
-  extractEntities: (text: string) => Promise<any[]>;
+  analyzeSentiment: (text: string) => Promise<unknown>;
+  extractEntities: (text: string) => Promise<unknown[]>;
   extractKeywords: (text: string) => Promise<string[]>;
   categorizeText: (text: string) => Promise<string[]>;
   generateTags: (text: string) => Promise<string[]>;
-  searchText: (text: string) => Promise<any[]>;
-  getRecommendations: (text: string) => Promise<any[]>;
+  searchText: (text: string) => Promise<unknown[]>;
+  getRecommendations: (text: string) => Promise<unknown[]>;
   personalizeContent: (text: string) => Promise<string>;
-  learnFromFeedback: (text: string, feedback: any) => Promise<void>;
-  adaptToContext: (text: string, context: any) => Promise<string>;
+  learnFromFeedback: (text: string, feedback: unknown) => Promise<void>;
+  adaptToContext: (text: string, context: unknown) => Promise<string>;
   optimizePerformance: () => Promise<void>;
-  getAIData: () => any;
+  getAIData: () => unknown;
   clearAIData: () => void;
-  getAIMetrics: () => any;
+  getAIMetrics: () => unknown;
   clearAIMetrics: () => void;
-  getAIAnalytics: () => any;
+  getAIAnalytics: () => unknown;
   clearAIAnalytics: () => void;
-  getAILogs: () => any[];
+  getAILogs: () => unknown[];
   clearAILogs: () => void;
-  getAITraces: () => any[];
+  getAITraces: () => unknown[];
   clearAITraces: () => void;
-  getAICache: () => any;
+  getAICache: () => unknown;
   clearAICache: () => void;
   exportAIData: () => string;
   importAIData: (data: string) => void;
@@ -521,7 +521,7 @@ export function useAIFeatures(options: AIFeaturesOptions = {}) {
       },
       errorHandling: {
         enabled: true,
-        onError: (error: Error, context: any) => {
+        onError: (error: Error, context: unknown) => {
           console.error('AI Features error:', error, context);
         },
         fallbackBehavior: 'disable',
@@ -633,7 +633,7 @@ export function useAIFeatures(options: AIFeaturesOptions = {}) {
   const errorIdCounter = useRef(0);
 
   // Log AI event
-  const logAIEvent = useCallback((level: string, message: string, context?: any) => {
+  const logAIEvent = useCallback((level: string, message: string, context?: unknown) => {
     if (!enableSmartLogging) return;
 
     const log = {
@@ -659,7 +659,7 @@ export function useAIFeatures(options: AIFeaturesOptions = {}) {
   }, [enableSmartLogging, aiFeatures.debugging]);
 
   // Handle AI error
-  const handleAIError = useCallback((error: Error, context: any) => {
+  const handleAIError = useCallback((error: Error, context: unknown) => {
     if (enableSmartErrorHandling && aiFeatures.errorHandling) {
       aiFeatures.errorHandling.onError(error, context);
     }
@@ -687,7 +687,7 @@ export function useAIFeatures(options: AIFeaturesOptions = {}) {
   }, [enableSmartErrorHandling, logAIEvent, aiFeatures.errorHandling, enableSmartDebugging]);
 
   // Process text with AI
-  const processText = useCallback(async (text: string, feature: string): Promise<any> => {
+  const processText = useCallback(async (text: string, feature: string): Promise<unknown> => {
     if (!enableAI) return null;
 
     setState(prev => ({ ...prev, isProcessing: true }));
@@ -762,11 +762,11 @@ export function useAIFeatures(options: AIFeaturesOptions = {}) {
         ...prev,
         aiData: {
           ...prev.aiData,
-          completions: result.completions || [],
+          completions: ((result as Record<string, unknown>).completions as string[]) || [],
         },
       }));
     }
-    return result?.completions || [];
+    return ((result as Record<string, unknown>)?.completions as string[]) || [];
   }, [enableAI, enableSmartCompletions, processText]);
 
   // Get suggestions
@@ -779,15 +779,15 @@ export function useAIFeatures(options: AIFeaturesOptions = {}) {
         ...prev,
         aiData: {
           ...prev.aiData,
-          suggestions: result.suggestions || [],
+          suggestions: ((result as Record<string, unknown>).suggestions as string[]) || [],
         },
       }));
     }
-    return result?.suggestions || [];
+    return ((result as Record<string, unknown>)?.suggestions as string[]) || [];
   }, [enableAI, enableSmartSuggestions, processText]);
 
   // Validate text
-  const validateText = useCallback(async (text: string): Promise<any> => {
+  const validateText = useCallback(async (text: string): Promise<unknown> => {
     if (!enableAI || !enableSmartValidation) return null;
 
     const result = await processText(text, 'validation');
@@ -808,7 +808,7 @@ export function useAIFeatures(options: AIFeaturesOptions = {}) {
     if (!enableAI || !enableSmartFormatting) return text;
 
     const result = await processText(text, 'formatting');
-    return result?.formattedText || text;
+    return ((result as Record<string, unknown>)?.formattedText as string) || text;
   }, [enableAI, enableSmartFormatting, processText]);
 
   // Translate text
@@ -816,7 +816,7 @@ export function useAIFeatures(options: AIFeaturesOptions = {}) {
     if (!enableAI || !enableSmartTranslation) return text;
 
     const result = await processText(text, 'translation');
-    return result?.translatedText || text;
+    return ((result as Record<string, unknown>)?.translatedText as string) || text;
   }, [enableAI, enableSmartTranslation, processText]);
 
   // Summarize text
@@ -824,11 +824,11 @@ export function useAIFeatures(options: AIFeaturesOptions = {}) {
     if (!enableAI || !enableSmartSummarization) return text;
 
     const result = await processText(text, 'summarization');
-    return result?.summary || text;
+    return ((result as Record<string, unknown>)?.summary as string) || text;
   }, [enableAI, enableSmartSummarization, processText]);
 
   // Analyze sentiment
-  const analyzeSentiment = useCallback(async (text: string): Promise<any> => {
+  const analyzeSentiment = useCallback(async (text: string): Promise<unknown> => {
     if (!enableAI || !enableSmartSentiment) return null;
 
     const result = await processText(text, 'sentiment');
@@ -845,7 +845,7 @@ export function useAIFeatures(options: AIFeaturesOptions = {}) {
   }, [enableAI, enableSmartSentiment, processText]);
 
   // Extract entities
-  const extractEntities = useCallback(async (text: string): Promise<any[]> => {
+  const extractEntities = useCallback(async (text: string): Promise<unknown[]> => {
     if (!enableAI || !enableSmartEntities) return [];
 
     const result = await processText(text, 'entities');
@@ -854,11 +854,11 @@ export function useAIFeatures(options: AIFeaturesOptions = {}) {
         ...prev,
         aiData: {
           ...prev.aiData,
-          entities: result.entities || [],
+          entities: ((result as Record<string, unknown>).entities as unknown[]) || [],
         },
       }));
     }
-    return result?.entities || [];
+    return ((result as Record<string, unknown>)?.entities as unknown[]) || [];
   }, [enableAI, enableSmartEntities, processText]);
 
   // Extract keywords
@@ -871,11 +871,11 @@ export function useAIFeatures(options: AIFeaturesOptions = {}) {
         ...prev,
         aiData: {
           ...prev.aiData,
-          keywords: result.keywords || [],
+          keywords: ((result as Record<string, unknown>).keywords as string[]) || [],
         },
       }));
     }
-    return result?.keywords || [];
+    return ((result as Record<string, unknown>)?.keywords as string[]) || [];
   }, [enableAI, enableSmartKeywords, processText]);
 
   // Categorize text
@@ -888,11 +888,11 @@ export function useAIFeatures(options: AIFeaturesOptions = {}) {
         ...prev,
         aiData: {
           ...prev.aiData,
-          categories: result.categories || [],
+          categories: ((result as Record<string, unknown>).categories as string[]) || [],
         },
       }));
     }
-    return result?.categories || [];
+    return ((result as Record<string, unknown>)?.categories as string[]) || [];
   }, [enableAI, enableSmartCategories, processText]);
 
   // Generate tags
@@ -905,15 +905,15 @@ export function useAIFeatures(options: AIFeaturesOptions = {}) {
         ...prev,
         aiData: {
           ...prev.aiData,
-          tags: result.tags || [],
+          tags: ((result as Record<string, unknown>).tags as string[]) || [],
         },
       }));
     }
-    return result?.tags || [];
+    return ((result as Record<string, unknown>)?.tags as string[]) || [];
   }, [enableAI, enableSmartTags, processText]);
 
   // Search text
-  const searchText = useCallback(async (text: string): Promise<any[]> => {
+  const searchText = useCallback(async (text: string): Promise<unknown[]> => {
     if (!enableAI || !enableSmartSearch) return [];
 
     const result = await processText(text, 'search');
@@ -922,15 +922,15 @@ export function useAIFeatures(options: AIFeaturesOptions = {}) {
         ...prev,
         aiData: {
           ...prev.aiData,
-          search: result.searchResults || [],
+          search: ((result as Record<string, unknown>).searchResults as unknown[]) || [],
         },
       }));
     }
-    return result?.searchResults || [];
+    return ((result as Record<string, unknown>)?.searchResults as unknown[]) || [];
   }, [enableAI, enableSmartSearch, processText]);
 
   // Get recommendations
-  const getRecommendations = useCallback(async (text: string): Promise<any[]> => {
+  const getRecommendations = useCallback(async (text: string): Promise<unknown[]> => {
     if (!enableAI || !enableSmartRecommendations) return [];
 
     const result = await processText(text, 'recommendations');
@@ -939,11 +939,11 @@ export function useAIFeatures(options: AIFeaturesOptions = {}) {
         ...prev,
         aiData: {
           ...prev.aiData,
-          recommendations: result.recommendations || [],
+          recommendations: ((result as Record<string, unknown>).recommendations as unknown[]) || [],
         },
       }));
     }
-    return result?.recommendations || [];
+    return ((result as Record<string, unknown>)?.recommendations as unknown[]) || [];
   }, [enableAI, enableSmartRecommendations, processText]);
 
   // Personalize content
@@ -951,11 +951,11 @@ export function useAIFeatures(options: AIFeaturesOptions = {}) {
     if (!enableAI || !enableSmartPersonalization) return text;
 
     const result = await processText(text, 'personalization');
-    return result?.personalizedText || text;
+    return ((result as Record<string, unknown>)?.personalizedText as string) || text;
   }, [enableAI, enableSmartPersonalization, processText]);
 
   // Learn from feedback
-  const learnFromFeedback = useCallback(async (text: string, feedback: any): Promise<void> => {
+  const learnFromFeedback = useCallback(async (text: string, feedback: unknown): Promise<void> => {
     if (!enableAI || !enableSmartLearning) return;
 
     setState(prev => ({ ...prev, isLearning: true }));
@@ -971,14 +971,14 @@ export function useAIFeatures(options: AIFeaturesOptions = {}) {
   }, [enableAI, enableSmartLearning, handleAIError, logAIEvent, processText]);
 
   // Adapt to context
-  const adaptToContext = useCallback(async (text: string, context: any): Promise<string> => {
+  const adaptToContext = useCallback(async (text: string, context: unknown): Promise<string> => {
     if (!enableAI || !enableSmartAdaptation) return text;
 
     setState(prev => ({ ...prev, isAdapting: true }));
     
     try {
       const result = await processText(text, 'adaptation');
-      return result?.adaptedText || text;
+      return ((result as Record<string, unknown>)?.adaptedText as string) || text;
     } catch (error) {
       handleAIError(error as Error, { action: 'adaptToContext', text, context });
       return text;

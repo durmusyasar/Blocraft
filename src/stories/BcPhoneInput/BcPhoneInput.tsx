@@ -29,7 +29,8 @@ import {
 import { countrySelectAppearances, countrySelectStyle } from "./styles";
 import StarIcon from '@mui/icons-material/Star';
 
-let FixedSizeList: any = null;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+let FixedSizeList: React.ComponentType<any> | null = null;
 let isReactWindowLoading = false;
 
 const TEXTS: Record<string, Record<string, string>> = {
@@ -54,11 +55,17 @@ const getText = (
 };
 
 // Virtualized Menu List for large country lists
+type CountryMenuItem = {
+  type: "header" | "country";
+  label?: string;
+  country?: CountryType;
+};
+
 function VirtualizedMenuList({ items, getItemLabel, getItemKey, renderItem, height = 300, itemSize = 44, ...props }: {
-  items: any[];
-  getItemLabel: (item: any, index: number) => string;
-  getItemKey: (item: any, index: number) => string | number;
-  renderItem: (item: any, index: number) => React.ReactNode;
+  items: CountryMenuItem[];
+  getItemLabel: (item: CountryMenuItem, index: number) => string;
+  getItemKey: (item: CountryMenuItem, index: number) => string | number;
+  renderItem: (item: CountryMenuItem, index: number) => React.ReactNode;
   height?: number;
   itemSize?: number;
 }) {
@@ -313,7 +320,7 @@ export const BcPhoneInput = forwardRef<HTMLInputElement, BcPhoneInputProps>(
     // === STATE ===
     const liveRegionRef = React.useRef<HTMLDivElement>(null);
 
-    const phone = (rest.value as string) || (rest.defaultValue as string) || "";
+    const phone = phoneLogic.state.phone;
     const isValid = validatePhone
       ? validatePhone(phone, country)
       : phoneValidation.validation.isValid;
@@ -333,11 +340,12 @@ export const BcPhoneInput = forwardRef<HTMLInputElement, BcPhoneInputProps>(
         if (enablePhoneFormatting) {
           newValue = phoneFormatting.formatOnChange(newValue, country);
         }
+        phoneLogic.actions.setPhone(newValue);
         if (!rest.value && rest.onChange) {
           rest.onChange({ ...e, target: { ...e.target, value: newValue } });
         }
       },
-      [enablePhoneFormatting, rest, phoneFormatting, country]
+      [enablePhoneFormatting, rest, phoneFormatting, country, phoneLogic.actions]
     );
 
     // === I18N ===
@@ -520,11 +528,7 @@ export const BcPhoneInput = forwardRef<HTMLInputElement, BcPhoneInputProps>(
       );
     } else if (showCountrySelect) {
       // Sanal render için düzleştirilmiş ülke listesi (başlıklar dahil)
-      const flatMenuItems: Array<{
-        type: "header" | "country";
-        label?: string;
-        country?: CountryType;
-      }> = [];
+      const flatMenuItems: CountryMenuItem[] = [];
       if (groupedCountries.favs.length > 0) {
         flatMenuItems.push({ type: "header", label: i18nFavorites });
         groupedCountries.favs.forEach((c) =>
@@ -1094,7 +1098,6 @@ export const BcPhoneInput = forwardRef<HTMLInputElement, BcPhoneInputProps>(
           autoFocus={autoFocus}
           inputPrefix={selectNode}
           sx={{
-            width: "300px",
             maxWidth: "100%",
             ...rest.sx,
           }}

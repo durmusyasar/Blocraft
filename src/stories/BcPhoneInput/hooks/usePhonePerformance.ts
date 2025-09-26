@@ -39,8 +39,8 @@ export interface PhonePerformanceReturn {
     trackMemoryUsage: () => void;
   };
   cache: {
-    get: (key: string) => any;
-    set: (key: string, value: any) => void;
+    get: (key: string) => unknown;
+    set: (key: string, value: unknown) => void;
     clear: () => void;
     size: () => number;
   };
@@ -70,7 +70,7 @@ export const usePhonePerformance = (props: BcPhoneInputProps): PhonePerformanceR
     cacheMisses: 0,
   });
 
-  const cacheRef = useRef<Map<string, any>>(new Map());
+  const cacheRef = useRef<Map<string, unknown>>(new Map());
 
   const startRender = useCallback(() => {
     if (enableRenderTracking) {
@@ -113,7 +113,7 @@ export const usePhonePerformance = (props: BcPhoneInputProps): PhonePerformanceR
 
   const trackMemoryUsage = useCallback(() => {
     if (enablePerformanceTracking && enableMemoryTracking && 'memory' in performance) {
-      const memory = (performance as any).memory;
+      const memory = (performance as Record<string, unknown>).memory as Record<string, number>;
       metricsRef.current.memoryUsage = memory.usedJSHeapSize;
     }
   }, [enablePerformanceTracking, enableMemoryTracking]);
@@ -128,7 +128,7 @@ export const usePhonePerformance = (props: BcPhoneInputProps): PhonePerformanceR
       trackCacheMiss();
       return undefined;
     },
-    set: (key: string, value: any) => {
+    set: (key: string, value: unknown) => {
       if (enableCaching) {
         cacheRef.current.set(key, value);
       }

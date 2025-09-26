@@ -3,7 +3,7 @@ import { useCallback, useMemo } from 'react';
 export interface AdvancedMonitoringCallbacks {
   onChange?: (value: string) => void;
   onError?: (error: Error) => void;
-  onPerformance?: (metrics: any) => void;
+  onPerformance?: (metrics: Record<string, unknown>) => void;
   onStrengthChange?: (strength: number) => void;
   onPasswordGenerated?: (password: string, method: 'manual' | 'auto') => void;
   onPasswordCopied?: (password: string) => void;
@@ -38,7 +38,7 @@ export function useAdvancedMonitoring(
     userId
   } = options;
 
-  const trackEvent = useCallback((eventName: string, data: any = {}) => {
+  const trackEvent = useCallback((eventName: string, data: Record<string, unknown> = {}) => {
     if (!enableAnalytics) return;
 
     const eventData = {
@@ -50,19 +50,19 @@ export function useAdvancedMonitoring(
     };
 
     // Send to analytics service
-    if (typeof window !== 'undefined' && (window as any).gtag) {
-      (window as any).gtag('event', eventName, eventData);
+    if (typeof window !== 'undefined' && (window as unknown as Record<string, unknown>).gtag) {
+      ((window as unknown as Record<string, unknown>).gtag as Function)('event', eventName, eventData);
     }
 
     // Send to custom analytics
-    if (typeof window !== 'undefined' && (window as any).analytics) {
-      (window as any).analytics.track(eventName, eventData);
+    if (typeof window !== 'undefined' && (window as unknown as Record<string, unknown>).analytics) {
+      ((window as unknown as Record<string, unknown>).analytics as { track: Function }).track(eventName, eventData);
     }
 
     console.log(`[BcPasswordInput Analytics] ${eventName}:`, eventData);
   }, [enableAnalytics, sessionId, userId]);
 
-  const trackPerformance = useCallback((metrics: any) => {
+  const trackPerformance = useCallback((metrics: Record<string, unknown>) => {
     if (!enablePerformanceTracking) return;
 
     const performanceData = {
@@ -74,14 +74,14 @@ export function useAdvancedMonitoring(
     };
 
     // Send to performance monitoring service
-    if (typeof window !== 'undefined' && (window as any).performanceObserver) {
-      (window as any).performanceObserver.observe(performanceData);
+    if (typeof window !== 'undefined' && (window as unknown as Record<string, unknown>).performanceObserver) {
+      ((window as unknown as Record<string, unknown>).performanceObserver as { observe: Function }).observe(performanceData);
     }
 
     console.log(`[BcPasswordInput Performance]`, performanceData);
   }, [enablePerformanceTracking, sessionId, userId]);
 
-  const trackUserBehavior = useCallback((action: string, data: any = {}) => {
+  const trackUserBehavior = useCallback((action: string, data: Record<string, unknown> = {}) => {
     if (!enableUserBehaviorTracking) return;
 
     const behaviorData = {
@@ -94,8 +94,8 @@ export function useAdvancedMonitoring(
     };
 
     // Send to user behavior tracking service
-    if (typeof window !== 'undefined' && (window as any).userBehaviorTracker) {
-      (window as any).userBehaviorTracker.track(behaviorData);
+    if (typeof window !== 'undefined' && (window as unknown as Record<string, unknown>).userBehaviorTracker) {
+      ((window as unknown as Record<string, unknown>).userBehaviorTracker as { track: Function }).track(behaviorData);
     }
 
     console.log(`[BcPasswordInput User Behavior] ${action}:`, behaviorData);
@@ -111,7 +111,7 @@ export function useAdvancedMonitoring(
       trackEvent('password_error', { error: error.message, stack: error.stack });
       callbacks.onError?.(error);
     },
-    onPerformance: (metrics: any) => {
+    onPerformance: (metrics: Record<string, unknown>) => {
       trackPerformance(metrics);
       callbacks.onPerformance?.(metrics);
     },

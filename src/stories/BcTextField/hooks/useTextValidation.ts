@@ -5,7 +5,13 @@ interface UseTextFieldValidationProps {
   enableAsyncValidation?: boolean;
   validateInput?: (input: string) => Promise<{ isValid: boolean; message?: string; type?: 'error' | 'warning' | 'success' | 'info' }>;
   validationDebounceMs?: number;
-  monitoring?: any;
+  monitoring?: {
+    enableUsageAnalytics?: boolean;
+    enableErrorTracking?: boolean;
+    componentId?: string;
+    getMonitor?: () => { trackSearch?: (input: string) => void } | undefined;
+    trackError?: (error: { type: string; message: string; inputValue: string; componentId: string }) => void;
+  };
   keyboardNavigationAnnouncements?: boolean;
   liveRegionRef: RefObject<HTMLDivElement | null>;
   setScreenReaderMessage: (msg: string) => void;

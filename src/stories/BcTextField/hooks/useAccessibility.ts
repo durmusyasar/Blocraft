@@ -40,8 +40,8 @@ export interface AccessibilityContext {
   fieldRequired?: boolean;
   fieldDisabled?: boolean;
   fieldReadonly?: boolean;
-  userContext?: Record<string, any>;
-  formContext?: Record<string, any>;
+  userContext?: Record<string, unknown>;
+  formContext?: Record<string, unknown>;
   locale?: string;
   deviceType?: 'desktop' | 'tablet' | 'mobile';
   userLevel?: 'beginner' | 'intermediate' | 'advanced';

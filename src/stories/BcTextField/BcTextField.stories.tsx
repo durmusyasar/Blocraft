@@ -13,14 +13,26 @@ const TEXTS: Record<string, Record<string, string>> = {
 
 type Locale = keyof typeof TEXTS;
 
+type StoryContext = {
+  globals?: { locale?: string };
+  locale?: string;
+};
+
 const getText = (locale: Locale | undefined, key: string): string => {
   const safeLocale = locale || "en";
   return TEXTS[safeLocale]?.[key] || TEXTS.en[key] || key;
 };
 
 // Storybook global locale decorator
-const withLocale = (Story: any, context: any) => {
-  const locale = context.locale || context.globals.locale;
+const withLocale = (
+  Story: React.ComponentType<Record<string, unknown>>,
+  context: {
+    locale?: string;
+    globals?: { locale?: string };
+    args?: Record<string, unknown>;
+  }
+) => {
+  const locale = context.locale || context.globals?.locale;
   const storyProps = context.args || {};
   const hasLocale = storyProps.locale !== undefined;
   return (
@@ -32,12 +44,18 @@ const withLocale = (Story: any, context: any) => {
 };
 // Get default locale from Storybook globals if available, else 'en'
 const defaultLocale =
-  (window as any)?.__STORYBOOK_ADDONS_CHANNEL__?.data?.globalsUpdated?.[0]
-    ?.globals?.locale || "en";
+  (
+    window as Window & {
+      __STORYBOOK_ADDONS_CHANNEL__?: {
+        data?: { globalsUpdated?: Array<{ globals?: { locale?: string } }> };
+      };
+    }
+  )?.__STORYBOOK_ADDONS_CHANNEL__?.data?.globalsUpdated?.[0]?.globals?.locale ||
+  "en";
 
 const meta: Meta<BcTextFieldProps> = {
   title: "Components/BcTextField",
-  component: BcTextField as any,
+  component: BcTextField as React.ComponentType<BcTextFieldProps>,
   tags: ["autodocs"],
   parameters: {
     docs: {
@@ -58,7 +76,7 @@ const meta: Meta<BcTextFieldProps> = {
     enableAsyncValidation: false,
     enableAutoComplete: false,
     enableAccessibility: false,
-    
+
     // İKİNCİ 10 ÖNEMLİ PROP
     enableRichText: false,
     enableCharacterCount: false,
@@ -102,7 +120,10 @@ const meta: Meta<BcTextFieldProps> = {
       control: "boolean",
     },
     enablePerformanceTracking: {
-      description: getText(defaultLocale, "enablePerformanceTrackingDescription"),
+      description: getText(
+        defaultLocale,
+        "enablePerformanceTrackingDescription"
+      ),
       control: "boolean",
     },
     responsiveWidth: {
@@ -125,7 +146,7 @@ const meta: Meta<BcTextFieldProps> = {
       description: getText(defaultLocale, "missingPropsEnableAccessibility"),
       control: "boolean",
     },
-    
+
     // İKİNCİ 10 ÖNEMLİ PROP - Controls panelinde gösterilecek
     enableRichText: {
       description: getText(defaultLocale, "missingPropsEnableRichText"),
@@ -167,7 +188,7 @@ const meta: Meta<BcTextFieldProps> = {
       description: getText(defaultLocale, "missingPropsEnableColors"),
       control: "boolean",
     },
-    
+
     // DİĞER TÜM PROPS'LARI GİZLE - MissingPropsTable'da gösterilecek
     onClear: { table: { disable: true } },
     name: { table: { disable: true } },
@@ -208,15 +229,15 @@ const meta: Meta<BcTextFieldProps> = {
     disabled: { table: { disable: true } },
     placeholder: { table: { disable: true } },
     label: { table: { disable: true } },
-    
+
     // Rich Text Editor
     enableMarkdown: { table: { disable: true } },
     enableHTML: { table: { disable: true } },
-    
+
     // Text Formatting
     enableLineCount: { table: { disable: true } },
     enableParagraphCount: { table: { disable: true } },
-    
+
     // Text Counter
     enableCounter: { table: { disable: true } },
     maxCharacters: { table: { disable: true } },
@@ -225,7 +246,7 @@ const meta: Meta<BcTextFieldProps> = {
     maxParagraphs: { table: { disable: true } },
     warningThreshold: { table: { disable: true } },
     criticalThreshold: { table: { disable: true } },
-    
+
     // Auto Complete
     autoCompleteOptions: { table: { disable: true } },
     fetchAutoCompleteOptions: { table: { disable: true } },
@@ -235,7 +256,7 @@ const meta: Meta<BcTextFieldProps> = {
     enableAutoCompleteCategories: { table: { disable: true } },
     enableAutoCompleteIcons: { table: { disable: true } },
     enableAutoCompleteKeyboardNavigation: { table: { disable: true } },
-    
+
     // Smart Suggestions
     enableSmartSuggestions: { table: { disable: true } },
     enableRecentHistory: { table: { disable: true } },
@@ -249,7 +270,7 @@ const meta: Meta<BcTextFieldProps> = {
     suggestionDebounceMs: { table: { disable: true } },
     enableLearning: { table: { disable: true } },
     enablePersonalization: { table: { disable: true } },
-    
+
     // Smart Validation
     enableSmartValidation: { table: { disable: true } },
     enableSmartRealTimeValidation: { table: { disable: true } },
@@ -257,7 +278,7 @@ const meta: Meta<BcTextFieldProps> = {
     enableValidationLearning: { table: { disable: true } },
     smartValidationDebounceMs: { table: { disable: true } },
     smartCustomValidationRules: { table: { disable: true } },
-    
+
     // Advanced Validation
     enableAdvancedValidation: { table: { disable: true } },
     enableAdvancedAsyncValidation: { table: { disable: true } },
@@ -268,7 +289,7 @@ const meta: Meta<BcTextFieldProps> = {
     maxConcurrentValidations: { table: { disable: true } },
     advancedCustomValidationRules: { table: { disable: true } },
     validationContext: { table: { disable: true } },
-    
+
     // Business Rules
     enableBusinessRules: { table: { disable: true } },
     enableBusinessRealTimeEvaluation: { table: { disable: true } },
@@ -277,13 +298,13 @@ const meta: Meta<BcTextFieldProps> = {
     businessEvaluationDebounceMs: { table: { disable: true } },
     customBusinessRules: { table: { disable: true } },
     businessContext: { table: { disable: true } },
-    
+
     // Cross Field Validation
     enableCrossFieldValidation: { table: { disable: true } },
     enableCrossFieldDependencyTracking: { table: { disable: true } },
     customCrossFieldRules: { table: { disable: true } },
     crossFieldContext: { table: { disable: true } },
-    
+
     // Smart Placeholder
     enableSmartPlaceholder: { table: { disable: true } },
     enableContextualPlaceholders: { table: { disable: true } },
@@ -292,7 +313,7 @@ const meta: Meta<BcTextFieldProps> = {
     enablePlaceholderLearning: { table: { disable: true } },
     customPlaceholderTemplates: { table: { disable: true } },
     placeholderContext: { table: { disable: true } },
-    
+
     // Smart Help
     enableSmartHelp: { table: { disable: true } },
     enableContextualHelp: { table: { disable: true } },
@@ -301,7 +322,7 @@ const meta: Meta<BcTextFieldProps> = {
     enableHelpPersonalization: { table: { disable: true } },
     customHelpItems: { table: { disable: true } },
     helpContext: { table: { disable: true } },
-    
+
     // Progressive Disclosure
     enableProgressiveDisclosure: { table: { disable: true } },
     enableContextualDisclosure: { table: { disable: true } },
@@ -310,7 +331,7 @@ const meta: Meta<BcTextFieldProps> = {
     customDisclosureRules: { table: { disable: true } },
     customDisclosureContent: { table: { disable: true } },
     disclosureContext: { table: { disable: true } },
-    
+
     // Accessibility
     enableScreenReaderSupport: { table: { disable: true } },
     enableKeyboardNavigation: { table: { disable: true } },
@@ -324,7 +345,7 @@ const meta: Meta<BcTextFieldProps> = {
     enableErrorAnnouncements: { table: { disable: true } },
     enableStatusAnnouncements: { table: { disable: true } },
     enableProgressAnnouncements: { table: { disable: true } },
-    
+
     // Performance
     enableRenderTracking: { table: { disable: true } },
     enableMemoryTracking: { table: { disable: true } },
@@ -335,7 +356,7 @@ const meta: Meta<BcTextFieldProps> = {
     enableThrottling: { table: { disable: true } },
     enableCaching: { table: { disable: true } },
     enableMemoization: { table: { disable: true } },
-    
+
     // Monitoring
     enableMonitoring: { table: { disable: true } },
     enableRealTimeMonitoring: { table: { disable: true } },
@@ -347,7 +368,7 @@ const meta: Meta<BcTextFieldProps> = {
     enableCustomEvents: { table: { disable: true } },
     monitoringApiEndpoint: { table: { disable: true } },
     monitoringApiKey: { table: { disable: true } },
-    
+
     // Testing
     enableTesting: { table: { disable: true } },
     enableTestMode: { table: { disable: true } },
@@ -373,7 +394,7 @@ const meta: Meta<BcTextFieldProps> = {
     customTestUtilities: { table: { disable: true } },
     customTestValidators: { table: { disable: true } },
     customTestAssertions: { table: { disable: true } },
-    
+
     // Integration
     enableIntegration: { table: { disable: true } },
     enableFormIntegration: { table: { disable: true } },
@@ -416,7 +437,7 @@ type Story = StoryObj<BcTextFieldProps>;
 
 // Ana Story - Controls panelindeki prop'lar bu story'de çalışır
 export const Default: Story = {
-  render: (args, context: any) => {
+  render: (args, context: StoryContext) => {
     const locale = context.globals?.locale ?? context.locale ?? "en";
     return (
       <BcTextField
@@ -455,7 +476,7 @@ export const MissingPropsTable: Story = {
     enableLinks: false,
     enableColors: false,
   },
-  render: (args, context: any) => {
+  render: (args, context: StoryContext) => {
     const locale = context.globals?.locale ?? context.locale ?? "en";
     const [currentPage, setCurrentPage] = React.useState(1);
     const [searchTerm, setSearchTerm] = React.useState("");
@@ -702,7 +723,10 @@ export const MissingPropsTable: Story = {
         name: "enableSmartRealTimeValidation",
         type: "boolean",
         category: getText(locale, "categorySmartValidation"),
-        description: getText(locale, "missingPropsEnableSmartRealTimeValidation"),
+        description: getText(
+          locale,
+          "missingPropsEnableSmartRealTimeValidation"
+        ),
       },
       {
         name: "enableValidationSuggestions",
@@ -740,7 +764,10 @@ export const MissingPropsTable: Story = {
         name: "enableAdvancedAsyncValidation",
         type: "boolean",
         category: getText(locale, "categoryAdvancedValidation"),
-        description: getText(locale, "missingPropsEnableAdvancedAsyncValidation"),
+        description: getText(
+          locale,
+          "missingPropsEnableAdvancedAsyncValidation"
+        ),
       },
       {
         name: "enableContextValidation",
@@ -758,13 +785,19 @@ export const MissingPropsTable: Story = {
         name: "enableAdvancedCrossFieldValidation",
         type: "boolean",
         category: getText(locale, "categoryAdvancedValidation"),
-        description: getText(locale, "missingPropsEnableAdvancedCrossFieldValidation"),
+        description: getText(
+          locale,
+          "missingPropsEnableAdvancedCrossFieldValidation"
+        ),
       },
       {
         name: "enableAdvancedRealTimeValidation",
         type: "boolean",
         category: getText(locale, "categoryAdvancedValidation"),
-        description: getText(locale, "missingPropsEnableAdvancedRealTimeValidation"),
+        description: getText(
+          locale,
+          "missingPropsEnableAdvancedRealTimeValidation"
+        ),
       },
       {
         name: "maxConcurrentValidations",
@@ -776,7 +809,10 @@ export const MissingPropsTable: Story = {
         name: "advancedCustomValidationRules",
         type: "array",
         category: getText(locale, "categoryAdvancedValidation"),
-        description: getText(locale, "missingPropsAdvancedCustomValidationRules"),
+        description: getText(
+          locale,
+          "missingPropsAdvancedCustomValidationRules"
+        ),
       },
       {
         name: "validationContext",
@@ -796,7 +832,10 @@ export const MissingPropsTable: Story = {
         name: "enableBusinessRealTimeEvaluation",
         type: "boolean",
         category: getText(locale, "categoryBusinessRules"),
-        description: getText(locale, "missingPropsEnableBusinessRealTimeEvaluation"),
+        description: getText(
+          locale,
+          "missingPropsEnableBusinessRealTimeEvaluation"
+        ),
       },
       {
         name: "enableRuleLearning",
@@ -814,7 +853,10 @@ export const MissingPropsTable: Story = {
         name: "businessEvaluationDebounceMs",
         type: "number",
         category: getText(locale, "categoryBusinessRules"),
-        description: getText(locale, "missingPropsBusinessEvaluationDebounceMs"),
+        description: getText(
+          locale,
+          "missingPropsBusinessEvaluationDebounceMs"
+        ),
       },
       {
         name: "customBusinessRules",
@@ -840,7 +882,10 @@ export const MissingPropsTable: Story = {
         name: "enableCrossFieldDependencyTracking",
         type: "boolean",
         category: getText(locale, "categoryCrossFieldValidation"),
-        description: getText(locale, "missingPropsEnableCrossFieldDependencyTracking"),
+        description: getText(
+          locale,
+          "missingPropsEnableCrossFieldDependencyTracking"
+        ),
       },
       {
         name: "customCrossFieldRules",
@@ -866,7 +911,10 @@ export const MissingPropsTable: Story = {
         name: "enableContextualPlaceholders",
         type: "boolean",
         category: getText(locale, "categorySmartPlaceholder"),
-        description: getText(locale, "missingPropsEnableContextualPlaceholders"),
+        description: getText(
+          locale,
+          "missingPropsEnableContextualPlaceholders"
+        ),
       },
       {
         name: "enableTimeBasedPlaceholders",
@@ -878,7 +926,10 @@ export const MissingPropsTable: Story = {
         name: "enablePersonalizedPlaceholders",
         type: "boolean",
         category: getText(locale, "categorySmartPlaceholder"),
-        description: getText(locale, "missingPropsEnablePersonalizedPlaceholders"),
+        description: getText(
+          locale,
+          "missingPropsEnablePersonalizedPlaceholders"
+        ),
       },
       {
         name: "enablePlaceholderLearning",
@@ -966,7 +1017,10 @@ export const MissingPropsTable: Story = {
         name: "enableDisclosurePersonalization",
         type: "boolean",
         category: getText(locale, "categoryProgressiveDisclosure"),
-        description: getText(locale, "missingPropsEnableDisclosurePersonalization"),
+        description: getText(
+          locale,
+          "missingPropsEnableDisclosurePersonalization"
+        ),
       },
       {
         name: "customDisclosureRules",
@@ -1004,13 +1058,19 @@ export const MissingPropsTable: Story = {
         name: "enableAccessibilityHighContrast",
         type: "boolean",
         category: getText(locale, "categoryAccessibility"),
-        description: getText(locale, "missingPropsEnableAccessibilityHighContrast"),
+        description: getText(
+          locale,
+          "missingPropsEnableAccessibilityHighContrast"
+        ),
       },
       {
         name: "enableAccessibilityReducedMotion",
         type: "boolean",
         category: getText(locale, "categoryAccessibility"),
-        description: getText(locale, "missingPropsEnableAccessibilityReducedMotion"),
+        description: getText(
+          locale,
+          "missingPropsEnableAccessibilityReducedMotion"
+        ),
       },
       {
         name: "enableFocusManagement",
@@ -1090,13 +1150,19 @@ export const MissingPropsTable: Story = {
         name: "enableUserInteractionTracking",
         type: "boolean",
         category: getText(locale, "categoryPerformance"),
-        description: getText(locale, "missingPropsEnableUserInteractionTracking"),
+        description: getText(
+          locale,
+          "missingPropsEnableUserInteractionTracking"
+        ),
       },
       {
         name: "enablePerformanceOptimization",
         type: "boolean",
         category: getText(locale, "categoryPerformance"),
-        description: getText(locale, "missingPropsEnablePerformanceOptimization"),
+        description: getText(
+          locale,
+          "missingPropsEnablePerformanceOptimization"
+        ),
       },
       {
         name: "enableDebouncing",
@@ -1396,13 +1462,19 @@ export const MissingPropsTable: Story = {
         name: "enableAccessibilityIntegration",
         type: "boolean",
         category: getText(locale, "categoryIntegration"),
-        description: getText(locale, "missingPropsEnableAccessibilityIntegration"),
+        description: getText(
+          locale,
+          "missingPropsEnableAccessibilityIntegration"
+        ),
       },
       {
         name: "enablePerformanceIntegration",
         type: "boolean",
         category: getText(locale, "categoryIntegration"),
-        description: getText(locale, "missingPropsEnablePerformanceIntegration"),
+        description: getText(
+          locale,
+          "missingPropsEnablePerformanceIntegration"
+        ),
       },
       {
         name: "enableMonitoringIntegration",
@@ -1651,8 +1723,8 @@ export const MissingPropsTable: Story = {
               Türkçe
             </button>
           </div>
-          </div>
-          
+        </div>
+
         <div style={{ marginBottom: 20 }}>
           <BcTextField
             {...args}
@@ -1665,7 +1737,7 @@ export const MissingPropsTable: Story = {
             }}
           />
         </div>
-          
+
         <div
           style={{
             background: "white",
@@ -1781,7 +1853,7 @@ export const MissingPropsTable: Story = {
             </tbody>
           </table>
         </div>
-        
+
         <div
           style={{
             display: "flex",
@@ -1872,7 +1944,10 @@ export const MissingPropsTable: Story = {
       control: "boolean",
     },
     enablePerformanceTracking: {
-      description: getText(defaultLocale, "enablePerformanceTrackingDescription"),
+      description: getText(
+        defaultLocale,
+        "enablePerformanceTrackingDescription"
+      ),
       control: "boolean",
     },
     responsiveWidth: {
@@ -1939,7 +2014,7 @@ export const MissingPropsTable: Story = {
   parameters: {
     docs: {
       description: {
-        story: getText(defaultLocale, 'missingPropsTableStoryDescription'),
+        story: getText(defaultLocale, "missingPropsTableStoryDescription"),
       },
     },
   },
@@ -1947,7 +2022,7 @@ export const MissingPropsTable: Story = {
 
 // Yeni Gelişmiş Input Özellikleri Stories
 export const RichTextEditor: Story = {
-  render: (args, context: any) => {
+  render: (args, context: StoryContext) => {
     const locale = context.globals?.locale ?? context.locale ?? "en";
     return (
       <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
@@ -1970,7 +2045,7 @@ export const RichTextEditor: Story = {
 };
 
 export const TextFormatting: Story = {
-  render: (args, context: any) => {
+  render: (args, context: StoryContext) => {
     const locale = context.globals?.locale ?? context.locale ?? "en";
     return (
       <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
@@ -1990,7 +2065,7 @@ export const TextFormatting: Story = {
 };
 
 export const TextCounter: Story = {
-  render: (args, context: any) => {
+  render: (args, context: StoryContext) => {
     const locale = context.globals?.locale ?? context.locale ?? "en";
     return (
       <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
@@ -2015,7 +2090,7 @@ export const TextCounter: Story = {
 };
 
 export const AdvancedFeatures: Story = {
-  render: (args, context: any) => {
+  render: (args, context: StoryContext) => {
     const locale = context.globals?.locale ?? context.locale ?? "en";
     return (
       <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
@@ -2047,7 +2122,7 @@ export const AdvancedFeatures: Story = {
 };
 
 export const AutoComplete: Story = {
-  render: (args, context: any) => {
+  render: (args, context: StoryContext) => {
     const locale = context.globals?.locale ?? context.locale ?? "en";
     const mockOptions = [
       {
@@ -2097,7 +2172,7 @@ export const AutoComplete: Story = {
 };
 
 export const SmartSuggestions: Story = {
-  render: (args, context: any) => {
+  render: (args, context: StoryContext) => {
     const locale = context.globals?.locale ?? context.locale ?? "en";
     return (
       <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
@@ -2122,7 +2197,7 @@ export const SmartSuggestions: Story = {
 };
 
 export const SmartValidation: Story = {
-  render: (args, context: any) => {
+  render: (args, context: StoryContext) => {
     const locale = context.globals?.locale ?? context.locale ?? "en";
     return (
       <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
@@ -2144,7 +2219,7 @@ export const SmartValidation: Story = {
 };
 
 export const AdvancedValidation: Story = {
-  render: (args, context: any) => {
+  render: (args, context: StoryContext) => {
     const locale = context.globals?.locale ?? context.locale ?? "en";
     return (
       <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
@@ -2166,7 +2241,7 @@ export const AdvancedValidation: Story = {
 };
 
 export const BusinessRules: Story = {
-  render: (args, context: any) => {
+  render: (args, context: StoryContext) => {
     const locale = context.globals?.locale ?? context.locale ?? "en";
     return (
       <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
@@ -2188,7 +2263,7 @@ export const BusinessRules: Story = {
 };
 
 export const CrossFieldValidation: Story = {
-  render: (args, context: any) => {
+  render: (args, context: StoryContext) => {
     const locale = context.globals?.locale ?? context.locale ?? "en";
     return (
       <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
@@ -2208,7 +2283,7 @@ export const CrossFieldValidation: Story = {
 };
 
 export const ProfessionalShowcase: Story = {
-  render: (args, context: any) => {
+  render: (args, context: StoryContext) => {
     const locale = context.globals?.locale ?? context.locale ?? "en";
     const mockOptions = [
       {
@@ -2237,7 +2312,10 @@ export const ProfessionalShowcase: Story = {
           <h3>Rich Text Editor</h3>
           <BcTextField
             label={getText(locale, "professionalShowcaseRichTextEditorLabel")}
-            placeholder={getText(locale, "professionalShowcaseRichTextEditorPlaceholder")}
+            placeholder={getText(
+              locale,
+              "professionalShowcaseRichTextEditorPlaceholder"
+            )}
             enableRichText={true}
             enableHTML={true}
             enableFormatting={true}
@@ -2251,7 +2329,10 @@ export const ProfessionalShowcase: Story = {
           <h3>Text Formatting</h3>
           <BcTextField
             label={getText(locale, "professionalShowcaseTextFormattingLabel")}
-            placeholder={getText(locale, "professionalShowcaseTextFormattingPlaceholder")}
+            placeholder={getText(
+              locale,
+              "professionalShowcaseTextFormattingPlaceholder"
+            )}
             enableTransformation={true}
             enableAutoResize={true}
             locale={locale}
@@ -2262,7 +2343,10 @@ export const ProfessionalShowcase: Story = {
           <h3>Text Counter</h3>
           <BcTextField
             label={getText(locale, "professionalShowcaseTextCounterLabel")}
-            placeholder={getText(locale, "professionalShowcaseTextCounterPlaceholder")}
+            placeholder={getText(
+              locale,
+              "professionalShowcaseTextCounterPlaceholder"
+            )}
             enableCounter={true}
             enableCharacterCount={true}
             enableWordCount={true}
@@ -2277,7 +2361,10 @@ export const ProfessionalShowcase: Story = {
           <h3>Auto Complete</h3>
           <BcTextField
             label={getText(locale, "professionalShowcaseAutoCompleteLabel")}
-            placeholder={getText(locale, "professionalShowcaseAutoCompletePlaceholder")}
+            placeholder={getText(
+              locale,
+              "professionalShowcaseAutoCompletePlaceholder"
+            )}
             enableAutoComplete={true}
             autoCompleteOptions={mockOptions}
             enableAutoCompleteCategories={true}
@@ -2290,7 +2377,10 @@ export const ProfessionalShowcase: Story = {
           <h3>Smart Suggestions</h3>
           <BcTextField
             label={getText(locale, "professionalShowcaseSmartSuggestionsLabel")}
-            placeholder={getText(locale, "professionalShowcaseSmartSuggestionsPlaceholder")}
+            placeholder={getText(
+              locale,
+              "professionalShowcaseSmartSuggestionsPlaceholder"
+            )}
             enableSmartSuggestions={true}
             enableRecentHistory={true}
             enableFavorites={true}
@@ -2303,7 +2393,10 @@ export const ProfessionalShowcase: Story = {
           <h3>Smart Validation</h3>
           <BcTextField
             label={getText(locale, "professionalShowcaseSmartValidationLabel")}
-            placeholder={getText(locale, "professionalShowcaseSmartValidationPlaceholder")}
+            placeholder={getText(
+              locale,
+              "professionalShowcaseSmartValidationPlaceholder"
+            )}
             enableSmartValidation={true}
             enableSmartRealTimeValidation={true}
             enableValidationSuggestions={true}
@@ -2314,8 +2407,14 @@ export const ProfessionalShowcase: Story = {
         <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
           <h3>Advanced Validation</h3>
           <BcTextField
-            label={getText(locale, "professionalShowcaseAdvancedValidationLabel")}
-            placeholder={getText(locale, "professionalShowcaseAdvancedValidationPlaceholder")}
+            label={getText(
+              locale,
+              "professionalShowcaseAdvancedValidationLabel"
+            )}
+            placeholder={getText(
+              locale,
+              "professionalShowcaseAdvancedValidationPlaceholder"
+            )}
             enableAdvancedValidation={true}
             enableAsyncValidation={true}
             enableContextValidation={true}
@@ -2327,7 +2426,10 @@ export const ProfessionalShowcase: Story = {
           <h3>Business Rules</h3>
           <BcTextField
             label={getText(locale, "professionalShowcaseBusinessRulesLabel")}
-            placeholder={getText(locale, "professionalShowcaseBusinessRulesPlaceholder")}
+            placeholder={getText(
+              locale,
+              "professionalShowcaseBusinessRulesPlaceholder"
+            )}
             enableBusinessRules={true}
             enableBusinessRealTimeEvaluation={true}
             locale={locale}
@@ -2337,8 +2439,14 @@ export const ProfessionalShowcase: Story = {
         <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
           <h3>Cross Field Validation</h3>
           <BcTextField
-            label={getText(locale, "professionalShowcaseCrossFieldValidationLabel")}
-            placeholder={getText(locale, "professionalShowcaseCrossFieldValidationPlaceholder")}
+            label={getText(
+              locale,
+              "professionalShowcaseCrossFieldValidationLabel"
+            )}
+            placeholder={getText(
+              locale,
+              "professionalShowcaseCrossFieldValidationPlaceholder"
+            )}
             enableCrossFieldValidation={true}
             enableCrossFieldDependencyTracking={true}
             locale={locale}
@@ -2349,7 +2457,10 @@ export const ProfessionalShowcase: Story = {
           <h3>Smart Placeholder</h3>
           <BcTextField
             label={getText(locale, "professionalShowcaseSmartPlaceholderLabel")}
-            placeholder={getText(locale, "professionalShowcaseSmartPlaceholderPlaceholder")}
+            placeholder={getText(
+              locale,
+              "professionalShowcaseSmartPlaceholderPlaceholder"
+            )}
             enableSmartPlaceholder={true}
             enableContextualPlaceholders={true}
             enableTimeBasedPlaceholders={true}
@@ -2370,7 +2481,10 @@ export const ProfessionalShowcase: Story = {
           <h3>Smart Help</h3>
           <BcTextField
             label={getText(locale, "professionalShowcaseSmartHelpLabel")}
-            placeholder={getText(locale, "professionalShowcaseSmartHelpPlaceholder")}
+            placeholder={getText(
+              locale,
+              "professionalShowcaseSmartHelpPlaceholder"
+            )}
             enableSmartHelp={true}
             enableContextualHelp={true}
             enableProgressiveHelp={true}
@@ -2394,8 +2508,14 @@ export const ProfessionalShowcase: Story = {
         <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
           <h3>Progressive Disclosure</h3>
           <BcTextField
-            label={getText(locale, "professionalShowcaseProgressiveDisclosureLabel")}
-            placeholder={getText(locale, "professionalShowcaseProgressiveDisclosurePlaceholder")}
+            label={getText(
+              locale,
+              "professionalShowcaseProgressiveDisclosureLabel"
+            )}
+            placeholder={getText(
+              locale,
+              "professionalShowcaseProgressiveDisclosurePlaceholder"
+            )}
             enableProgressiveDisclosure={true}
             enableContextualDisclosure={true}
             enableDisclosureLearning={true}
@@ -2427,8 +2547,8 @@ export const ProfessionalShowcase: Story = {
 // 4. Kullanıcı Deneyimi - Ayrı Story'ler
 export const SmartPlaceholder: Story = {
   args: {
-    label: getText('en', "smartPlaceholderLabel"),
-    placeholder: getText('en', "smartPlaceholderPlaceholder"),
+    label: getText("en", "smartPlaceholderLabel"),
+    placeholder: getText("en", "smartPlaceholderPlaceholder"),
     enableSmartPlaceholder: true,
     enableContextualPlaceholders: true,
     enableTimeBasedPlaceholders: true,
@@ -2479,8 +2599,8 @@ export const SmartPlaceholder: Story = {
 
 export const SmartHelp: Story = {
   args: {
-    label: getText('en', "smartHelpLabel"),
-    placeholder: getText('en', "smartHelpPlaceholder"),
+    label: getText("en", "smartHelpLabel"),
+    placeholder: getText("en", "smartHelpPlaceholder"),
     enableSmartHelp: true,
     enableContextualHelp: true,
     enableProgressiveHelp: true,
@@ -2534,8 +2654,8 @@ export const SmartHelp: Story = {
 
 export const ProgressiveDisclosure: Story = {
   args: {
-    label: getText('en', "progressiveDisclosureLabel"),
-    placeholder: getText('en', "progressiveDisclosurePlaceholder"),
+    label: getText("en", "progressiveDisclosureLabel"),
+    placeholder: getText("en", "progressiveDisclosurePlaceholder"),
     enableProgressiveDisclosure: true,
     enableContextualDisclosure: true,
     enableDisclosureLearning: true,
@@ -2591,8 +2711,8 @@ export const ProgressiveDisclosure: Story = {
 // 5. Erişilebilirlik ve Performans - Ayrı Story'ler
 export const Accessibility: Story = {
   args: {
-    label: getText('en', "accessibilityLabel"),
-    placeholder: getText('en', "accessibilityFeaturesPlaceholder"),
+    label: getText("en", "accessibilityLabel"),
+    placeholder: getText("en", "accessibilityFeaturesPlaceholder"),
     enableAccessibility: true,
     enableScreenReaderSupport: true,
     enableKeyboardNavigation: true,
@@ -2636,8 +2756,8 @@ export const Accessibility: Story = {
 
 export const Performance: Story = {
   args: {
-    label: getText('en', "performanceLabel"),
-    placeholder: getText('en', "performanceFeaturesPlaceholder"),
+    label: getText("en", "performanceLabel"),
+    placeholder: getText("en", "performanceFeaturesPlaceholder"),
     enablePerformanceTracking: true,
     enableRenderTracking: true,
     enableMemoryTracking: true,
@@ -2678,16 +2798,9 @@ export const Performance: Story = {
 
 export const Monitoring: Story = {
   args: {
-    label: getText('en', "monitoringLabel"),
-    placeholder: getText('en', "monitoringFeaturesPlaceholder"),
+    label: getText("en", "monitoringLabel"),
+    placeholder: getText("en", "monitoringFeaturesPlaceholder"),
     enableMonitoring: true,
-    enableRealTimeMonitoring: true,
-    enableAnalytics: true,
-    enableErrorReporting: true,
-    enablePerformanceMonitoring: true,
-    enableUserBehaviorTracking: true,
-    enableSecurityMonitoring: false,
-    enableCustomEvents: true,
     locale: "tr",
   },
   render: (args) => {
@@ -2719,8 +2832,8 @@ export const Monitoring: Story = {
 // 6. Entegrasyon ve Test - Ayrı Story'ler
 export const Testing: Story = {
   args: {
-    label: getText('en', "testingLabel"),
-    placeholder: getText('en', "testingFeaturesPlaceholder"),
+    label: getText("en", "testingLabel"),
+    placeholder: getText("en", "testingFeaturesPlaceholder"),
     enableTesting: true,
     enableTestMode: true,
     enableMockData: true,
@@ -2771,8 +2884,8 @@ export const Testing: Story = {
 
 export const Integration: Story = {
   args: {
-    label: getText('en', "integrationLabel"),
-    placeholder: getText('en', "integrationFeaturesPlaceholder"),
+    label: getText("en", "integrationLabel"),
+    placeholder: getText("en", "integrationFeaturesPlaceholder"),
     enableIntegration: true,
     enableFormIntegration: true,
     enableValidationIntegration: true,
@@ -2832,4 +2945,3 @@ export const Integration: Story = {
     );
   },
 };
-

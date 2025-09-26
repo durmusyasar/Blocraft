@@ -37,8 +37,8 @@ export interface AnimationOptions {
   animationDirection?: 'normal' | 'reverse' | 'alternate' | 'alternate-reverse';
   animationFillMode?: 'none' | 'forwards' | 'backs' | 'both';
   animationPlayState?: 'running' | 'paused';
-  customAnimations?: Record<string, any>;
-  animationPresets?: Record<string, any>;
+  customAnimations?: Record<string, unknown>;
+  animationPresets?: Record<string, unknown>;
   animationLibrary?: 'css' | 'framer-motion' | 'lottie' | 'gsap' | 'anime' | 'custom';
   animationPerformance?: 'low' | 'medium' | 'high' | 'ultra';
   animationQuality?: 'low' | 'medium' | 'high' | 'ultra';
@@ -63,8 +63,8 @@ export interface AnimationState {
   isAnimationsEnabled: boolean;
   isAnimating: boolean;
   currentAnimation: string | null;
-  animationQueue: Array<string | { name: string; element: HTMLElement; options: any }>;
-  activeAnimations: Record<string, any>;
+  animationQueue: Array<string | { name: string; element: HTMLElement; options: unknown }>;
+  activeAnimations: Record<string, unknown>;
   animationHistory: Array<{
     id: string;
     name: string;
@@ -86,47 +86,47 @@ export interface AnimationState {
     id: string;
     error: Error;
     timestamp: number;
-    context: any;
+    context: unknown;
   }>;
-  animationCache: Record<string, any>;
+  animationCache: Record<string, unknown>;
   animationDebugging: {
     logs: Array<{
       id: string;
       level: string;
       message: string;
       timestamp: number;
-      context: any;
+      context: unknown;
     }>;
     traces: Array<{
       id: string;
-      trace: any;
+      trace: unknown;
       timestamp: number;
     }>;
   };
 }
 
 export interface AnimationActions {
-  playAnimation: (name: string, element: HTMLElement, options?: any) => Promise<void>;
+  playAnimation: (name: string, element: HTMLElement, options?: unknown) => Promise<void>;
   stopAnimation: (name: string) => void;
   pauseAnimation: (name: string) => void;
   resumeAnimation: (name: string) => void;
   reverseAnimation: (name: string) => void;
   resetAnimation: (name: string) => void;
-  queueAnimation: (name: string, element: HTMLElement, options?: any) => void;
+  queueAnimation: (name: string, element: HTMLElement, options?: unknown) => void;
   clearAnimationQueue: () => void;
-  addCustomAnimation: (name: string, animation: any) => void;
+  addCustomAnimation: (name: string, animation: unknown) => void;
   removeCustomAnimation: (name: string) => void;
-  updateAnimationPreset: (name: string, preset: any) => void;
-  getActiveAnimations: () => Record<string, any>;
-  getAnimationHistory: () => any[];
+  updateAnimationPreset: (name: string, preset: unknown) => void;
+  getActiveAnimations: () => Record<string, unknown>;
+  getAnimationHistory: () => unknown[];
   clearAnimationHistory: () => void;
-  getAnimationMetrics: () => any;
+  getAnimationMetrics: () => unknown;
   clearAnimationMetrics: () => void;
-  getAnimationLogs: () => any[];
+  getAnimationLogs: () => unknown[];
   clearAnimationLogs: () => void;
-  getAnimationTraces: () => any[];
+  getAnimationTraces: () => unknown[];
   clearAnimationTraces: () => void;
-  getAnimationCache: () => any;
+  getAnimationCache: () => unknown;
   clearAnimationCache: () => void;
   exportAnimationData: () => string;
   importAnimationData: (data: string) => void;
@@ -169,7 +169,7 @@ export function useAdvancedAnimations(options: AnimationOptions = {}) {
   const errorIdCounter = useRef(0);
 
   // Log animation event
-  const logAnimationEvent = useCallback((level: string, message: string, context?: any) => {
+  const logAnimationEvent = useCallback((level: string, message: string, context?: unknown) => {
     if (!animationLogging) return;
 
     const log = {
@@ -190,7 +190,7 @@ export function useAdvancedAnimations(options: AnimationOptions = {}) {
   }, [animationLogging]);
 
   // Play animation
-  const playAnimation = useCallback(async (name: string, element: HTMLElement, options: any = {}): Promise<void> => {
+  const playAnimation = useCallback(async (name: string, element: HTMLElement, options: unknown = {}): Promise<void> => {
     if (!enableAnimations || !element) return;
 
     const animationId = `anim-${++animationIdCounter.current}-${Date.now()}`;
@@ -320,7 +320,7 @@ export function useAdvancedAnimations(options: AnimationOptions = {}) {
     setState(prev => ({
       ...prev,
       activeAnimations: Object.fromEntries(
-        Object.entries(prev.activeAnimations).filter(([, anim]) => anim.name !== name)
+        Object.entries(prev.activeAnimations).filter(([, anim]) => (anim as { name: string }).name !== name)
       ),
     }));
 
@@ -366,7 +366,7 @@ export function useAdvancedAnimations(options: AnimationOptions = {}) {
   }, [enableAnimations, animationLogging, logAnimationEvent]);
 
   // Queue animation
-  const queueAnimation = useCallback((name: string, element: HTMLElement, options: any = {}) => {
+  const queueAnimation = useCallback((name: string, element: HTMLElement, options: unknown = {}) => {
     if (!enableAnimations) return;
 
     setState(prev => ({
@@ -394,7 +394,7 @@ export function useAdvancedAnimations(options: AnimationOptions = {}) {
   }, [enableAnimations, animationLogging, logAnimationEvent]);
 
   // Add custom animation
-  const addCustomAnimation = useCallback((name: string, animation: any) => {
+  const addCustomAnimation = useCallback((name: string, animation: unknown) => {
     if (!enableAnimations) return;
 
     setState(prev => ({
@@ -427,7 +427,7 @@ export function useAdvancedAnimations(options: AnimationOptions = {}) {
   }, [enableAnimations, animationLogging, logAnimationEvent]);
 
   // Update animation preset
-  const updateAnimationPreset = useCallback((name: string, preset: any) => {
+  const updateAnimationPreset = useCallback((name: string, preset: unknown) => {
     if (!enableAnimations) return;
 
     setState(prev => ({

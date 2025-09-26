@@ -7,6 +7,7 @@ import trTexts from "../i18n/i18n/tr.json";
 import { useForm, Controller } from "react-hook-form";
 import { countryList as defaultCountryList } from "./utils";
 import React from "react";
+import { BcTextField } from "../BcTextField/BcTextField";
 
 const TEXTS: Record<string, Record<string, string>> = {
   en: enTexts.BcPhoneInput,
@@ -18,8 +19,8 @@ const getText = (locale: Locale | undefined, key: string): string => {
   return TEXTS[safeLocale]?.[key] || TEXTS.en[key] || key;
 };
 
-const withLocale = (Story: any, context: any) => {
-  const locale = context.locale || context.globals.locale;
+const withLocale = (Story: React.ComponentType<Record<string, unknown>>, context: { locale?: string; globals?: { locale?: string }; args?: Record<string, unknown> }) => {
+  const locale = context.locale || context.globals?.locale;
   const storyProps = context.args || {};
   const hasLocale = storyProps.locale !== undefined;
   return (
@@ -30,7 +31,7 @@ const withLocale = (Story: any, context: any) => {
   );
 };
 const defaultLocale =
-  (window as any)?.__STORYBOOK_ADDONS_CHANNEL__?.data?.globalsUpdated?.[0]
+  (window as { __STORYBOOK_ADDONS_CHANNEL__?: { data?: { globalsUpdated?: Array<{ globals?: { locale?: string } }> } } })?.__STORYBOOK_ADDONS_CHANNEL__?.data?.globalsUpdated?.[0]
     ?.globals?.locale || "en";
 
 const meta: Meta<typeof BcPhoneInput> = {
@@ -47,285 +48,206 @@ const meta: Meta<typeof BcPhoneInput> = {
       },
     },
   },
+  args: {
+    // Varsayılan değerler - Controls panelinde değiştirilebilir
+    label: getText(defaultLocale, "label"),
+    placeholder: getText(defaultLocale, "placeholder"),
+    country: "TR",
+    showCountrySelect: true,
+    enablePhoneFormatting: true,
+    enableAdvancedValidation: true,
+    enableAutoCountryDetection: false,
+    enablePhoneSuggestions: true,
+    enablePhoneHistory: true,
+    enableAccessibility: true,
+  },
   argTypes: {
-    // === BcTextField'den inherit edilen temel props ===
-    appearance: {
-      description: getText(defaultLocale, "appearanceDescription"),
-      control: "select",
-      options: [
-        "premium",
-        "soft",
-        "glass",
-        "minimal",
-        "neumorph",
-        "underline",
-        "dark",
-        "borderless",
-        undefined,
-      ],
-      table: { category: "BcTextField Inherited" },
-    },
-    size: {
-      description: getText(defaultLocale, "sizeDescription"),
-      control: "select",
-      options: ["small", "medium", "large", undefined],
-      table: { category: "BcTextField Inherited" },
-    },
-    color: {
-      description: getText(defaultLocale, "colorDescription"),
-      control: "select",
-      options: [
-        "primary",
-        "secondary",
-        "success",
-        "error",
-        "warning",
-        "info",
-        undefined,
-      ],
-      table: { category: "BcTextField Inherited" },
-    },
-    disabled: {
-      description: getText(defaultLocale, "disabledDescription"),
-      control: "boolean",
-      table: { category: "BcTextField Inherited" },
-    },
-    responsiveWidth: {
-      description: getText(defaultLocale, "responsiveWidthDescription"),
-      control: "boolean",
-      table: { category: "BcTextField Inherited" },
-    },
-    enableRTL: {
-      description: getText(defaultLocale, "enableRTLDescription"),
-      control: "boolean",
-      table: { category: "BcTextField Inherited" },
-    },
-    enableHighContrast: {
-      description: getText(defaultLocale, "enableHighContrastDescription"),
-      control: "boolean",
-      table: { category: "BcTextField Inherited" },
-    },
-    showClearButton: {
-      description: getText(defaultLocale, "clearButtonLabelDescription"),
-      control: "boolean",
-      table: { category: "BcTextField Inherited" },
-    },
-    locale: {
-      description: getText(defaultLocale, "localeDescription"),
+    // EN ÖNEMLİ 10 PROP - Controls panelinde gösterilecek
+    label: {
+      description: getText(defaultLocale, "labelDescription"),
       control: "text",
-      table: { category: "BcTextField Inherited" },
     },
-    fallbackLocale: {
-      description: getText(defaultLocale, "fallbackLocaleDescription"),
+    placeholder: {
+      description: getText(defaultLocale, "placeholderDescription"),
       control: "text",
-      table: { category: "BcTextField Inherited" },
     },
-
-    // === BcPhoneInput özel props ===
     country: {
       description: getText(defaultLocale, "countryDescription"),
       control: "text",
-      table: { category: "Phone Specific" },
-    },
-    onCountryChange: {
-      description: getText(defaultLocale, "onCountryChangeDescription"),
-      action: "countryChanged",
-      table: { category: "Phone Specific" },
     },
     showCountrySelect: {
       description: getText(defaultLocale, "showCountrySelectDescription"),
       control: "boolean",
-      table: { category: "Phone Specific" },
     },
-    favoriteCountries: {
-      description: getText(defaultLocale, "favoriteCountriesDescription"),
-      control: "object",
-      table: { category: "Phone Specific" },
-    },
-    validatePhone: {
-      description: getText(defaultLocale, "validatePhoneDescription"),
-      table: { category: "Phone Specific" },
-    },
-    getMask: {
-      description: getText(defaultLocale, "getMaskDescription"),
-      table: { category: "Phone Specific" },
-    },
-    showMaskInPlaceholder: {
-      description: getText(defaultLocale, "showMaskInPlaceholderDescription"),
-      control: "boolean",
-      table: { category: "Phone Specific" },
-    },
-    // === Gelişmiş özellikler ===
     enablePhoneFormatting: {
-      control: "boolean",
       description: getText(defaultLocale, "enablePhoneFormattingDescription"),
-      table: { category: "Advanced Features" },
+      control: "boolean",
     },
     enableAdvancedValidation: {
+      description: getText(defaultLocale, "enableAdvancedValidationDescription"),
       control: "boolean",
-      description: getText(
-        defaultLocale,
-        "enableAdvancedValidationDescription"
-      ),
-      table: { category: "Advanced Features" },
     },
     enableAutoCountryDetection: {
+      description: getText(defaultLocale, "enableAutoCountryDetectionDescription"),
       control: "boolean",
-      description: getText(
-        defaultLocale,
-        "enableAutoCountryDetectionDescription"
-      ),
-      table: { category: "Advanced Features" },
     },
     enablePhoneSuggestions: {
-      control: "boolean",
       description: getText(defaultLocale, "enablePhoneSuggestionsDescription"),
-      table: { category: "Advanced Features" },
+      control: "boolean",
     },
     enablePhoneHistory: {
-      control: "boolean",
       description: getText(defaultLocale, "enablePhoneHistoryDescription"),
-      table: { category: "Advanced Features" },
+      control: "boolean",
     },
     enableAccessibility: {
+      description: getText(defaultLocale, "enableAccessibilityDescription"),
       control: "boolean",
-      description: "Enterprise accessibility features including screen reader support, keyboard navigation, ARIA labels, and high contrast mode",
-      table: { category: "Enterprise Features" },
     },
-    enablePerformance: {
-      control: "boolean",
-      description: "Performance tracking and optimization features including render time monitoring, memory usage tracking, and user interaction analytics",
-      table: { category: "Enterprise Features" },
+
+    // MissingPropsTable'da gösterilen prop'lar - Controls panelinde gizli
+    countryList: {
+      table: { disable: true },
     },
-    enableMonitoring: {
-      control: "boolean",
-      description: "Enterprise monitoring and analytics including real-time tracking, error reporting, user behavior analytics, and security monitoring",
-      table: { category: "Enterprise Features" },
+    fetchCountries: {
+      table: { disable: true },
     },
-    enableSmartFeatures: {
-      control: "boolean",
-      description: "AI-powered smart features including smart placeholder generation, contextual validation, personalized suggestions, and adaptive UI",
-      table: { category: "Enterprise Features" },
+    onCountryChange: {
+      table: { disable: true },
     },
-    enableIntegration: {
-      control: "boolean",
-      description: "Enterprise integration hooks for form systems, validation frameworks, state management, event systems, and external APIs",
-      table: { category: "Enterprise Features" },
+    validatePhone: {
+      table: { disable: true },
+    },
+    getMask: {
+      table: { disable: true },
+    },
+    showMaskInPlaceholder: {
+      table: { disable: true },
+    },
+    favoriteCountries: {
+      table: { disable: true },
+    },
+    inputMode: {
+      table: { disable: true },
+    },
+    appearance: {
+      table: { disable: true },
+    },
+    size: {
+      table: { disable: true },
+    },
+    color: {
+      table: { disable: true },
+    },
+    disabled: {
+      table: { disable: true },
+    },
+    fallbackLocale: {
+      table: { disable: true },
+    },
+    locale: {
+      table: { disable: true },
+    },
+    showClearButton: {
+      table: { disable: true },
+    },
+    responsiveWidth: {
+      table: { disable: true },
+    },
+    enableRTL: {
+      table: { disable: true },
+    },
+    enableHighContrast: {
+      table: { disable: true },
     },
     enableSmartPlaceholder: {
-      control: "boolean",
-      description: "Smart placeholder generation based on context and user behavior",
-      table: { category: "Smart Features" },
+      table: { disable: true },
     },
     enableSmartValidation: {
-      control: "boolean",
-      description: "Smart validation with contextual rules and learning capabilities",
-      table: { category: "Smart Features" },
+      table: { disable: true },
     },
     enableSmartSuggestions: {
-      control: "boolean",
-      description: "Smart suggestions based on user history and patterns",
-      table: { category: "Smart Features" },
+      table: { disable: true },
     },
     enableSmartFormatting: {
-      control: "boolean",
-      description: "Smart formatting based on user preferences and context",
-      table: { category: "Smart Features" },
+      table: { disable: true },
     },
     enableSmartCountryDetection: {
-      control: "boolean",
-      description: "Smart country detection using IP, timezone, and user history",
-      table: { category: "Smart Features" },
+      table: { disable: true },
     },
     enableLearning: {
-      control: "boolean",
-      description: "Learning capabilities to adapt to user behavior",
-      table: { category: "Smart Features" },
+      table: { disable: true },
     },
     enablePersonalization: {
-      control: "boolean",
-      description: "Personalization features based on user preferences",
-      table: { category: "Smart Features" },
+      table: { disable: true },
     },
     enableContextualHelp: {
-      control: "boolean",
-      description: "Contextual help and guidance based on user context",
-      table: { category: "Smart Features" },
+      table: { disable: true },
     },
     enableProgressiveDisclosure: {
-      control: "boolean",
-      description: "Progressive disclosure of features based on user experience",
-      table: { category: "Smart Features" },
+      table: { disable: true },
+    },
+    enableAdaptiveUI: {
+      table: { disable: true },
+    },
+    enablePerformance: {
+      table: { disable: true },
+    },
+    enableMonitoring: {
+      table: { disable: true },
+    },
+    enableSmartFeatures: {
+      table: { disable: true },
+    },
+    enableIntegration: {
+      table: { disable: true },
+    },
+    enableSecurity: {
+      table: { disable: true },
+    },
+    enableTesting: {
+      table: { disable: true },
     },
     enableScreenReaderSupport: {
-      control: "boolean",
-      description: "Screen reader support for accessibility",
-      table: { category: "Accessibility Features" },
+      table: { disable: true },
     },
     enableKeyboardNavigation: {
-      control: "boolean",
-      description: "Keyboard navigation support",
-      table: { category: "Accessibility Features" },
+      table: { disable: true },
     },
     enableReducedMotion: {
-      control: "boolean",
-      description: "Reduced motion support for accessibility",
-      table: { category: "Accessibility Features" },
+      table: { disable: true },
     },
     enableFocusManagement: {
-      control: "boolean",
-      description: "Focus management for accessibility",
-      table: { category: "Accessibility Features" },
+      table: { disable: true },
     },
     enableARIALabels: {
-      control: "boolean",
-      description: "ARIA labels and attributes for screen readers",
-      table: { category: "Accessibility Features" },
+      table: { disable: true },
     },
     enableLiveRegions: {
-      control: "boolean",
-      description: "Live regions for dynamic content announcements",
-      table: { category: "Accessibility Features" },
+      table: { disable: true },
     },
     enableSkipLinks: {
-      control: "boolean",
-      description: "Skip links for keyboard navigation",
-      table: { category: "Accessibility Features" },
+      table: { disable: true },
     },
     enableTooltips: {
-      control: "boolean",
-      description: "Tooltips for additional information",
-      table: { category: "Accessibility Features" },
+      table: { disable: true },
     },
     enableErrorAnnouncements: {
-      control: "boolean",
-      description: "Error announcements for screen readers",
-      table: { category: "Accessibility Features" },
+      table: { disable: true },
     },
     enableStatusAnnouncements: {
-      control: "boolean",
-      description: "Status announcements for screen readers",
-      table: { category: "Accessibility Features" },
+      table: { disable: true },
     },
     enableProgressAnnouncements: {
-      control: "boolean",
-      description: "Progress announcements for screen readers",
-      table: { category: "Accessibility Features" },
+      table: { disable: true },
     },
     integrationTimeout: {
-      control: { type: "number", min: 1000, max: 30000, step: 1000 },
-      description: "Integration timeout in milliseconds",
-      table: { category: "Integration Features" },
+      table: { disable: true },
     },
     integrationRetries: {
-      control: { type: "number", min: 0, max: 10, step: 1 },
-      description: "Number of retries for failed integration operations",
-      table: { category: "Integration Features" },
+      table: { disable: true },
     },
     integrationDelay: {
-      control: { type: "number", min: 100, max: 5000, step: 100 },
-      description: "Delay between retries in milliseconds",
-      table: { category: "Integration Features" },
+      table: { disable: true },
     },
   },
   decorators: [withLocale],
@@ -342,6 +264,648 @@ export const Default: Story = {
     showCountrySelect: true,
   },
 };
+
+// Missing Props Table / Eksik Prop'lar Tablosu - EN ÜSTTE (Kullanıcılar önce tüm prop'ları görebilir)
+export const MissingPropsTable: Story = {
+  args: {
+    // Varsayılan değerler - Controls panelinde değiştirilebilir
+    label: getText(defaultLocale, "label"),
+    placeholder: getText(defaultLocale, "placeholder"),
+    country: "TR",
+    showCountrySelect: true,
+    enablePhoneFormatting: true,
+    enableAdvancedValidation: true,
+    enableAutoCountryDetection: false,
+    enablePhoneSuggestions: true,
+    enablePhoneHistory: true,
+    enableAccessibility: true,
+  },
+  render: (args, context: { globals?: { locale?: string }; locale?: string }) => {
+    const locale = context.globals?.locale ?? context.locale ?? "en";
+    const [currentPage, setCurrentPage] = React.useState(1);
+    const [searchTerm, setSearchTerm] = React.useState("");
+    const itemsPerPage = 10;
+
+    const missingProps = [
+      // Phone Specific Props
+      {
+        name: "countryList",
+        type: "CountryType[] | Promise<CountryType[]>",
+        category: getText(locale, "categoryPhoneSpecific"),
+        description: getText(locale, "missingPropsCountryList"),
+      },
+      {
+        name: "fetchCountries",
+        type: "() => Promise<CountryType[]>",
+        category: getText(locale, "categoryPhoneSpecific"),
+        description: getText(locale, "missingPropsFetchCountries"),
+      },
+      {
+        name: "onCountryChange",
+        type: "(country: CountryCode) => void",
+        category: getText(locale, "categoryPhoneSpecific"),
+        description: getText(locale, "missingPropsOnCountryChange"),
+      },
+      {
+        name: "validatePhone",
+        type: "(phone: string, country: CountryCode) => boolean",
+        category: getText(locale, "categoryPhoneSpecific"),
+        description: getText(locale, "missingPropsValidatePhone"),
+      },
+      {
+        name: "getMask",
+        type: "(country: string) => string",
+        category: getText(locale, "categoryPhoneSpecific"),
+        description: getText(locale, "missingPropsGetMask"),
+      },
+      {
+        name: "showMaskInPlaceholder",
+        type: "boolean",
+        category: getText(locale, "categoryPhoneSpecific"),
+        description: getText(locale, "missingPropsShowMaskInPlaceholder"),
+      },
+      {
+        name: "favoriteCountries",
+        type: "CountryCode[]",
+        category: getText(locale, "categoryPhoneSpecific"),
+        description: getText(locale, "missingPropsFavoriteCountries"),
+      },
+      {
+        name: "inputMode",
+        type: "tel | numeric",
+        category: getText(locale, "categoryPhoneSpecific"),
+        description: getText(locale, "missingPropsInputMode"),
+      },
+
+      // BcTextField Inherited Props
+      {
+        name: "appearance",
+        type: "string",
+        category: getText(locale, "categoryBcTextFieldInherited"),
+        description: getText(locale, "missingPropsAppearance"),
+      },
+      {
+        name: "size",
+        type: "string",
+        category: getText(locale, "categoryBcTextFieldInherited"),
+        description: getText(locale, "missingPropsSize"),
+      },
+      {
+        name: "color",
+        type: "string",
+        category: getText(locale, "categoryBcTextFieldInherited"),
+        description: getText(locale, "missingPropsColor"),
+      },
+      {
+        name: "disabled",
+        type: "boolean",
+        category: getText(locale, "categoryBcTextFieldInherited"),
+        description: getText(locale, "missingPropsDisabled"),
+      },
+      {
+        name: "fallbackLocale",
+        type: "string",
+        category: getText(locale, "categoryBcTextFieldInherited"),
+        description: getText(locale, "missingPropsFallbackLocale"),
+      },
+      {
+        name: "locale",
+        type: "string",
+        category: getText(locale, "categoryBcTextFieldInherited"),
+        description: getText(locale, "missingPropsLocale"),
+      },
+      {
+        name: "showClearButton",
+        type: "boolean",
+        category: getText(locale, "categoryBcTextFieldInherited"),
+        description: getText(locale, "missingPropsShowClearButton"),
+      },
+      {
+        name: "responsiveWidth",
+        type: "boolean",
+        category: getText(locale, "categoryBcTextFieldInherited"),
+        description: getText(locale, "missingPropsResponsiveWidth"),
+      },
+      {
+        name: "enableRTL",
+        type: "boolean",
+        category: getText(locale, "categoryBcTextFieldInherited"),
+        description: getText(locale, "missingPropsEnableRTL"),
+      },
+      {
+        name: "enableHighContrast",
+        type: "boolean",
+        category: getText(locale, "categoryBcTextFieldInherited"),
+        description: getText(locale, "missingPropsEnableHighContrast"),
+      },
+
+      // Advanced Features
+      {
+        name: "enableSmartPlaceholder",
+        type: "boolean",
+        category: getText(locale, "categoryAdvancedFeatures"),
+        description: getText(locale, "missingPropsEnableSmartPlaceholder"),
+      },
+      {
+        name: "enableSmartValidation",
+        type: "boolean",
+        category: getText(locale, "categoryAdvancedFeatures"),
+        description: getText(locale, "missingPropsEnableSmartValidation"),
+      },
+      {
+        name: "enableSmartSuggestions",
+        type: "boolean",
+        category: getText(locale, "categoryAdvancedFeatures"),
+        description: getText(locale, "missingPropsEnableSmartSuggestions"),
+      },
+      {
+        name: "enableSmartFormatting",
+        type: "boolean",
+        category: getText(locale, "categoryAdvancedFeatures"),
+        description: getText(locale, "missingPropsEnableSmartFormatting"),
+      },
+      {
+        name: "enableSmartCountryDetection",
+        type: "boolean",
+        category: getText(locale, "categoryAdvancedFeatures"),
+        description: getText(locale, "missingPropsEnableSmartCountryDetection"),
+      },
+      {
+        name: "enableLearning",
+        type: "boolean",
+        category: getText(locale, "categoryAdvancedFeatures"),
+        description: getText(locale, "missingPropsEnableLearning"),
+      },
+      {
+        name: "enablePersonalization",
+        type: "boolean",
+        category: getText(locale, "categoryAdvancedFeatures"),
+        description: getText(locale, "missingPropsEnablePersonalization"),
+      },
+      {
+        name: "enableContextualHelp",
+        type: "boolean",
+        category: getText(locale, "categoryAdvancedFeatures"),
+        description: getText(locale, "missingPropsEnableContextualHelp"),
+      },
+      {
+        name: "enableProgressiveDisclosure",
+        type: "boolean",
+        category: getText(locale, "categoryAdvancedFeatures"),
+        description: getText(locale, "missingPropsEnableProgressiveDisclosure"),
+      },
+      {
+        name: "enableAdaptiveUI",
+        type: "boolean",
+        category: getText(locale, "categoryAdvancedFeatures"),
+        description: getText(locale, "missingPropsEnableAdaptiveUI"),
+      },
+
+      // Enterprise Features
+      {
+        name: "enablePerformance",
+        type: "boolean",
+        category: getText(locale, "categoryEnterpriseFeatures"),
+        description: getText(locale, "missingPropsEnablePerformance"),
+      },
+      {
+        name: "enableMonitoring",
+        type: "boolean",
+        category: getText(locale, "categoryEnterpriseFeatures"),
+        description: getText(locale, "missingPropsEnableMonitoring"),
+      },
+      {
+        name: "enableSmartFeatures",
+        type: "boolean",
+        category: getText(locale, "categoryEnterpriseFeatures"),
+        description: getText(locale, "missingPropsEnableSmartFeatures"),
+      },
+      {
+        name: "enableIntegration",
+        type: "boolean",
+        category: getText(locale, "categoryEnterpriseFeatures"),
+        description: getText(locale, "missingPropsEnableIntegration"),
+      },
+      {
+        name: "enableSecurity",
+        type: "boolean",
+        category: getText(locale, "categoryEnterpriseFeatures"),
+        description: getText(locale, "missingPropsEnableSecurity"),
+      },
+      {
+        name: "enableTesting",
+        type: "boolean",
+        category: getText(locale, "categoryEnterpriseFeatures"),
+        description: getText(locale, "missingPropsEnableTesting"),
+      },
+
+      // Accessibility Features
+      {
+        name: "enableScreenReaderSupport",
+        type: "boolean",
+        category: getText(locale, "categoryAccessibilityFeatures"),
+        description: getText(locale, "missingPropsEnableScreenReaderSupport"),
+      },
+      {
+        name: "enableKeyboardNavigation",
+        type: "boolean",
+        category: getText(locale, "categoryAccessibilityFeatures"),
+        description: getText(locale, "missingPropsEnableKeyboardNavigation"),
+      },
+      {
+        name: "enableReducedMotion",
+        type: "boolean",
+        category: getText(locale, "categoryAccessibilityFeatures"),
+        description: getText(locale, "missingPropsEnableReducedMotion"),
+      },
+      {
+        name: "enableFocusManagement",
+        type: "boolean",
+        category: getText(locale, "categoryAccessibilityFeatures"),
+        description: getText(locale, "missingPropsEnableFocusManagement"),
+      },
+      {
+        name: "enableARIALabels",
+        type: "boolean",
+        category: getText(locale, "categoryAccessibilityFeatures"),
+        description: getText(locale, "missingPropsEnableARIALabels"),
+      },
+      {
+        name: "enableLiveRegions",
+        type: "boolean",
+        category: getText(locale, "categoryAccessibilityFeatures"),
+        description: getText(locale, "missingPropsEnableLiveRegions"),
+      },
+      {
+        name: "enableSkipLinks",
+        type: "boolean",
+        category: getText(locale, "categoryAccessibilityFeatures"),
+        description: getText(locale, "missingPropsEnableSkipLinks"),
+      },
+      {
+        name: "enableTooltips",
+        type: "boolean",
+        category: getText(locale, "categoryAccessibilityFeatures"),
+        description: getText(locale, "missingPropsEnableTooltips"),
+      },
+      {
+        name: "enableErrorAnnouncements",
+        type: "boolean",
+        category: getText(locale, "categoryAccessibilityFeatures"),
+        description: getText(locale, "missingPropsEnableErrorAnnouncements"),
+      },
+      {
+        name: "enableStatusAnnouncements",
+        type: "boolean",
+        category: getText(locale, "categoryAccessibilityFeatures"),
+        description: getText(locale, "missingPropsEnableStatusAnnouncements"),
+      },
+      {
+        name: "enableProgressAnnouncements",
+        type: "boolean",
+        category: getText(locale, "categoryAccessibilityFeatures"),
+        description: getText(locale, "missingPropsEnableProgressAnnouncements"),
+      },
+
+      // Integration Features
+      {
+        name: "integrationTimeout",
+        type: "number",
+        category: getText(locale, "categoryIntegrationFeatures"),
+        description: getText(locale, "missingPropsIntegrationTimeout"),
+      },
+      {
+        name: "integrationRetries",
+        type: "number",
+        category: getText(locale, "categoryIntegrationFeatures"),
+        description: getText(locale, "missingPropsIntegrationRetries"),
+      },
+      {
+        name: "integrationDelay",
+        type: "number",
+        category: getText(locale, "categoryIntegrationFeatures"),
+        description: getText(locale, "missingPropsIntegrationDelay"),
+      },
+    ];
+
+    const filteredProps = missingProps.filter(prop =>
+      prop.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      prop.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      prop.category.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
+    const totalPages = Math.ceil(filteredProps.length / itemsPerPage);
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    const currentProps = filteredProps.slice(startIndex, endIndex);
+
+    const getTypeColor = (type: string) => {
+      switch (type.toLowerCase()) {
+        case "string":
+          return "#e3f2fd";
+        case "number":
+          return "#f3e5f5";
+        case "boolean":
+          return "#e8f5e8";
+        case "function":
+          return "#fff3e0";
+        case "object":
+          return "#ffebee";
+        case "array":
+          return "#f1f8e9";
+        default:
+          return "#f5f5f5";
+      }
+    };
+
+    const getTypeIcon = (type: string) => {
+      switch (type.toLowerCase()) {
+        case "string":
+          return "🔤";
+        case "number":
+          return "#️⃣";
+        case "boolean":
+          return "☑️";
+        case "function":
+          return "⚙️";
+        case "object":
+          return "📦";
+        case "array":
+          return "📋";
+        default:
+          return "❓";
+      }
+    };
+
+    return (
+      <div
+        style={{
+          padding: 24,
+          background: "#f8f9fa",
+          borderRadius: 8,
+          border: "1px solid #e9ecef",
+        }}
+      >
+        <div
+          style={{
+            marginBottom: 16,
+            padding: "12px 16px",
+            background: "#e3f2fd",
+            borderRadius: 6,
+            border: "1px solid #bbdefb",
+          }}
+        >
+          <p
+            style={{
+              margin: 0,
+              color: "#1976d2",
+              fontSize: "14px",
+              lineHeight: "1.5",
+            }}
+          >
+            {getText(locale, "missingPropsTableStoryDescription") || "Complete list of ALL props for BcPhoneInput component. All props are available in the component but hidden from the controls panel for better performance and cleaner interface."}
+          </p>
+        </div>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            marginBottom: 24,
+          }}
+        >
+          <h2
+            style={{
+              margin: 0,
+              fontSize: "24px",
+              fontWeight: "bold",
+              color: "#495057",
+            }}
+          >
+            📋 {getText(locale, "missingPropsTableTitle") || "Missing Props Table"}
+          </h2>
+          <div style={{ display: "flex", gap: 8 }}>
+            <button
+              onClick={() => setCurrentPage(1)}
+              style={{
+                padding: "8px 16px",
+                border: "1px solid #ccc",
+                background: locale === "en" ? "#007bff" : "white",
+                color: locale === "en" ? "white" : "black",
+                borderRadius: "4px",
+                cursor: "pointer",
+              }}
+            >
+              English
+            </button>
+            <button
+              onClick={() => setCurrentPage(1)}
+              style={{
+                padding: "8px 16px",
+                border: "1px solid #ccc",
+                background: locale === "tr" ? "#007bff" : "white",
+                color: locale === "tr" ? "white" : "black",
+                borderRadius: "4px",
+                cursor: "pointer",
+              }}
+            >
+              Türkçe
+            </button>
+          </div>
+        </div>
+        
+        <div style={{ marginBottom: 20 }}>
+          <BcTextField
+            {...args}
+            placeholder={getText(locale, "missingPropsSearchPlaceholder") || "Search props..."}
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            locale={locale}
+            style={{
+              width: "100%",
+            }}
+          />
+        </div>
+        
+        <div
+          style={{
+            background: "white",
+            borderRadius: 8,
+            overflow: "hidden",
+            boxShadow: "0 2px 4px rgba(0,0,0,0.1)",
+          }}
+        >
+          <table style={{ width: "100%", borderCollapse: "collapse" }}>
+            <thead>
+              <tr
+                style={{
+                  background: "#f8f9fa",
+                  borderBottom: "2px solid #dee2e6",
+                }}
+              >
+                <th
+                  style={{
+                    padding: "16px",
+                    textAlign: "left",
+                    fontWeight: "600",
+                    color: "#495057",
+                  }}
+                >
+                  {getText(locale, "missingPropsPropName") || "Prop Name"}
+                </th>
+                <th
+                  style={{
+                    padding: "15px",
+                    textAlign: "left",
+                    fontWeight: "600",
+                    color: "#495057",
+                  }}
+                >
+                  {getText(locale, "missingPropsType") || "Type"}
+                </th>
+                <th
+                  style={{
+                    padding: "16px",
+                    textAlign: "left",
+                    fontWeight: "600",
+                    color: "#495057",
+                  }}
+                >
+                  {getText(locale, "missingPropsCategory") || "Category"}
+                </th>
+                <th
+                  style={{
+                    padding: "16px",
+                    textAlign: "left",
+                    fontWeight: "600",
+                    color: "#495057",
+                  }}
+                >
+                  {getText(locale, "missingPropsDescription") || "Description"}
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              {currentProps.map((prop, index) => (
+                <tr
+                  key={prop.name}
+                  style={{ borderBottom: "1px solid #dee2e6" }}
+                >
+                  <td
+                    style={{
+                      padding: "16px",
+                      fontWeight: "500",
+                      color: "#212529",
+                    }}
+                  >
+                    <code
+                      style={{
+                        background: "#f8f9fa",
+                        padding: "4px 8px",
+                        borderRadius: "4px",
+                        fontSize: "14px",
+                      }}
+                    >
+                      {prop.name}
+                    </code>
+                  </td>
+                  <td style={{ padding: "14px" }}>
+                    <span
+                      style={{
+                        display: "inline-flex",
+                        alignItems: "center",
+                        gap: "6px",
+                        padding: "4px 12px",
+                        borderRadius: "20px",
+                        fontSize: "12px",
+                        fontWeight: "500",
+                        background: getTypeColor(prop.type),
+                        color: "#495057",
+                      }}
+                    >
+                      {getTypeIcon(prop.type)} {prop.type}
+                    </span>
+                  </td>
+                  <td style={{ padding: "16px", color: "#6c757d" }}>
+                    {prop.category}
+                  </td>
+                  <td style={{ padding: "16px", color: "#6c757d" }}>
+                    {prop.description}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            marginTop: 20,
+          }}
+        >
+          <div style={{ color: "#6c757d", fontSize: "14px" }}>
+            {getText(locale, "missingPropsShowing") || "Showing"} {filteredProps.length}{" "}
+            {getText(locale, "missingPropsProps") || "props"} ({startIndex + 1}-
+            {Math.min(endIndex, filteredProps.length)})
+          </div>
+          <div style={{ display: "flex", gap: 8 }}>
+            <button
+              onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
+              disabled={currentPage === 1}
+              style={{
+                padding: "8px 16px",
+                border: "1px solid #ccc",
+                background: currentPage === 1 ? "#f8f9fa" : "white",
+                color: currentPage === 1 ? "#6c757d" : "#495057",
+                borderRadius: "4px",
+                cursor: currentPage === 1 ? "not-allowed" : "pointer",
+              }}
+            >
+              {getText(locale, "missingPropsPrevious") || "Previous"}
+            </button>
+            <span
+              style={{
+                padding: "8px 16px",
+                color: "#495057",
+                display: "flex",
+                alignItems: "center",
+              }}
+            >
+              {currentPage} / {totalPages}
+            </span>
+            <button
+              onClick={() =>
+                setCurrentPage(Math.min(totalPages, currentPage + 1))
+              }
+              disabled={currentPage === totalPages}
+              style={{
+                padding: "8px 16px",
+                border: "1px solid #ccc",
+                background: currentPage === totalPages ? "#f8f9fa" : "white",
+                color: currentPage === totalPages ? "#6c757d" : "#495057",
+                borderRadius: "4px",
+                cursor: currentPage === totalPages ? "not-allowed" : "pointer",
+              }}
+            >
+              {getText(locale, "missingPropsNext") || "Next"}
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  },
+  parameters: {
+    docs: {
+      description: {
+        story: getText(defaultLocale, "missingPropsTableStoryDescription"),
+      },
+    },
+  },
+};
+
 
 export const WithCountrySelect: Story = {
   args: {
@@ -485,8 +1049,9 @@ export const AllAppearances: Story = {
             </div>
             <BcPhoneInput
               label={getText(defaultLocale, "label")}
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
               appearance={appearance as any}
-              country="TR"
+              country={"TR" as CountryCode}
               placeholder={getText(defaultLocale, "placeholder")}
               locale={defaultLocale}
             />
@@ -528,7 +1093,7 @@ export const WithTranslations: Story = {
 };
 
 export const RHFPhoneInputExample: Story = {
-  render: (args, context: any) => {
+  render: (args, context: { globals?: { locale?: string }; locale?: string }) => {
     const locale = context.globals?.locale ?? context.locale ?? "en";
     const { control, setValue, watch } = useForm({
       defaultValues: {
@@ -582,14 +1147,14 @@ export const RHFPhoneInputExample: Story = {
 
 // Favori ve son kullanılan ülke örneği
 export const FavoritesAndRecents = {
-  render: (args: any, context: any) => {
-    const [selectedCountry, setSelectedCountry] = React.useState("TR");
+  render: (args: Record<string, unknown>, context: { globals?: { locale?: string }; locale?: string }) => {
+    const [selectedCountry, setSelectedCountry] = React.useState<CountryCode>("TR");
     const [value, setValue] = React.useState("");
     const locale = context?.globals?.locale ?? context?.locale ?? "en";
     return (
       <BcPhoneInput
         {...args}
-        label={args.label || (locale === "tr" ? "Telefon" : "Phone")}
+        label={(args.label as string) || (locale === "tr" ? "Telefon" : "Phone")}
         favoriteCountries={["TR", "US"]}
         country={selectedCountry}
         onCountryChange={setSelectedCountry}
@@ -611,7 +1176,7 @@ export const FavoritesAndRecents = {
 
 // Çoklu BcPhoneInput örneği (örnek kullanım)
 export const MultipleInputs = {
-  render: (args: any, context: any) => {
+  render: (args: Record<string, unknown>, context: { globals?: { locale?: string }; locale?: string }) => {
     const defaultLocale = context?.globals?.locale ?? context?.locale ?? "en";
     const [country1, setCountry1] = React.useState<CountryCode>("TR");
     const [country2, setCountry2] = React.useState<CountryCode>("US");
@@ -657,15 +1222,18 @@ export const MultipleInputs = {
 
 // Büyük ülke listesiyle performans testi
 export const PerformanceTest = {
-  render: (args: any, context: any) => {
-    const [countries, setCountries] = React.useState<any[]>([]);
+  render: (args: Record<string, unknown>, context: { globals?: { locale?: string }; locale?: string }) => {
+    const [countries, setCountries] = React.useState<Array<{ id: number; code: string; name: { tr: string; en: string }; flag: string; dial: number; mask: string }>>([]);
     const [loading, setLoading] = React.useState(true);
-    const [selectedCountry, setSelectedCountry] = React.useState("TR");
+    const [selectedCountry, setSelectedCountry] = React.useState<CountryCode>("TR");
     const [value, setValue] = React.useState("");
     const [renderTime, setRenderTime] = React.useState<number | null>(null);
     const locale = context?.globals?.locale ?? context?.locale ?? "en";
+    
     React.useEffect(() => {
+      let isMounted = true;
       const start = performance.now();
+      
       // 1000 ülke simüle et
       const bigList = Array.from({ length: 1000 }, (_, i) => ({
         id: i + 1,
@@ -694,11 +1262,19 @@ export const PerformanceTest = {
           mask: "(999) 999-9999",
         }
       );
-      setTimeout(() => {
-        setCountries(bigList);
-        setLoading(false);
-        setRenderTime(performance.now() - start);
+      
+      const timeoutId = setTimeout(() => {
+        if (isMounted) {
+          setCountries(bigList);
+          setLoading(false);
+          setRenderTime(performance.now() - start);
+        }
       }, 800); // Async fetch simülasyonu
+      
+      return () => {
+        isMounted = false;
+        clearTimeout(timeoutId);
+      };
     }, []);
     return (
       <div>
@@ -715,15 +1291,20 @@ export const PerformanceTest = {
         </div>
         <BcPhoneInput
           {...args}
-          label={args.label || getText(locale, 'label')}
-          countryList={countries}
+          label={(args.label as string) || getText(locale, 'label')}
+          countryList={countries.map(country => ({
+            code: country.code as CountryCode,
+            name: country.name[locale as 'tr' | 'en'] || country.name.en,
+            flag: country.flag,
+            dial: country.dial
+          }))}
           country={selectedCountry}
           onCountryChange={setSelectedCountry}
           value={value}
           onChange={(e) => setValue(e.target.value)}
           locale={locale}
           placeholder={
-            args.placeholder || getText(locale, 'placeholder')
+            (args.placeholder as string) || getText(locale, 'placeholder')
           }
           disabled={loading}
         />
@@ -741,21 +1322,26 @@ export const PerformanceTest = {
 
 // Async country loading example
 export const AsyncCountryLoading = {
-  render: (args: any, context: any) => {
-    const [selectedCountry, setSelectedCountry] = React.useState("TR");
+  render: (args: Record<string, unknown>, context: { globals?: { locale?: string }; locale?: string }) => {
+    const [selectedCountry, setSelectedCountry] = React.useState<CountryCode>("TR");
     const [value, setValue] = React.useState("");
     const locale = context?.globals?.locale ?? context?.locale ?? "en";
 
     const fetchCountries = React.useCallback(async () => {
-      // Simulate API call
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-      return defaultCountryList;
+      try {
+        // Simulate API call
+        await new Promise((resolve) => setTimeout(resolve, 2000));
+        return defaultCountryList;
+      } catch (error) {
+        console.warn('Country loading failed:', error);
+        return defaultCountryList; // Fallback to default list
+      }
     }, []);
 
     return (
       <BcPhoneInput
         {...args}
-        label={args.label || getText(locale, 'label')}
+        label={(args.label as string) || getText(locale, 'label')}
         fetchCountries={fetchCountries}
         country={selectedCountry}
         onCountryChange={setSelectedCountry}
@@ -763,7 +1349,7 @@ export const AsyncCountryLoading = {
         onChange={(e) => setValue(e.target.value)}
         locale={locale}
         placeholder={
-          args.placeholder || getText(locale, 'placeholder')
+          (args.placeholder as string) || getText(locale, 'placeholder')
         }
       />
     );
@@ -779,20 +1365,32 @@ export const AsyncCountryLoading = {
 
 // Custom validation example
 export const CustomValidation = {
-  render: (args: any, context: any) => {
-    const [selectedCountry, setSelectedCountry] = React.useState("TR");
+  render: (args: Record<string, unknown>, context: { globals?: { locale?: string }; locale?: string }) => {
+    const [selectedCountry, setSelectedCountry] = React.useState<CountryCode>("TR");
     const [value, setValue] = React.useState("");
     const locale = context?.globals?.locale ?? context?.locale ?? "en";
 
     const validatePhone = React.useCallback(
-      (phone: string, country: string) => {
+      (phone: string, country: CountryCode) => {
         if (country === "TR") {
-          return phone.length >= 10 && phone.startsWith("5");
+          return {
+            isValid: phone.length >= 10 && phone.startsWith("5"),
+            errorMessage: phone.length < 10 || !phone.startsWith("5") ? "Invalid Turkish phone number" : "",
+            rules: []
+          };
         }
         if (country === "US") {
-          return phone.length === 10;
+          return {
+            isValid: phone.length === 10,
+            errorMessage: phone.length !== 10 ? "Invalid US phone number" : "",
+            rules: []
+          };
         }
-        return phone.length >= 8;
+        return {
+          isValid: phone.length >= 8,
+          errorMessage: phone.length < 8 ? "Phone number too short" : "",
+          rules: []
+        };
       },
       []
     );
@@ -800,7 +1398,7 @@ export const CustomValidation = {
     return (
       <BcPhoneInput
         {...args}
-        label={args.label || getText(locale, 'label')}
+        label={(args.label as string) || getText(locale, 'label')}
         validatePhone={validatePhone}
         country={selectedCountry}
         onCountryChange={setSelectedCountry}
@@ -808,7 +1406,7 @@ export const CustomValidation = {
         onChange={(e) => setValue(e.target.value)}
         locale={locale}
         placeholder={
-          args.placeholder || getText(locale, 'placeholder')
+          (args.placeholder as string) || getText(locale, 'placeholder')
         }
         helperText={
           getText(locale, 'helperText')
@@ -827,7 +1425,7 @@ export const CustomValidation = {
 
 // Advanced Monitoring Feature
 export const AdvancedMonitoring: Story = {
-  render: (args, context: any) => {
+  render: (args, context: { globals?: { locale?: string }; locale?: string }) => {
     const locale = context.globals?.locale ?? context.locale ?? "en";
     return (
       <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
@@ -846,7 +1444,7 @@ export const AdvancedMonitoring: Story = {
 
 // Mobile Optimizations Feature
 export const MobileOptimizations: Story = {
-  render: (args, context: any) => {
+  render: (args, context: { globals?: { locale?: string }; locale?: string }) => {
     const locale = context.globals?.locale ?? context.locale ?? "en";
     return (
       <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
@@ -865,7 +1463,7 @@ export const MobileOptimizations: Story = {
 
 // Advanced i18n Feature
 export const AdvancedI18n: Story = {
-  render: (args, context: any) => {
+  render: (args, context: { globals?: { locale?: string }; locale?: string }) => {
     const locale = context.globals?.locale ?? context.locale ?? "en";
     return (
       <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
@@ -884,7 +1482,7 @@ export const AdvancedI18n: Story = {
 
 // Theme Aware Styles Feature
 export const ThemeAwareStyles: Story = {
-  render: (args, context: any) => {
+  render: (args, context: { globals?: { locale?: string }; locale?: string }) => {
     const locale = context.globals?.locale ?? context.locale ?? "en";
     return (
       <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
@@ -903,7 +1501,7 @@ export const ThemeAwareStyles: Story = {
 
 // Keyboard Shortcuts Feature
 export const KeyboardShortcuts: Story = {
-  render: (args, context: any) => {
+  render: (args, context: { globals?: { locale?: string }; locale?: string }) => {
     const locale = context.globals?.locale ?? context.locale ?? "en";
     return (
       <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
@@ -922,7 +1520,7 @@ export const KeyboardShortcuts: Story = {
 
 // All Advanced Features Combined
 export const AllAdvancedFeatures: Story = {
-  render: (args, context: any) => {
+  render: (args, context: { globals?: { locale?: string }; locale?: string }) => {
     const locale = context.globals?.locale ?? context.locale ?? "en";
     return (
       <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
@@ -941,7 +1539,7 @@ export const AllAdvancedFeatures: Story = {
 
 // New Professional Features
 export const PhoneFormatting: Story = {
-  render: (args, context: any) => {
+  render: (args, context: { globals?: { locale?: string }; locale?: string }) => {
     const locale = context.globals?.locale ?? context.locale ?? "en";
     return (
       <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
@@ -949,7 +1547,7 @@ export const PhoneFormatting: Story = {
           label={getText(locale, "phoneFormattingLabel")}
           placeholder={getText(locale, "phoneFormattingPlaceholder")}
           enablePhoneFormatting={true}
-          country="TR"
+          country={"TR" as CountryCode}
           locale={locale}
         />
         <div style={{ fontSize: 12, color: "#666" }}>
@@ -961,14 +1559,14 @@ export const PhoneFormatting: Story = {
 };
 
 export const VoiceSearch: Story = {
-  render: (args, context: any) => {
+  render: (args, context: { globals?: { locale?: string }; locale?: string }) => {
     const locale = context.globals?.locale ?? context.locale ?? "en";
     return (
       <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
         <BcPhoneInput
           label={getText(locale, "voiceSearchLabel")}
           placeholder={getText(locale, "voiceSearchPlaceholder")}
-          country="TR"
+          country={"TR" as CountryCode}
           locale={locale}
         />
         <div style={{ fontSize: 12, color: "#666" }}>
@@ -980,14 +1578,14 @@ export const VoiceSearch: Story = {
 };
 
 export const QRCodeIntegration: Story = {
-  render: (args, context: any) => {
+  render: (args, context: { globals?: { locale?: string }; locale?: string }) => {
     const locale = context.globals?.locale ?? context.locale ?? "en";
     return (
       <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
         <BcPhoneInput
           label={getText(locale, "qrCodeIntegrationLabel")}
           placeholder={getText(locale, "qrCodeIntegrationPlaceholder")}
-          country="TR"
+          country={"TR" as CountryCode}
           locale={locale}
         />
         <div style={{ fontSize: 12, color: "#666" }}>
@@ -999,7 +1597,7 @@ export const QRCodeIntegration: Story = {
 };
 
 export const AdvancedValidation: Story = {
-  render: (args, context: any) => {
+  render: (args, context: { globals?: { locale?: string }; locale?: string }) => {
     const locale = context.globals?.locale ?? context.locale ?? "en";
     return (
       <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
@@ -1007,7 +1605,7 @@ export const AdvancedValidation: Story = {
           label={getText(locale, "advancedValidationLabel")}
           placeholder={getText(locale, "advancedValidationPlaceholder")}
           enableAdvancedValidation={true}
-          country="TR"
+          country={"TR" as CountryCode}
           locale={locale}
         />
         <div style={{ fontSize: 12, color: "#666" }}>
@@ -1019,7 +1617,7 @@ export const AdvancedValidation: Story = {
 };
 
 export const AutoCountryDetection: Story = {
-  render: (args, context: any) => {
+  render: (args, context: { globals?: { locale?: string }; locale?: string }) => {
     const locale = context.globals?.locale ?? context.locale ?? "en";
     return (
       <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
@@ -1038,7 +1636,7 @@ export const AutoCountryDetection: Story = {
 };
 
 export const PhoneSuggestions: Story = {
-  render: (args, context: any) => {
+  render: (args, context: { globals?: { locale?: string }; locale?: string }) => {
     const locale = context.globals?.locale ?? context.locale ?? "en";
     return (
       <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
@@ -1046,7 +1644,7 @@ export const PhoneSuggestions: Story = {
           label={getText(locale, "phoneSuggestionsLabel")}
           placeholder={getText(locale, "phoneSuggestionsPlaceholder")}
           enablePhoneSuggestions={true}
-          country="TR"
+          country={"TR" as CountryCode}
           locale={locale}
         />
         <div style={{ fontSize: 12, color: "#666" }}>
@@ -1058,7 +1656,7 @@ export const PhoneSuggestions: Story = {
 };
 
 export const PhoneHistory: Story = {
-  render: (args, context: any) => {
+  render: (args, context: { globals?: { locale?: string }; locale?: string }) => {
     const locale = context.globals?.locale ?? context.locale ?? "en";
     return (
       <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
@@ -1066,7 +1664,7 @@ export const PhoneHistory: Story = {
           label={getText(locale, "phoneHistoryLabel")}
           placeholder={getText(locale, "phoneHistoryPlaceholder")}
           enablePhoneHistory={true}
-          country="TR"
+          country={"TR" as CountryCode}
           locale={locale}
         />
         <div style={{ fontSize: 12, color: "#666" }}>
@@ -1078,7 +1676,7 @@ export const PhoneHistory: Story = {
 };
 
 export const ProfessionalShowcase: Story = {
-  render: (args, context: any) => {
+  render: (args, context: { globals?: { locale?: string }; locale?: string }) => {
     const locale = context.globals?.locale ?? context.locale ?? "en";
     return (
       <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
@@ -1090,7 +1688,7 @@ export const ProfessionalShowcase: Story = {
           enableAutoCountryDetection={true}
           enablePhoneSuggestions={true}
           enablePhoneHistory={true}
-          country="TR"
+          country={"TR" as CountryCode}
           favoriteCountries={["TR", "US", "GB", "DE", "FR"]}
           locale={locale}
         />
@@ -1348,9 +1946,14 @@ export const WithAsyncCountryLoading: Story = {
     const locale = args.locale || "tr";
 
     const fetchCountries = async () => {
-      // Simulate API delay
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      return defaultCountryList.slice(0, 10); // Return first 10 countries
+      try {
+        // Simulate API delay
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        return defaultCountryList.slice(0, 10); // Return first 10 countries
+      } catch (error) {
+        console.warn('Country loading failed:', error);
+        return defaultCountryList.slice(0, 10); // Fallback
+      }
     };
 
     return (

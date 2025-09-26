@@ -1,691 +1,531 @@
-import React, { useState, forwardRef, useCallback, useId } from "react";
-import { BcTextField } from "../BcTextField/BcTextField";
-import type { BcTextFieldProps } from "../BcTextField/BcTextField";
-import { barContainerStyle, barStyle, strengthColors, barGradient, allPassedCheckStyle } from "./styles";
+import React, { forwardRef, useCallback, useState, useMemo, useEffect } from 'react';
+import { IconButton, Box, Tooltip, LinearProgress, Typography, Chip, Fade, Collapse } from '@mui/material';
+import { Visibility, VisibilityOff, Refresh, ContentCopy, Check } from '@mui/icons-material';
+import { useTheme } from '@mui/material/styles';
+import { BcTextField } from '../BcTextField/BcTextField';
+import { BcPasswordInputProps } from './types';
+import { usePasswordVisibility } from './hooks/usePasswordVisibility';
 import { usePasswordStrength } from './hooks/usePasswordStrength';
-import { usePasswordAdornments } from './hooks/usePasswordAdornments';
-import { usePasswordValidation } from './hooks/usePasswordValidation';
-import { usePasswordLiveRegion } from './hooks/usePasswordLiveRegion';
-import { getStatusIconAndColor } from './hooks/useStatusIcon';
-import { getTranslationsObject } from './hooks/useTranslationsObject';
-import { getTranslation } from "../i18n/i18nHelpers";
-import type { PasswordRuleType, PasswordMonitoringCallbacks } from './types';
-import PasswordInputErrorBoundary from './ErrorBoundary';
-import { usePasswordGenerator } from './hooks/usePasswordGenerator';
-import { usePasswordBreachCheck } from './hooks/usePasswordBreachCheck';
-import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts';
-import { usePasswordScoring } from './hooks/usePasswordScoring';
-import { useThemeAwareStyles } from './hooks/useThemeAwareStyles';
-import { useAdvancedMonitoring } from './hooks/useAdvancedMonitoring';
-import { useMobileOptimizations, useHapticFeedback } from './hooks/useMobileOptimizations';
-import { useAdvancedI18n } from './hooks/useAdvancedI18n';
+import { usePasswordGeneration } from './hooks/usePasswordGeneration';
+import { passwordToggleStyles } from './styles';
+import { getTranslation } from '../i18n/i18nHelpers';
 
 /**
- * BcPasswordInputProps
- * @property showStrengthBar - Şifre gücü barı gösterilsin mi / Show password strength bar
- * @property minLength - Minimum şifre uzunluğu / Minimum password length
- * @property requireUppercase - Büyük harf gereksinimi / Require uppercase letter
- * @property requireLowercase - Küçük harf gereksinimi / Require lowercase letter
- * @property requireNumber - Rakam gereksinimi / Require number
- * @property requireSpecial - Özel karakter gereksinimi / Require special character
- * @property onStrengthChange - Şifre gücü değişince çağrılır / Called when password strength changes
- * @property customRules - Özel şifre kuralları [{ key, label, test }] / Custom password rules [{ key, label, test }]
- * @property useZxcvbnStrength - Gelişmiş şifre gücü ölçümü için zxcvbn kullanılsın mı? / Use zxcvbn for advanced password strength?
- * @property showPasswordToggle - Şifre göster/gizle butonu gösterilsin mi / Show password toggle button
- * @property showCopyButton - Kopyala butonu gösterilsin mi / Show copy button
- * @property enableAsyncValidation - Asenkron validasyon / Enable async validation
- * @property validatePassword - Asenkron şifre validasyon fonksiyonu / Async password validation function
- * @property showValidationStatus - Validasyon durumu gösterilsin mi / Show validation status
- * @property validationDebounceMs - Validasyon debounce süresi / Validation debounce ms
- * @property monitoring - İzleme fonksiyonları / Monitoring callbacks
- * @property ...rest - Diğer BcTextFieldProps / Other BcTextFieldProps
+ * BcPasswordInput component - extends BcTextField with password-specific features
  */
-export interface BcPasswordInputProps extends Omit<BcTextFieldProps, "type"> {
-  /** Şifre gücü barı gösterilsin mi */
-  showStrengthBar?: boolean;
-  /** Minimum şifre uzunluğu */
-  minLength?: number;
-  /** Büyük harf gereksinimi */
-  requireUppercase?: boolean;
-  /** Küçük harf gereksinimi */
-  requireLowercase?: boolean;
-  /** Rakam gereksinimi */
-  requireNumber?: boolean;
-  /** Özel karakter gereksinimi */
-  requireSpecial?: boolean;
-  /** Şifre gücü değişince çağrılır */
-  onStrengthChange?: (strength: number) => void;
-  /** Özel şifre kuralları */
-  customRules?: PasswordRuleType[];
-  /** Gelişmiş şifre gücü ölçümü için zxcvbn kullanılsın mı? */
-  useZxcvbnStrength?: boolean;
-  /** Şifre göster/gizle butonu gösterilsin mi */
-  showPasswordToggle?: boolean;
-  /** Kopyala butonu gösterilsin mi */
-  showCopyButton?: boolean;
-  /** Asenkron validasyon */
-  enableAsyncValidation?: boolean;
-  /** Asenkron şifre validasyon fonksiyonu */
-  validatePassword?: (password: string) => Promise<{ isValid: boolean; message?: string }>;
-  /** Validasyon durumu gösterilsin mi */
-  showValidationStatus?: boolean;
-  /** Validasyon debounce süresi */
-  validationDebounceMs?: number;
-  /** İzleme fonksiyonları */
-  monitoring?: PasswordMonitoringCallbacks;
-  /** Şifre üretme özelliği */
-  enablePasswordGenerator?: boolean;
-  /** Breach kontrolü */
-  enableBreachCheck?: boolean;
-  /** Klavye kısayolları */
-  enableKeyboardShortcuts?: boolean;
-  /** Gelişmiş şifre skorlama */
-  enableAdvancedScoring?: boolean;
-  /** Tema uyumlu stiller */
-  enableThemeAwareStyles?: boolean;
-  /** Gelişmiş izleme */
-  enableAdvancedMonitoring?: boolean;
-  /** Mobil optimizasyonlar */
-  enableMobileOptimizations?: boolean;
-  /** Gelişmiş i18n */
-  enableAdvancedI18n?: boolean;
-}
-
-
-
-const BcPasswordInputInner = forwardRef<HTMLInputElement, BcPasswordInputProps>(
-  (
-    {
-      showStrengthBar = true,
-      minLength = 8,
-      requireUppercase = true,
-      requireLowercase = true,
-      requireNumber = true,
-      requireSpecial = false,
-      onStrengthChange,
+export const BcPasswordInput = forwardRef<HTMLInputElement, BcPasswordInputProps>(
+  (props, ref) => {
+    const {
       showPasswordToggle = true,
-      showCopyButton = true,
-      enableAsyncValidation = false,
-      validatePassword,
-      showValidationStatus = false,
-      validationDebounceMs = 300,
-      monitoring,
-      enablePasswordGenerator = false,
-      enableBreachCheck = false,
-      enableKeyboardShortcuts = true,
-      enableAdvancedScoring = false,
-      enableThemeAwareStyles = true,
-      enableAdvancedMonitoring = false,
-      enableMobileOptimizations = true,
-      enableAdvancedI18n = false,
-      ...rest
-    },
-    ref
-  ) => {
-    const [showPassword, setShowPassword] = useState(false);
-    const [value, setValue] = useState(rest.defaultValue ?? "");
-    const [copied, setCopied] = useState(false);
-    
-    const isControlled = rest.value !== undefined;
-    const password: string = isControlled ? String(rest.value ?? '') : String(value ?? '');
+      passwordToggleLabel,
+      enablePasswordGeneration = false,
+      enableStrengthIndicator = false,
+      showStrengthMeter = false,
+      showRequirements: showRequirementsProp = false,
+      strengthConfig,
+      onStrengthChange,
+      generationOptions,
+      onPasswordGenerated,
+      value,
+      onChange,
+      onFocus,
+      onBlur,
+      passwordTranslations,
+      locale = 'en',
+      enableBreachDetection = false,
+      enableCommonPasswordCheck = true,
+      enablePatternDetection = true,
+      enableKeyboardPatternCheck = true,
+      enableRepeatedCharCheck = true,
+      enableSequentialCharCheck = true,
+      enableDictionaryCheck = false,
+      breachDetectionApi,
+      commonPasswordsList,
+      dictionaryWords,
+      onSecurityWarning,
+      ...bcTextFieldProps
+    } = props;
 
-    // Accessibility: id'ler ve aria bağlantıları
-    const reactId = useId();
-    const strengthBarId = `bc-password-strength-${reactId}`;
-    const rulesId = `bc-password-rules-${reactId}`;
-    const liveRegionId = `bc-password-live-${reactId}`;
+    const theme = useTheme();
+    const [password, setPassword] = useState<string>((value as string) ?? '');
+    const [isCopied, setIsCopied] = useState(false);
+    const [showRequirements, setShowRequirements] = useState(showRequirementsProp);
 
-    // i18n desteği
-    const locale = rest.locale || 'en';
-    const fallbackLocale = rest.fallbackLocale || 'en';
-    const translationsObj = getTranslationsObject(rest.translations);
-
-    // Password strength calculation using hook
-    const { strength, rules, ruleLabels, allPassed } = usePasswordStrength({
-      password,
-      minLength,
-      requireUppercase,
-      requireLowercase,
-      requireNumber,
-      requireSpecial,
-      useZxcvbnStrength: rest.useZxcvbnStrength,
-      customRules: rest.customRules,
+    // Password visibility hook
+    const visibility = usePasswordVisibility({
+      defaultVisible: false,
+      rememberVisibility: false,
     });
 
-    // Advanced features hooks
-    const passwordGenerator = usePasswordGenerator({
-      minLength,
-      requireUppercase,
-      requireLowercase,
-      requireNumber,
-      requireSpecial,
-      customRules: rest.customRules,
-    });
+    // Password strength hook
+    const strength = usePasswordStrength(strengthConfig);
 
-    const breachCheck = usePasswordBreachCheck();
+    // Password generation hook
+    const passwordGenerator = usePasswordGeneration();
 
-    const passwordScore = usePasswordScoring(password, {
-      minLength,
-      requireUppercase,
-      requireLowercase,
-      requireNumber,
-      requireSpecial,
-      customRules: rest.customRules,
-    });
+    // Translation helper
+    const t = useCallback((key: string, fallback?: string) => {
+      const translations = passwordTranslations as Record<string, string> | undefined;
+      return getTranslation(key, locale, translations, 'en') || fallback || key;
+    }, [locale, passwordTranslations]);
 
-    const themeStyles = useThemeAwareStyles();
+    // Security analysis
+    const analyzeSecurity = useCallback((password: string) => {
+      if (!password) return;
 
-    const advancedMonitoring = useAdvancedMonitoring(monitoring || {}, {
-      enableAnalytics: enableAdvancedMonitoring,
-      enablePerformanceTracking: enableAdvancedMonitoring,
-      enableUserBehaviorTracking: enableAdvancedMonitoring,
-    });
+      const warnings: Array<{ message: string; severity: 'low' | 'medium' | 'high' }> = [];
 
-    const mobileOptimizations = useMobileOptimizations();
-    const { triggerHaptic } = useHapticFeedback();
-
-    const advancedI18n = useAdvancedI18n({
-      locale,
-      fallbackLocale,
-      translations: rest.translations,
-      enablePluralization: enableAdvancedI18n,
-      enableInterpolation: enableAdvancedI18n,
-    });
-
-    // i18n text'leri - advanced i18n varsa onu kullan, yoksa normal i18n
-    const i18nLabel = rest.label || (enableAdvancedI18n ? advancedI18n.t('label') : getTranslation('label', locale, translationsObj, fallbackLocale));
-    const i18nPlaceholder = rest.placeholder || (enableAdvancedI18n ? advancedI18n.t('placeholder') : getTranslation('placeholder', locale, translationsObj, fallbackLocale));
-    const i18nHelperText = rest.helperText || (enableAdvancedI18n ? advancedI18n.t('helperText') : getTranslation('helperText', locale, translationsObj, fallbackLocale));
-    const i18nStatusMessage = rest.statusMessage || (enableAdvancedI18n ? advancedI18n.t('statusMessage') : getTranslation('statusMessage', locale, translationsObj, fallbackLocale));
-    const i18nShowPassword = enableAdvancedI18n ? advancedI18n.t('showPassword') : getTranslation('showPassword', locale, translationsObj, fallbackLocale);
-    const i18nHidePassword = enableAdvancedI18n ? advancedI18n.t('hidePassword') : getTranslation('hidePassword', locale, translationsObj, fallbackLocale);
-    const i18nRules = enableAdvancedI18n ? advancedI18n.t('rules') : getTranslation('rules', locale, translationsObj, fallbackLocale);
-    const i18nStrengthBar = enableAdvancedI18n ? advancedI18n.t('strengthBar') : getTranslation('strengthBar', locale, translationsObj, fallbackLocale);
-    const i18nCopyPassword = enableAdvancedI18n ? advancedI18n.t('copyPassword') : getTranslation('copyPassword', locale, translationsObj, fallbackLocale);
-    const i18nCopied = enableAdvancedI18n ? advancedI18n.t('copied') : getTranslation('copied', locale, translationsObj, fallbackLocale);
-    const i18nClearButton = enableAdvancedI18n ? advancedI18n.t('clearButtonLabel') : (getTranslation('clearButtonLabel', locale, translationsObj, fallbackLocale) || 'Temizle');
-    const i18nStrengthVeryWeak = enableAdvancedI18n ? advancedI18n.t('strengthVeryWeak') : getTranslation('strengthVeryWeak', locale, translationsObj, fallbackLocale);
-    const i18nStrengthWeak = enableAdvancedI18n ? advancedI18n.t('strengthWeak') : getTranslation('strengthWeak', locale, translationsObj, fallbackLocale);
-    const i18nStrengthMedium = enableAdvancedI18n ? advancedI18n.t('strengthMedium') : getTranslation('strengthMedium', locale, translationsObj, fallbackLocale);
-    const i18nStrengthStrong = enableAdvancedI18n ? advancedI18n.t('strengthStrong') : getTranslation('strengthStrong', locale, translationsObj, fallbackLocale);
-    const i18nStrengthVeryStrong = enableAdvancedI18n ? advancedI18n.t('strengthVeryStrong') : getTranslation('strengthVeryStrong', locale, translationsObj, fallbackLocale);
-    const i18nStrengthPerfect = enableAdvancedI18n ? advancedI18n.t('strengthPerfect') : getTranslation('strengthPerfect', locale, translationsObj, fallbackLocale);
-
-    function isCustomRule(rule: any): rule is { key: string; label: string; custom: true; test: (password: string) => boolean } {
-      return rule.custom === true && typeof rule.test === 'function';
-    }
-
-    // Async validation using hook
-    const { validationResult: asyncValidationResult, isValidating } = usePasswordValidation({
-      password,
-      enableAsyncValidation,
-      validatePassword,
-      validationDebounceMs,
-      monitoring,
-    });
-
-    // Status ikonunu ve helperText rengini ayarla
-    const { statusIcon: defaultStatusIcon } = getStatusIconAndColor(rest.status, rest.color);
-    let statusIcon = null;
-    
-    // Sadece gerçek bir status varsa icon göster
-    if (rest.status && ['error', 'warning', 'success', 'info'].includes(rest.status)) {
-      statusIcon = defaultStatusIcon;
-      if (rest.renderCustomIcon) {
-        const customIcon = rest.renderCustomIcon(rest.status);
-        if (customIcon) statusIcon = customIcon;
-      }
-    }
-
-    // Live region for screen reader
-    const { liveRegionRef, liveRegionMessage } = usePasswordLiveRegion({
-      password,
-      strength,
-      rules,
-      ruleLabels,
-      requireUppercase,
-      requireLowercase,
-      requireNumber,
-      requireSpecial,
-      useZxcvbnStrength: rest.useZxcvbnStrength,
-      i18nStrengthBar,
-      i18nRules,
-      showValidationStatus,
-      enableAsyncValidation,
-      validationResult: asyncValidationResult,
-      isValidating,
-    });
-
-    // Şifre gücü değişim callback'i
-    React.useEffect(() => {
-      if (onStrengthChange) onStrengthChange(strength);
-      if (monitoring?.onStrengthChange) monitoring.onStrengthChange(strength);
-    }, [strength, onStrengthChange, monitoring]);
-
-    // Breach check - şifre değiştiğinde kontrol et
-    React.useEffect(() => {
-      if (enableBreachCheck && password.length > 0) {
-        breachCheck.checkPassword(password);
-      }
-    }, [password, enableBreachCheck, breachCheck]);
-
-    // Performans ölçümü
-    React.useEffect(() => {
-      const start = performance.now();
-      return () => {
-        const end = performance.now();
-        if (monitoring?.onPerformance) {
-          monitoring.onPerformance({
-            renderTimeMs: end - start,
-            passwordLength: password.length,
-            timestamp: Date.now(),
+      // Common password check
+      if (enableCommonPasswordCheck) {
+        const commonPasswords = commonPasswordsList || [
+          'password', '123456', '123456789', 'qwerty', 'abc123', 'password123',
+          'admin', 'letmein', 'welcome', 'monkey', 'dragon', 'master'
+        ];
+        
+        if (commonPasswords.some((common: string) => password.toLowerCase().includes(common.toLowerCase()))) {
+          warnings.push({
+            message: t('securityWarning.commonPassword', 'Yaygın şifre kalıpları kullanılmış'),
+            severity: 'high'
           });
         }
-      };
-    }, [password, monitoring]);
+      }
 
-    // Event handlers with useCallback
-    const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
-      if (!isControlled) setValue(e.target.value);
-      if (rest.onChange) rest.onChange(e);
-      if (monitoring?.onChange) {
-        try {
-          monitoring.onChange(e.target.value);
-        } catch (err) {
-          if (monitoring.onError) monitoring.onError(err as Error);
+      // Pattern detection
+      if (enablePatternDetection) {
+        if (/(.)\1{2,}/.test(password)) {
+          warnings.push({
+            message: t('securityWarning.repeatedChars', 'Tekrarlanan karakterler tespit edildi'),
+            severity: 'medium'
+          });
         }
       }
-    }, [isControlled, rest, monitoring]);
 
-    const handleTogglePassword = useCallback(() => {
-      setShowPassword(prev => {
-        const newValue = !prev;
-        triggerHaptic('light');
-        advancedMonitoring.onPasswordToggled?.(newValue);
-        return newValue;
-      });
-    }, [triggerHaptic, advancedMonitoring]);
-
-    const handleCopy = useCallback(async () => {
-      if (!password) return;
-      try {
-        await navigator.clipboard.writeText(password);
-        setCopied(true);
-        triggerHaptic('medium');
-        advancedMonitoring.onPasswordCopied?.(password);
-        setTimeout(() => setCopied(false), 1200);
-      } catch (error) {
-        console.warn('BcPasswordInput: Failed to copy password:', error);
-        if (monitoring?.onError) {
-          monitoring.onError(error as Error);
+      // Repeated character check
+      if (enableRepeatedCharCheck) {
+        if (/(.)\1{2,}/.test(password)) {
+          warnings.push({
+            message: t('securityWarning.repeatedChars', 'Tekrarlanan karakterler tespit edildi'),
+            severity: 'medium'
+          });
         }
       }
-    }, [password, monitoring, triggerHaptic, advancedMonitoring]);
 
-    const handleClear = useCallback(() => {
-      if (!isControlled) setValue("");
-      if (isControlled && rest.onChange) {
-        // Controlled ise, boş bir event ile value'yu sıfırla
-        const event = { target: { value: "" } } as React.ChangeEvent<HTMLInputElement>;
-        rest.onChange(event);
-        if (monitoring?.onChange) {
-          try {
-            monitoring.onChange("");
-          } catch (err) {
-            if (monitoring.onError) monitoring.onError(err as Error);
-          }
+      // Keyboard pattern check
+      if (enableKeyboardPatternCheck) {
+        const keyboardPatterns = ['qwerty', 'asdf', 'zxcv', '1234567890', '0987654321'];
+        if (keyboardPatterns.some(pattern => password.toLowerCase().includes(pattern))) {
+          warnings.push({
+            message: t('securityWarning.keyboardPattern', 'Klavye sıralaması tespit edildi'),
+            severity: 'medium'
+          });
         }
       }
-      triggerHaptic('light');
-      advancedMonitoring.onPasswordCleared?.();
-      if (rest.onClear) rest.onClear();
-    }, [isControlled, rest, monitoring, triggerHaptic, advancedMonitoring]);
 
-    // Keyboard shortcuts hook (moved after handlers)
-    const { shortcuts } = useKeyboardShortcuts({
-      onTogglePassword: handleTogglePassword,
-      onCopyPassword: handleCopy,
-      onClearPassword: handleClear,
-      onGeneratePassword: () => {
-        if (enablePasswordGenerator) {
-          const newPassword = passwordGenerator.generatePassword();
-          setValue(newPassword);
-          if (rest.onChange) {
-            const event = { target: { value: newPassword } } as React.ChangeEvent<HTMLInputElement>;
-            rest.onChange(event);
-          }
+      // Sequential character check
+      if (enableSequentialCharCheck) {
+        if (/123|234|345|456|567|678|789|890|012|abc|bcd|cde|def|efg|fgh|ghi|hij|ijk|jkl|klm|lmn|mno|nop|opq|pqr|qrs|rst|stu|tuv|uvw|vwx|wxy|xyz/i.test(password)) {
+          warnings.push({
+            message: t('securityWarning.sequentialChars', 'Ardışık karakterler tespit edildi'),
+            severity: 'low'
+          });
         }
-      },
-      enabled: enableKeyboardShortcuts,
-    });
-
-
-
-    // Status ve mesajı validation'a göre override et
-    let finalStatus = rest.status;
-    let finalStatusMessage = i18nStatusMessage;
-    let finalLoading = rest.loading;
-    if (showValidationStatus && enableAsyncValidation) {
-      if (isValidating) {
-        finalLoading = true;
-      } else if (asyncValidationResult) {
-        finalStatus = asyncValidationResult.isValid ? "success" : "error";
-        finalStatusMessage = asyncValidationResult.message || i18nStatusMessage || '';
       }
-    }
 
-    // End adornment composition using hook
-    const endAdornment = usePasswordAdornments({
-      endAdornment: rest.inputSuffix,
-      showPasswordToggle,
-      showCopyButton,
-      showClearButton: rest.showClearButton || false,
-      showPassword,
-      password,
-      copied,
-      loading: finalLoading || false,
-      disabled: rest.disabled || false,
-      statusIcon,
-      i18nShowPassword,
-      i18nHidePassword,
-      i18nCopyPassword,
-      i18nCopied,
-      i18nClearButton,
-      onTogglePassword: handleTogglePassword,
-      onCopy: handleCopy,
-      onClear: handleClear,
-      renderEndAdornment: rest.renderEndAdornment,
-    });
-
-    return (
-      <div>
-        <BcTextField
-          {...rest}
-          ref={ref}
-          type={showPassword ? "text" : "password"}
-          value={password}
-          onChange={handleChange}
-          showClearButton={rest.showClearButton}
-          status={undefined}
-          statusMessage={undefined}
-          helperText={finalStatusMessage || i18nHelperText}
-          loading={false}
-          error={finalStatus === 'error'}
-          inputPrefix={rest.inputPrefix}
-          inputSuffix={endAdornment}
-          translations={rest.translations}
-          locale={locale}
-          fallbackLocale={fallbackLocale}
-          appearance={rest.appearance}
-          responsiveWidth={rest.responsiveWidth}
-          disabled={rest.disabled}
-          label={i18nLabel}
-          placeholder={i18nPlaceholder}
-          enableAsyncValidation={enableAsyncValidation}
-          validateInput={validatePassword}
-          showValidationStatus={showValidationStatus}
-          validationDebounceMs={validationDebounceMs}
-          monitoring={monitoring}
-          enableRTL={rest.enableRTL}
-          enableHighContrast={rest.enableHighContrast}
-          enableReducedMotion={rest.enableReducedMotion}
-          fontSize={rest.fontSize}
-          renderCustomIcon={rest.renderCustomIcon}
-          renderHelperText={rest.renderHelperText}
-          autoFocus={rest.autoFocus}
-          autoComplete={rest.autoComplete}
-          inputMode={rest.inputMode}
-          pattern={rest.pattern}
-          maxLength={rest.maxLength}
-          spellCheck={rest.spellCheck}
-          inputComponent={rest.inputComponent}
-          loadingReadonly={rest.loadingReadonly}
-          aria-describedby={[
-            typeof rest['aria-describedby'] === 'string' ? rest['aria-describedby'] : undefined,
-            showStrengthBar ? strengthBarId : undefined,
-            showStrengthBar ? rulesId : undefined,
-            liveRegionRef.current ? liveRegionId : undefined
-          ].filter(Boolean).join(' ') || undefined}
-        />
+      // Dictionary check
+      if (enableDictionaryCheck && dictionaryWords) {
+        const words = dictionaryWords.map((word: string) => word.toLowerCase());
+        const passwordLower = password.toLowerCase();
+        const foundWords = words.filter((word: string) => passwordLower.includes(word));
         
-        {/* Screen reader için live region */}
-        <div 
-          ref={liveRegionRef}
-          id={liveRegionId}
-          aria-live="polite" 
-          aria-atomic="true" 
-          style={{ position: 'absolute', left: -9999, width: 1, height: 1, overflow: 'hidden' }}
-        >
-          {liveRegionMessage}
-        </div>
+        if (foundWords.length > 0) {
+          warnings.push({
+            message: t('securityWarning.dictionaryWords', 'Sözlük kelimeleri tespit edildi'),
+            severity: 'medium'
+          });
+        }
+      }
 
-        {showStrengthBar && (
-          <>
-            {/* Şifre gücü barı */}
-            <div 
-              id={strengthBarId}
-              style={{
-                ...barContainerStyle,
-                ...(enableThemeAwareStyles ? themeStyles.containerStyles : {}),
-              } as React.CSSProperties}
-              role="progressbar"
-              aria-valuenow={strength}
-              aria-valuemin={0}
-              aria-valuemax={rest.useZxcvbnStrength ? 5 : 4}
-              aria-label={`${i18nStrengthBar}: ${strength}/${rest.useZxcvbnStrength ? 5 : 4}`}
-              title={`${i18nStrengthBar}: ${strength}/${rest.useZxcvbnStrength ? 5 : 4}`}
-            >
-              <div
-                style={{
-                  ...barStyle(rest.useZxcvbnStrength ? Math.max(1, Math.min(strength, 5)) : strength),
-                  background: enableThemeAwareStyles 
-                    ? themeStyles.strengthBarGradient(rest.useZxcvbnStrength ? Math.max(1, Math.min(strength, 5)) : strength)
-                    : barGradient(rest.useZxcvbnStrength ? Math.max(1, Math.min(strength, 5)) : strength),
-                  transition: 'width 0.3s, background 0.3s',
-                }}
+      // Breach detection
+      if (enableBreachDetection) {
+        // Simulate breach detection check
+        const checkBreach = async () => {
+          try {
+            if (breachDetectionApi) {
+              const response = await fetch(breachDetectionApi, {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ password: password }),
+              });
+              
+              if (response.ok) {
+                const result = await response.json();
+                if (result.breached) {
+                  warnings.push({
+                    message: t('securityWarning.breachDetected', 'Bu şifre veri ihlali veritabanında bulundu'),
+                    severity: 'high'
+                  });
+                }
+              }
+            } else {
+              // Fallback: Check against common breached passwords
+              const breachedPasswords = [
+                'password', '123456', '123456789', 'qwerty', 'abc123', 'password123',
+                'admin', 'letmein', 'welcome', 'monkey', 'dragon', 'master',
+                '1234567890', 'password1', 'qwerty123', 'welcome123'
+              ];
+              
+              if (breachedPasswords.includes(password.toLowerCase())) {
+                warnings.push({
+                  message: t('securityWarning.breachDetected', 'Bu şifre veri ihlali veritabanında bulundu'),
+                  severity: 'high'
+                });
+              }
+            }
+          } catch (error) {
+            console.warn('Breach detection failed:', error);
+          }
+        };
+        
+        checkBreach();
+      }
+
+      // Report warnings
+      warnings.forEach(warning => {
+        if (onSecurityWarning) {
+          onSecurityWarning(warning.message, warning.severity);
+        }
+      });
+    }, [
+      enableCommonPasswordCheck,
+      enablePatternDetection,
+      enableKeyboardPatternCheck,
+      enableSequentialCharCheck,
+      enableDictionaryCheck,
+      enableRepeatedCharCheck,
+      enableBreachDetection,
+      commonPasswordsList,
+      dictionaryWords,
+      breachDetectionApi,
+      onSecurityWarning,
+      t
+    ]);
+
+
+    // Handle password change
+    const handlePasswordChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+      const newPassword = e.target.value;
+      setPassword(newPassword);
+      
+      // Show requirements when user starts typing
+      if (newPassword.length > 0) {
+        setShowRequirements(true);
+      } else {
+        setShowRequirements(false);
+      }
+      
+      // Analyze password strength if enabled
+      if (enableStrengthIndicator && newPassword) {
+        const strengthResult = strength.analyzePassword(newPassword);
+        if (onStrengthChange) {
+          onStrengthChange(strengthResult.strength, strengthResult.score);
+        }
+      }
+
+      // Analyze security if enabled
+      if (newPassword) {
+        analyzeSecurity(newPassword);
+      }
+      
+      if (onChange) {
+        onChange(e);
+      }
+    }, [onChange, enableStrengthIndicator, strength, onStrengthChange, analyzeSecurity]);
+
+    // Handle visibility toggle
+    const handleVisibilityToggle = useCallback(() => {
+      visibility.toggleVisibility();
+    }, [visibility]);
+
+    // Handle password generation
+    const handlePasswordGeneration = useCallback(() => {
+      const generatedPassword = passwordGenerator.generatePassword();
+      setPassword(generatedPassword);
+      setShowRequirements(true);
+      
+      if (onPasswordGenerated) {
+        onPasswordGenerated(generatedPassword);
+      }
+      
+      // Analyze generated password strength
+      if (enableStrengthIndicator) {
+        const strengthResult = strength.analyzePassword(generatedPassword);
+        if (onStrengthChange) {
+          onStrengthChange(strengthResult.strength, strengthResult.score);
+        }
+      }
+    }, [passwordGenerator, onPasswordGenerated, enableStrengthIndicator, strength, onStrengthChange]);
+
+    // Handle password copy
+    const handlePasswordCopy = useCallback(async () => {
+      try {
+        await passwordGenerator.copyToClipboard(password);
+        setIsCopied(true);
+        setTimeout(() => setIsCopied(false), 2000);
+      } catch (error) {
+        console.error('Failed to copy password:', error);
+      }
+    }, [passwordGenerator, password]);
+
+    // Keyboard shortcuts
+    useEffect(() => {
+      const handleKeyDown = (event: KeyboardEvent) => {
+        // Ctrl/Cmd + H: Toggle visibility
+        if ((event.ctrlKey || event.metaKey) && event.key === 'h') {
+          event.preventDefault();
+          handleVisibilityToggle();
+        }
+        
+        // Ctrl/Cmd + C: Copy password
+        if ((event.ctrlKey || event.metaKey) && event.key === 'c' && password) {
+          event.preventDefault();
+          handlePasswordCopy();
+        }
+        
+        // Ctrl/Cmd + G: Generate password
+        if ((event.ctrlKey || event.metaKey) && event.key === 'g' && enablePasswordGeneration) {
+          event.preventDefault();
+          handlePasswordGeneration();
+        }
+        
+        // Escape: Clear password
+        if (event.key === 'Escape' && password) {
+          event.preventDefault();
+          setPassword('');
+          setShowRequirements(false);
+        }
+      };
+
+      document.addEventListener('keydown', handleKeyDown);
+      return () => document.removeEventListener('keydown', handleKeyDown);
+    }, [password, enablePasswordGeneration, handleVisibilityToggle, handlePasswordCopy, handlePasswordGeneration]);
+
+    // Render password toggle button
+    const renderPasswordToggle = useCallback(() => {
+      if (!showPasswordToggle) return null;
+
+      const toggleLabel = passwordToggleLabel || (visibility.isVisible ? t('hidePassword', 'Şifreyi gizle') : t('showPassword', 'Şifreyi göster'));
+
+      return (
+        <Tooltip title={toggleLabel}>
+          <IconButton
+            onClick={handleVisibilityToggle}
+            sx={passwordToggleStyles(theme).button}
+            aria-label={toggleLabel}
+            aria-pressed={visibility.isVisible}
+            aria-expanded={visibility.isVisible}
+            role="button"
+            tabIndex={0}
+          >
+            {visibility.isVisible ? (
+              <VisibilityOff 
+                sx={passwordToggleStyles(theme).icon}
+                aria-hidden="true"
               />
-              {allPassed && (
-                <span style={allPassedCheckStyle} aria-label="Tüm kurallar sağlandı" title="Tüm kurallar sağlandı">✔️</span>
-              )}
-            </div>
-            
-            {/* Şifre gücü metni */}
-            <div 
-              style={{ fontSize: 12, color: '#666', marginTop: 2, marginBottom: 4 }}
+            ) : (
+              <Visibility 
+                sx={passwordToggleStyles(theme).icon}
+                aria-hidden="true"
+              />
+            )}
+          </IconButton>
+        </Tooltip>
+      );
+    }, [showPasswordToggle, passwordToggleLabel, visibility.isVisible, t, handleVisibilityToggle, theme]);
+
+    // Render password generation button
+    const renderPasswordGenerator = useCallback(() => {
+      if (!enablePasswordGeneration) return null;
+
+      const generateLabel = t('generatePassword', 'Güçlü şifre üret');
+
+      return (
+        <Tooltip title={generateLabel}>
+          <IconButton
+            onClick={handlePasswordGeneration}
+            size="small"
+            sx={passwordToggleStyles(theme).button}
+            aria-label={generateLabel}
+            role="button"
+            tabIndex={0}
+          >
+            <Refresh 
+              fontSize="small" 
+              aria-hidden="true"
+            />
+          </IconButton>
+        </Tooltip>
+      );
+    }, [enablePasswordGeneration, t, handlePasswordGeneration, theme]);
+
+    // Render password copy button
+    const renderPasswordCopy = useCallback(() => {
+      if (!password) return null;
+
+      const copyLabel = isCopied ? t('copied', 'Kopyalandı!') : t('copyPassword', 'Şifreyi kopyala');
+
+      return (
+        <Tooltip title={copyLabel}>
+          <IconButton
+            onClick={handlePasswordCopy}
+            size="small"
+            sx={{
+              ...passwordToggleStyles(theme).button,
+              color: isCopied ? theme.palette.success.main : theme.palette.text.secondary,
+            }}
+            aria-label={copyLabel}
+            role="button"
+            tabIndex={0}
+          >
+            {isCopied ? (
+              <Check 
+                fontSize="small" 
+                aria-hidden="true"
+              />
+            ) : (
+              <ContentCopy 
+                fontSize="small" 
+                aria-hidden="true"
+              />
+            )}
+          </IconButton>
+        </Tooltip>
+      );
+    }, [password, isCopied, t, handlePasswordCopy, theme]);
+
+    // Render password strength meter
+    const renderPasswordStrengthMeter = () => {
+      if (!showStrengthMeter || !strength.strengthResult) return null;
+
+      const { strength: strengthLevel, score } = strength.strengthResult;
+      const color = strength.getStrengthColor(strengthLevel);
+      const label = strength.getStrengthLabel(strengthLevel);
+
+      return (
+        <Box sx={{ mt: 1 }}>
+          <Box 
+            sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 0.5 }}
+            role="progressbar"
+            aria-label={t('strengthLabel', 'Şifre gücü') + `: ${label}`}
+            aria-valuenow={score}
+            aria-valuemin={0}
+            aria-valuemax={100}
+          >
+            <LinearProgress
+              variant="determinate"
+              value={score}
+              sx={{
+                flexGrow: 1,
+                height: 4,
+                borderRadius: 2,
+                backgroundColor: theme.palette.grey[300],
+                '& .MuiLinearProgress-bar': {
+                  backgroundColor: color,
+                },
+              }}
+            />
+            <Typography 
+              variant="caption" 
+              sx={{ minWidth: 60, textAlign: 'right' }}
               aria-live="polite"
             >
-              {(() => {
-                const getStrengthLabel = (strength: number) => {
-                  if (rest.useZxcvbnStrength) {
-                    return strength === 0 ? i18nStrengthVeryWeak : 
-                           strength === 1 ? i18nStrengthWeak : 
-                           strength === 2 ? i18nStrengthMedium : 
-                           strength === 3 ? i18nStrengthStrong : 
-                           strength === 4 ? i18nStrengthVeryStrong : i18nStrengthPerfect;
-                  } else {
-                    return strength === 0 ? i18nStrengthVeryWeak : 
-                           strength === 1 ? i18nStrengthWeak : 
-                           strength === 2 ? i18nStrengthMedium : 
-                           strength === 3 ? i18nStrengthStrong : i18nStrengthPerfect;
-                  }
-                };
+              {label}
+            </Typography>
+          </Box>
+        </Box>
+      );
+    };
 
-                const maxStrength = rest.useZxcvbnStrength ? 5 : 4;
-                const baseText = `${i18nStrengthBar}: ${strength}/${maxStrength} (${getStrengthLabel(strength)})`;
-                
-                // Advanced scoring bilgisi ekle
-                if (enableAdvancedScoring && password.length > 0) {
-                  return `${baseText} | Score: ${passwordScore.percentage}% | Entropy: ${passwordScore.entropy.toFixed(1)} bits`;
-                }
-                
-                return baseText;
-              })()}
-            </div>
+    // Render password requirements
+    const renderPasswordRequirements = () => {
+      if (!showRequirements || !strength.strengthResult) return null;
 
-            {/* Breach check uyarısı */}
-            {enableBreachCheck && breachCheck.isBreached && (
-              <div 
-                style={{ 
-                  fontSize: 12, 
-                  color: '#d32f2f', 
-                  marginTop: 4, 
-                  marginBottom: 4,
-                  padding: 8,
-                  backgroundColor: '#ffebee',
-                  border: '1px solid #ffcdd2',
-                  borderRadius: 4
-                }}
-                role="alert"
-                aria-live="assertive"
-              >
-                ⚠️ Bu şifre {breachCheck.breachCount} veri ihlalinde bulundu. Güvenliğiniz için farklı bir şifre kullanın.
-              </div>
-            )}
+      const { requirements } = strength.strengthResult;
 
-            {/* Breach check loading */}
-            {enableBreachCheck && breachCheck.isLoading && (
-              <div 
-                style={{ 
-                  fontSize: 12, 
-                  color: '#666', 
-                  marginTop: 4, 
-                  marginBottom: 4 
-                }}
-              >
-                🔍 Şifre güvenlik kontrolü yapılıyor...
-              </div>
-            )}
+      return (
+        <Collapse in={showRequirements} timeout={300}>
+          <Box sx={{ mt: 1 }}>
+            <Typography variant="caption" color="text.secondary" gutterBottom>
+              {t('requirementsLabel', 'Şifre Gereksinimleri')}:
+            </Typography>
+            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+              {Object.entries(requirements).map(([key, passed]) => (
+                <Fade in={true} timeout={300} key={key}>
+                  <Chip
+                    label={getRequirementLabel(key)}
+                    size="small"
+                    color={passed ? 'success' : 'error'}
+                    variant={passed ? 'filled' : 'outlined'}
+                    sx={{ 
+                      fontSize: '0.7rem',
+                      transition: 'all 0.3s ease',
+                      transform: passed ? 'scale(1.05)' : 'scale(1)',
+                    }}
+                  />
+                </Fade>
+              ))}
+            </Box>
+          </Box>
+        </Collapse>
+      );
+    };
 
-            {/* Breach check error */}
-            {enableBreachCheck && breachCheck.error && (
-              <div 
-                style={{ 
-                  fontSize: 12, 
-                  color: '#f57c00', 
-                  marginTop: 4, 
-                  marginBottom: 4 
-                }}
-              >
-                ⚠️ Güvenlik kontrolü yapılamadı: {breachCheck.error}
-              </div>
-            )}
-            
-            {/* Kurallar başlığı */}
-            <div 
-              style={{ fontWeight: 600, fontSize: 13, marginTop: 4, marginBottom: 2 }}
-              id={`${rulesId}-label`}
-            >
-              {i18nRules}
-            </div>
-            
-            {/* Password generator butonu */}
-            {enablePasswordGenerator && (
-              <div 
-                style={{ 
-                  marginTop: 8, 
-                  marginBottom: 8 
-                }}
-              >
-                <button
-                  type="button"
-                  onClick={() => {
-                    const newPassword = passwordGenerator.generatePassword();
-                    setValue(newPassword);
-                    if (rest.onChange) {
-                      const event = { target: { value: newPassword } } as React.ChangeEvent<HTMLInputElement>;
-                      rest.onChange(event);
-                    }
-                    triggerHaptic('medium');
-                    advancedMonitoring.onPasswordGenerated?.(newPassword, 'manual');
-                  }}
-                  style={{
-                    padding: '6px 12px',
-                    fontSize: 12,
-                    backgroundColor: '#1976d2',
-                    color: 'white',
-                    border: 'none',
-                    borderRadius: 4,
-                    cursor: 'pointer',
-                    ...(mobileOptimizations.isMobile ? { 
-                      padding: '8px 16px',
-                      fontSize: 14 
-                    } : {})
-                  }}
-                  disabled={rest.disabled}
-                >
-                  🎲 {enableAdvancedI18n ? advancedI18n.t('passwordGeneratorButton') : getTranslation('passwordGeneratorButton', locale, translationsObj, fallbackLocale)}
-                </button>
-              </div>
-            )}
+    // Get requirement label
+    const getRequirementLabel = (key: string): string => {
+      const labels: Record<string, string> = {
+        minLength: t('requirements.minLength', 'Min. 8 karakter'),
+        uppercase: t('requirements.uppercase', 'Büyük harf'),
+        lowercase: t('requirements.lowercase', 'Küçük harf'),
+        numbers: t('requirements.numbers', 'Rakam'),
+        specialChars: t('requirements.specialChars', 'Özel karakter'),
+        noCommonPasswords: t('requirements.noCommonPasswords', 'Yaygın değil'),
+        noPersonalInfo: t('requirements.noPersonalInfo', 'Kişisel bilgi yok'),
+      };
+      return labels[key] || key;
+    };
 
-            {/* Keyboard shortcuts bilgisi */}
-            {enableKeyboardShortcuts && shortcuts && (
-              <div 
-                style={{ 
-                  fontSize: 11, 
-                  color: '#888', 
-                  marginTop: 8, 
-                  marginBottom: 4,
-                  fontStyle: 'italic'
-                }}
-              >
-                💡 Kısayollar: {Object.entries(shortcuts).map(([key, desc]) => `${key}: ${desc}`).join(' | ')}
-              </div>
-            )}
+    // Memoized input suffix to prevent unnecessary re-renders
+    const inputSuffix = useMemo(() => (
+      <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.5 }}>
+        {renderPasswordToggle()}
+        {renderPasswordCopy()}
+        {renderPasswordGenerator()}
+      </Box>
+    ), [renderPasswordToggle, renderPasswordCopy, renderPasswordGenerator]);
 
-            {/* Kurallar listesi */}
-            <ul 
-              id={rulesId}
-              style={{ listStyle: "none", padding: 0, margin: 0, display: "flex", flexWrap: "wrap", gap: 12 }}
-              aria-labelledby={`${rulesId}-label`}
-            >
-              {ruleLabels.map((rule) => {
-                if (!isCustomRule(rule)) {
-                  if (rule.key === "uppercase" && !requireUppercase) return null;
-                  if (rule.key === "lowercase" && !requireLowercase) return null;
-                  if (rule.key === "number" && !requireNumber) return null;
-                  if (rule.key === "special" && !requireSpecial) return null;
-                }
-                const passed = isCustomRule(rule)
-                  ? rule.test(password)
-                  : rules[rule.key as keyof typeof rules];
-                return (
-                  <li 
-                    key={rule.key} 
-                    style={{ 
-                      color: enableThemeAwareStyles 
-                        ? (passed ? themeStyles.ruleColors.passed : themeStyles.ruleColors.failed)
-                        : (passed ? strengthColors[2] : "#aaa"), 
-                      fontSize: mobileOptimizations.optimizedLayout ? 14 : 13,
-                      ...(mobileOptimizations.isMobile ? { marginBottom: 4 } : {})
-                    }} 
-                    aria-checked={passed} 
-                    role="checkbox"
-                    aria-label={`${rule.label}: ${passed ? 'sağlandı' : 'eksik'}`}
-                  >
-                    <span style={{ position: 'absolute', left: -9999, width: 1, height: 1, overflow: 'hidden' }}>
-                      {rule.label}: {passed ? 'sağlandı' : 'eksik'}
-                    </span>
-                    {passed ? "✔️" : "❌"} {rule.label}
-                  </li>
-                );
-              })}
-            </ul>
-          </>
-        )}
-      </div>
+    // Compose input props
+    const inputProps = useMemo(() => ({
+      ...bcTextFieldProps,
+      type: visibility.isVisible ? 'text' : 'password',
+      value: password,
+      onChange: handlePasswordChange,
+      onFocus,
+      onBlur,
+      inputSuffix,
+    }), [bcTextFieldProps, visibility.isVisible, password, handlePasswordChange, onFocus, onBlur, inputSuffix]);
+
+    return (
+      <>
+        <BcTextField
+          ref={ref}
+          {...inputProps}
+        />
+        {renderPasswordStrengthMeter()}
+        {renderPasswordRequirements()}
+      </>
     );
   }
-) as React.ForwardRefExoticComponent<React.PropsWithoutRef<BcPasswordInputProps> & React.RefAttributes<HTMLInputElement>>;
+);
 
-BcPasswordInputInner.displayName = "BcPasswordInput";
-
-// Performance optimized export with React.memo
-const BcPasswordInputMemo = React.memo(BcPasswordInputInner);
-
-// Error boundary wrapped export
-export const BcPasswordInput = React.forwardRef<HTMLInputElement, BcPasswordInputProps>((props, ref) => (
-  <PasswordInputErrorBoundary>
-    <BcPasswordInputMemo {...props} ref={ref} />
-  </PasswordInputErrorBoundary>
-)); 
+BcPasswordInput.displayName = 'BcPasswordInput';

@@ -58,12 +58,12 @@ export interface VoiceInputOptions {
     accent: string;
     gender: string;
     age: string;
-    voiceSettings: Record<string, any>;
+    voiceSettings: Record<string, unknown>;
     enabled: boolean;
   }>;
   voiceTraining?: {
     enableTraining: boolean;
-    trainingData: any[];
+    trainingData: unknown[];
     modelPath: string;
     trainingInterval: number;
     maxTrainingTime: number;
@@ -93,7 +93,7 @@ export interface VoiceInputOptions {
     customMetrics: string[];
   };
   voiceErrorHandling?: {
-    onError: (error: Error, context: any) => void;
+    onError: (error: Error, context: unknown) => void;
     fallbackBehavior: 'disable' | 'ignore' | 'retry' | 'replace';
     maxRetries: number;
     retryDelay: number;
@@ -169,7 +169,7 @@ export interface VoiceInputState {
     accent: string;
     gender: string;
     age: string;
-    voiceSettings: Record<string, any>;
+    voiceSettings: Record<string, unknown>;
     enabled: boolean;
   }>;
   voiceCommands: Array<{
@@ -196,7 +196,7 @@ export interface VoiceInputState {
     id: string;
     error: Error;
     timestamp: number;
-    context: any;
+    context: unknown;
   }>;
   voiceMetrics: {
     recognitionAccuracy: number;
@@ -214,7 +214,7 @@ export interface VoiceInputState {
     usage: Record<string, number>;
     performance: Record<string, number[]>;
     errors: Record<string, number>;
-    userBehavior: Record<string, any>;
+    userBehavior: Record<string, unknown>;
   };
   voiceDebugging: {
     logs: Array<{
@@ -222,15 +222,15 @@ export interface VoiceInputState {
       level: string;
       message: string;
       timestamp: number;
-      context: any;
+      context: unknown;
     }>;
     traces: Array<{
       id: string;
-      trace: any;
+      trace: unknown;
       timestamp: number;
     }>;
   };
-  voiceCache: Record<string, any>;
+  voiceCache: Record<string, unknown>;
   voiceSecurity: {
     violations: Array<{
       id: string;
@@ -259,26 +259,26 @@ export interface VoiceInputActions {
   setAccent: (accent: string) => void;
   setGender: (gender: string) => void;
   setAge: (age: string) => void;
-  setVoiceSettings: (settings: Record<string, any>) => void;
+  setVoiceSettings: (settings: Record<string, unknown>) => void;
   addVoiceCommand: (command: string, action: (value: string) => void, description: string, category: string) => void;
   removeVoiceCommand: (command: string) => void;
   enableVoiceCommand: (command: string) => void;
   disableVoiceCommand: (command: string) => void;
-  addVoiceProfile: (profile: any) => void;
+  addVoiceProfile: (profile: unknown) => void;
   removeVoiceProfile: (profileId: string) => void;
   switchVoiceProfile: (profileId: string) => void;
-  trainVoice: (data: any) => Promise<void>;
-  getVoiceData: () => any;
+  trainVoice: (data: unknown) => Promise<void>;
+  getVoiceData: () => unknown;
   clearVoiceData: () => void;
-  getVoiceMetrics: () => any;
+  getVoiceMetrics: () => unknown;
   clearVoiceMetrics: () => void;
-  getVoiceAnalytics: () => any;
+  getVoiceAnalytics: () => unknown;
   clearVoiceAnalytics: () => void;
-  getVoiceLogs: () => any[];
+  getVoiceLogs: () => unknown[];
   clearVoiceLogs: () => void;
-  getVoiceTraces: () => any[];
+  getVoiceTraces: () => unknown[];
   clearVoiceTraces: () => void;
-  getVoiceCache: () => any;
+  getVoiceCache: () => unknown;
   clearVoiceCache: () => void;
   exportVoiceData: () => string;
   importVoiceData: (data: string) => void;
@@ -363,7 +363,7 @@ export function useVoiceInput(options: VoiceInputOptions = {}) {
       customMetrics: [],
     },
     voiceErrorHandling = {
-      onError: (error: Error, context: any) => {
+      onError: (error: Error, context: unknown) => {
         console.error('Voice input error:', error, context);
       },
       fallbackBehavior: 'disable',
@@ -479,14 +479,14 @@ export function useVoiceInput(options: VoiceInputOptions = {}) {
     },
   });
 
-  const recognitionRef = useRef<any>(null);
+  const recognitionRef = useRef<unknown>(null);
   const synthesisRef = useRef<SpeechSynthesisUtterance | null>(null);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
   const audioChunksRef = useRef<Blob[]>([]);
   const errorIdCounter = useRef(0);
 
   // Log voice event
-  const logVoiceEvent = useCallback((level: string, message: string, context?: any) => {
+  const logVoiceEvent = useCallback((level: string, message: string, context?: unknown) => {
     if (!enableVoiceLogging) return;
 
     const log = {
@@ -512,7 +512,7 @@ export function useVoiceInput(options: VoiceInputOptions = {}) {
   }, [enableVoiceLogging, enableVoiceDebugging, voiceDebugging]);
 
   // Handle voice error
-  const handleVoiceError = useCallback((error: Error, context: any) => {
+  const handleVoiceError = useCallback((error: Error, context: unknown) => {
     if (enableVoiceErrorHandling) {
       voiceErrorHandling.onError(error, context);
     }
@@ -536,7 +536,7 @@ export function useVoiceInput(options: VoiceInputOptions = {}) {
   }, [enableVoiceErrorHandling, voiceErrorHandling, logVoiceEvent, enableVoiceFallbacks, voiceFallbacks]);
 
   // Update voice metrics
-  const updateVoiceMetrics = useCallback((type: string, data: any) => {
+  const updateVoiceMetrics = useCallback((type: string, data: unknown) => {
     if (!enableVoiceMetrics) return;
 
     setState(prev => ({
@@ -554,7 +554,7 @@ export function useVoiceInput(options: VoiceInputOptions = {}) {
   }, [enableVoiceMetrics, voiceMetrics]);
 
   // Update voice analytics
-  const updateVoiceAnalytics = useCallback((type: string, data: any) => {
+  const updateVoiceAnalytics = useCallback((type: string, data: unknown) => {
     if (!enableVoiceAnalytics) return;
 
     setState(prev => ({
@@ -590,7 +590,7 @@ export function useVoiceInput(options: VoiceInputOptions = {}) {
     const recognition = new SpeechRecognition();
     recognition.continuous = true;
     recognition.interimResults = true;
-    recognition.lang = state.currentLanguage;
+    (recognition as unknown as Record<string, unknown>).lang = state.currentLanguage;
 
     recognition.onstart = () => {
       setState(prev => ({ ...prev, isListening: true }));
@@ -601,10 +601,13 @@ export function useVoiceInput(options: VoiceInputOptions = {}) {
       const results = Array.from(event.results);
       const transcript = results.map(result => result[0].transcript).join('');
       const confidence = results[results.length - 1][0].confidence;
-      const alternatives = (results[results.length - 1][0] as any).alternatives?.map((alt: any) => ({
-        transcript: alt.transcript,
-        confidence: alt.confidence,
-      })) || [];
+      const alternatives = ((results[results.length - 1][0] as unknown as Record<string, unknown>).alternatives as unknown[])?.map((alt: unknown) => {
+        const altObj = alt as Record<string, unknown>;
+        return {
+          transcript: String(altObj.transcript),
+          confidence: Number(altObj.confidence),
+        };
+      }) || [];
 
       setState(prev => ({
         ...prev,
@@ -652,7 +655,7 @@ export function useVoiceInput(options: VoiceInputOptions = {}) {
 
     try {
       if (recognitionRef.current) {
-        recognitionRef.current.start();
+        ((recognitionRef.current as unknown as Record<string, unknown>).start as () => void)();
         logVoiceEvent('info', 'Started listening');
         
         // Use voiceFeedback for user feedback
@@ -675,7 +678,7 @@ export function useVoiceInput(options: VoiceInputOptions = {}) {
     if (!enableVoiceInput || !enableSpeechRecognition) return;
 
     if (recognitionRef.current) {
-      recognitionRef.current.stop();
+      ((recognitionRef.current as unknown as Record<string, unknown>).stop as () => void)();
       logVoiceEvent('info', 'Stopped listening');
     }
   }, [enableVoiceInput, enableSpeechRecognition, logVoiceEvent]);
@@ -753,7 +756,7 @@ export function useVoiceInput(options: VoiceInputOptions = {}) {
   const setLanguage = useCallback((language: string) => {
     setState(prev => ({ ...prev, currentLanguage: language }));
     if (recognitionRef.current) {
-      recognitionRef.current.lang = language;
+      (recognitionRef.current as unknown as Record<string, unknown>).lang = language;
     }
     logVoiceEvent('info', 'Language changed', { language });
   }, [logVoiceEvent]);
@@ -783,7 +786,7 @@ export function useVoiceInput(options: VoiceInputOptions = {}) {
   }, [logVoiceEvent]);
 
   // Set voice settings
-  const setVoiceSettings = useCallback((settings: Record<string, any>) => {
+  const setVoiceSettings = useCallback((settings: Record<string, unknown>) => {
     setState(prev => ({
       ...prev,
       voiceSettings: { ...prev.voiceSettings, ...settings },
@@ -840,12 +843,12 @@ export function useVoiceInput(options: VoiceInputOptions = {}) {
   }, [enableVoiceCommands, logVoiceEvent]);
 
   // Add voice profile
-  const addVoiceProfile = useCallback((profile: any) => {
+  const addVoiceProfile = useCallback((profile: unknown) => {
     if (!enableVoiceProfiles) return;
 
     setState(prev => ({
       ...prev,
-      voiceProfiles: [...prev.voiceProfiles, profile],
+      voiceProfiles: [...prev.voiceProfiles, profile as typeof prev.voiceProfiles[0]],
     }));
     logVoiceEvent('info', 'Voice profile added', { profile });
   }, [enableVoiceProfiles, logVoiceEvent]);
@@ -881,7 +884,7 @@ export function useVoiceInput(options: VoiceInputOptions = {}) {
   }, [enableVoiceProfiles, state.voiceProfiles, logVoiceEvent]);
 
   // Train voice
-  const trainVoice = useCallback(async (data: any): Promise<void> => {
+  const trainVoice = useCallback(async (data: unknown): Promise<void> => {
     if (!enableVoiceTraining) return;
 
     setState(prev => ({ ...prev, isTraining: true }));

@@ -102,7 +102,7 @@ describe("BcTextField", () => {
     const onChange = jest.fn();
     const monitoring = { onChange };
     render(
-      <BcTextField label="Monitored" value="a" onChange={() => {}} monitoring={monitoring} />
+      <BcTextField label="Monitored" value="a" onChange={() => {/* empty handler */}} monitoring={monitoring} />
     );
     const input = screen.getByLabelText("Monitored") as HTMLInputElement;
     fireEvent.change(input, { target: { value: "b" } });

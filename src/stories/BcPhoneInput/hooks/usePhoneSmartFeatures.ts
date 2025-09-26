@@ -16,26 +16,26 @@ export interface PhoneSmartFeaturesOptions {
 
 export interface PhoneSmartFeaturesReturn {
   smartPlaceholder: {
-    generatePlaceholder: (country: string, context?: any) => string;
-    getContextualPlaceholder: (userHistory: any[]) => string;
+    generatePlaceholder: (country: string, context?: unknown) => string;
+    getContextualPlaceholder: (userHistory: unknown[]) => string;
     getTimeBasedPlaceholder: () => string;
     getPersonalizedPlaceholder: (userId: string) => string;
   };
   smartValidation: {
-    getContextualRules: (country: string, context?: any) => any[];
-    getPersonalizedRules: (userId: string) => any[];
-    getLearningRules: (userHistory: any[]) => any[];
-    getAdaptiveRules: (currentInput: string) => any[];
+    getContextualRules: (country: string, context?: unknown) => unknown[];
+    getPersonalizedRules: (userId: string) => unknown[];
+    getLearningRules: (userHistory: unknown[]) => unknown[];
+    getAdaptiveRules: (currentInput: string) => unknown[];
   };
   smartSuggestions: {
     getHistorySuggestions: (userId: string) => string[];
     getSimilarSuggestions: (currentInput: string) => string[];
-    getContextualSuggestions: (context: any) => string[];
-    getPersonalizedSuggestions: (userId: string, preferences: any) => string[];
+    getContextualSuggestions: (context: unknown) => string[];
+    getPersonalizedSuggestions: (userId: string, preferences: unknown) => string[];
   };
   smartFormatting: {
-    getOptimalFormat: (country: string, userPreferences: any) => string;
-    getContextualFormat: (context: any) => string;
+    getOptimalFormat: (country: string, userPreferences: unknown) => string;
+    getContextualFormat: (context: unknown) => string;
     getPersonalizedFormat: (userId: string) => string;
     getAdaptiveFormat: (input: string, country: string) => string;
   };
@@ -46,19 +46,19 @@ export interface PhoneSmartFeaturesReturn {
     detectFromUserHistory: (userId: string) => string;
   };
   learning: {
-    learnFromUser: (userId: string, behavior: any) => void;
-    getLearnedPatterns: (userId: string) => any[];
-    updatePreferences: (userId: string, preferences: any) => void;
-    getRecommendations: (userId: string) => any[];
+    learnFromUser: (userId: string, behavior: unknown) => void;
+    getLearnedPatterns: (userId: string) => unknown[];
+    updatePreferences: (userId: string, preferences: unknown) => void;
+    getRecommendations: (userId: string) => unknown[];
   };
   personalization: {
-    getUserProfile: (userId: string) => any;
-    updateUserProfile: (userId: string, profile: any) => void;
-    getPersonalizedSettings: (userId: string) => any;
-    adaptToUser: (userId: string, behavior: any) => void;
+    getUserProfile: (userId: string) => unknown;
+    updateUserProfile: (userId: string, profile: unknown) => void;
+    getPersonalizedSettings: (userId: string) => unknown;
+    adaptToUser: (userId: string, behavior: unknown) => void;
   };
   contextualHelp: {
-    getHelpForContext: (context: any) => string;
+    getHelpForContext: (context: unknown) => string;
     getHelpForCountry: (country: string) => string;
     getHelpForInput: (input: string) => string;
     getProgressiveHelp: (step: number) => string;
@@ -70,10 +70,10 @@ export interface PhoneSmartFeaturesReturn {
     adaptComplexity: (userExperience: number) => number;
   };
   adaptiveUI: {
-    adaptToDevice: (deviceInfo: any) => any;
-    adaptUIToUser: (userInfo: any) => any;
-    adaptToContext: (context: any) => any;
-    adaptToPerformance: (performance: any) => any;
+    adaptToDevice: (deviceInfo: unknown) => unknown;
+    adaptUIToUser: (userInfo: unknown) => unknown;
+    adaptToContext: (context: unknown) => unknown;
+    adaptToPerformance: (performance: unknown) => unknown;
   };
 }
 
@@ -91,12 +91,12 @@ export const usePhoneSmartFeatures = (props: BcPhoneInputProps): PhoneSmartFeatu
     enableAdaptiveUI = false,
   } = props;
 
-  const [userHistory, setUserHistory] = useState<any[]>([]);
-  const [userPreferences, setUserPreferences] = useState<any>({});
-  const [learnedPatterns, setLearnedPatterns] = useState<any[]>([]);
+  const [userHistory, setUserHistory] = useState<unknown[]>([]);
+  const [userPreferences, setUserPreferences] = useState<Record<string, unknown>>({});
+  const [learnedPatterns, setLearnedPatterns] = useState<unknown[]>([]);
 
   // Smart Placeholder
-  const generatePlaceholder = useCallback((country: string, context?: any) => {
+  const generatePlaceholder = useCallback((country: string, context?: unknown) => {
     if (!enableSmartPlaceholder) return '';
     
     const countryPlaceholders: Record<string, string> = {
@@ -110,20 +110,23 @@ export const usePhoneSmartFeatures = (props: BcPhoneInputProps): PhoneSmartFeatu
     return countryPlaceholders[country] || 'XXX XXX XXXX';
   }, [enableSmartPlaceholder]);
 
-  const getContextualPlaceholder = useCallback((history: any[]) => {
+  const getContextualPlaceholder = useCallback((history: unknown[]) => {
     if (!enableSmartPlaceholder) return '';
     
     // Analyze user history to suggest contextual placeholder
     const mostUsedCountry = history.reduce((acc, item) => {
-      if (item && typeof item === 'object' && item.country) {
-        acc[item.country] = (acc[item.country] || 0) + 1;
+      const itemData = item as { country?: string };
+      if (itemData && typeof itemData === 'object' && itemData.country) {
+        const accData = acc as Record<string, number>;
+        accData[itemData.country] = (accData[itemData.country] || 0) + 1;
       }
       return acc;
     }, {} as Record<string, number>);
     
-    const topCountry = Object.keys(mostUsedCountry).reduce((a, b) => 
-      mostUsedCountry[a] > mostUsedCountry[b] ? a : b
-    );
+    const topCountry = Object.keys(mostUsedCountry as Record<string, number>).reduce((a, b) => {
+      const countryData = mostUsedCountry as Record<string, number>;
+      return countryData[a] > countryData[b] ? a : b;
+    });
     
     return generatePlaceholder(topCountry);
   }, [enableSmartPlaceholder, generatePlaceholder]);
@@ -142,7 +145,7 @@ export const usePhoneSmartFeatures = (props: BcPhoneInputProps): PhoneSmartFeatu
   const getPersonalizedPlaceholder = useCallback((userId: string) => {
     if (!enableSmartPlaceholder) return '';
     
-    const userPrefs = userPreferences[userId];
+    const userPrefs = (userPreferences as Record<string, { preferredCountry?: string }>)[userId];
     if (userPrefs?.preferredCountry) {
       return generatePlaceholder(userPrefs.preferredCountry);
     }
@@ -150,12 +153,12 @@ export const usePhoneSmartFeatures = (props: BcPhoneInputProps): PhoneSmartFeatu
   }, [enableSmartPlaceholder, generatePlaceholder, userPreferences]);
 
   // Smart Validation
-  const getContextualRules = useCallback((country: string, context?: any) => {
+  const getContextualRules = useCallback((country: string, context?: unknown) => {
     if (!enableSmartValidation) return [];
     
-    const rules: any[] = [];
+    const rules: unknown[] = [];
     
-    if (context?.business) {
+    if ((context as Record<string, unknown>)?.business) {
       rules.push({
         name: 'business_hours',
         test: (phone: string) => {
@@ -172,32 +175,34 @@ export const usePhoneSmartFeatures = (props: BcPhoneInputProps): PhoneSmartFeatu
   const getPersonalizedRules = useCallback((userId: string) => {
     if (!enableSmartValidation) return [];
     
-    const userPrefs = userPreferences[userId];
+    const userPrefs = (userPreferences as Record<string, { customRules?: unknown[] }>)[userId];
     if (userPrefs?.customRules) {
       return userPrefs.customRules;
     }
     return [];
   }, [enableSmartValidation, userPreferences]);
 
-  const getLearningRules = useCallback((history: any[]) => {
+  const getLearningRules = useCallback((history: unknown[]): unknown[] => {
     if (!enableSmartValidation) return [];
     
     // Learn from user behavior patterns
     const patterns = history.reduce((acc, item) => {
-      if (item.validation) {
-        acc.push(item.validation);
+      const itemData = item as { validation?: unknown };
+      const accData = acc as unknown[];
+      if (itemData.validation) {
+        accData.push(itemData.validation);
       }
-      return acc;
-    }, [] as any[]);
+      return accData;
+    }, [] as unknown[]);
     
-    return patterns;
+    return patterns as unknown[];
   }, [enableSmartValidation]);
 
   const getAdaptiveRules = useCallback((currentInput: string) => {
     if (!enableSmartValidation) return [];
     
     // Adapt rules based on current input
-    const rules: any[] = [];
+    const rules: unknown[] = [];
     
     if (currentInput.length > 10) {
       rules.push({
@@ -214,8 +219,8 @@ export const usePhoneSmartFeatures = (props: BcPhoneInputProps): PhoneSmartFeatu
   const getHistorySuggestions = useCallback((userId: string) => {
     if (!enableSmartSuggestions) return [];
     
-    const userHistoryData = userHistory.filter(item => item.userId === userId);
-    return userHistoryData.map(item => item.phone).slice(0, 5);
+    const userHistoryData = userHistory.filter(item => (item as { userId?: string }).userId === userId);
+    return userHistoryData.map(item => (item as { phone?: string }).phone || '').slice(0, 5);
   }, [enableSmartSuggestions, userHistory]);
 
   const getSimilarSuggestions = useCallback((currentInput: string) => {
@@ -223,28 +228,29 @@ export const usePhoneSmartFeatures = (props: BcPhoneInputProps): PhoneSmartFeatu
     
     // Find similar phone numbers from history
     return userHistory
-      .filter(item => item.phone.includes(currentInput))
-      .map(item => item.phone)
+      .filter(item => ((item as { phone?: string }).phone || '').includes(currentInput))
+      .map(item => (item as { phone?: string }).phone || '')
       .slice(0, 3);
   }, [enableSmartSuggestions, userHistory]);
 
-  const getContextualSuggestions = useCallback((context: any) => {
+  const getContextualSuggestions = useCallback((context: unknown) => {
     if (!enableSmartSuggestions) return [];
     
     // Get suggestions based on context
-    if (context?.country) {
+    const contextData = context as { country?: string };
+    if (contextData?.country) {
       return userHistory
-        .filter(item => item.country === context.country)
-        .map(item => item.phone)
+        .filter(item => (item as { country?: string }).country === contextData.country)
+        .map(item => (item as { phone?: string }).phone || '')
         .slice(0, 3);
     }
     return [];
   }, [enableSmartSuggestions, userHistory]);
 
-  const getPersonalizedSuggestions = useCallback((userId: string, preferences: any) => {
+  const getPersonalizedSuggestions = useCallback((userId: string, preferences: unknown) => {
     if (!enableSmartSuggestions) return [];
     
-    const userPrefs = userPreferences[userId];
+    const userPrefs = (userPreferences as Record<string, { favoriteNumbers?: string[] }>)[userId];
     if (userPrefs?.favoriteNumbers) {
       return userPrefs.favoriteNumbers.slice(0, 5);
     }
@@ -252,7 +258,7 @@ export const usePhoneSmartFeatures = (props: BcPhoneInputProps): PhoneSmartFeatu
   }, [enableSmartSuggestions, userPreferences]);
 
   // Smart Formatting
-  const getOptimalFormat = useCallback((country: string, preferences: any) => {
+  const getOptimalFormat = useCallback((country: string, preferences: unknown) => {
     if (!enableSmartFormatting) return '';
     
     const formats: Record<string, string> = {
@@ -266,10 +272,11 @@ export const usePhoneSmartFeatures = (props: BcPhoneInputProps): PhoneSmartFeatu
     return formats[country] || 'XXX XXX XXXX';
   }, [enableSmartFormatting]);
 
-  const getContextualFormat = useCallback((context: any) => {
+  const getContextualFormat = useCallback((context: unknown) => {
     if (!enableSmartFormatting) return '';
     
-    if (context?.international) {
+    const contextData = context as { international?: boolean };
+    if (contextData?.international) {
       return '+XXX XXX XXX XXXX';
     }
     return '';
@@ -278,7 +285,7 @@ export const usePhoneSmartFeatures = (props: BcPhoneInputProps): PhoneSmartFeatu
   const getPersonalizedFormat = useCallback((userId: string) => {
     if (!enableSmartFormatting) return '';
     
-    const userPrefs = userPreferences[userId];
+    const userPrefs = (userPreferences as Record<string, { preferredFormat?: string }>)[userId];
     if (userPrefs?.preferredFormat) {
       return userPrefs.preferredFormat;
     }
@@ -300,10 +307,20 @@ export const usePhoneSmartFeatures = (props: BcPhoneInputProps): PhoneSmartFeatu
     if (!enableSmartCountryDetection) return '';
     
     try {
-      const response = await fetch('https://ipapi.co/json/');
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 saniye timeout
+      
+      const response = await fetch('https://ipapi.co/json/', {
+        signal: controller.signal
+      });
+      
+      clearTimeout(timeoutId);
       const data = await response.json();
       return data.country_code || '';
-    } catch {
+    } catch (error: unknown) {
+      if (error instanceof Error && error.name === 'AbortError') {
+        console.warn('IP detection request was aborted');
+      }
       return '';
     }
   }, [enableSmartCountryDetection]);
@@ -341,25 +358,30 @@ export const usePhoneSmartFeatures = (props: BcPhoneInputProps): PhoneSmartFeatu
   const detectFromUserHistory = useCallback((userId: string) => {
     if (!enableSmartCountryDetection) return '';
     
-    const userHistoryData = userHistory.filter(item => item.userId === userId);
+    const userHistoryData = userHistory.filter(item => (item as { userId?: string }).userId === userId);
     if (userHistoryData.length > 0) {
       const mostUsedCountry = userHistoryData.reduce((acc, item) => {
-        acc[item.country] = (acc[item.country] || 0) + 1;
-        return acc;
+        const accData = acc as Record<string, number>;
+        const itemData = item as { country?: string };
+        if (itemData.country) {
+          accData[itemData.country] = (accData[itemData.country] || 0) + 1;
+        }
+        return accData;
       }, {} as Record<string, number>);
       
-      return Object.keys(mostUsedCountry).reduce((a, b) => 
-        mostUsedCountry[a] > mostUsedCountry[b] ? a : b
-      );
+      return Object.keys(mostUsedCountry as Record<string, number>).reduce((a, b) => {
+        const countryData = mostUsedCountry as Record<string, number>;
+        return countryData[a] > countryData[b] ? a : b;
+      });
     }
     return '';
   }, [enableSmartCountryDetection, userHistory]);
 
   // Learning
-  const learnFromUser = useCallback((userId: string, behavior: any) => {
+  const learnFromUser = useCallback((userId: string, behavior: unknown) => {
     if (!enableLearning) return;
     
-    setUserHistory(prev => [...prev, { userId, ...behavior, timestamp: Date.now() }]);
+    setUserHistory(prev => [...prev, { userId, ...(behavior as Record<string, unknown>), timestamp: Date.now() }]);
     
     // Update learned patterns
     setLearnedPatterns(prev => [...prev, {
@@ -372,15 +394,18 @@ export const usePhoneSmartFeatures = (props: BcPhoneInputProps): PhoneSmartFeatu
   const getLearnedPatterns = useCallback((userId: string) => {
     if (!enableLearning) return [];
     
-    return learnedPatterns.filter(pattern => pattern.userId === userId);
+    return learnedPatterns.filter(pattern => (pattern as { userId?: string }).userId === userId);
   }, [enableLearning, learnedPatterns]);
 
-  const updatePreferences = useCallback((userId: string, preferences: any) => {
+  const updatePreferences = useCallback((userId: string, preferences: unknown) => {
     if (!enableLearning) return;
     
-    setUserPreferences((prev: any) => ({
-      ...prev,
-      [userId]: { ...prev[userId], ...preferences },
+    setUserPreferences((prev: unknown) => ({
+      ...(prev as Record<string, unknown>),
+      [userId]: { 
+        ...((prev as Record<string, unknown>)[userId] as Record<string, unknown>), 
+        ...(preferences as Record<string, unknown>) 
+      },
     }));
   }, [enableLearning]);
 
@@ -403,19 +428,27 @@ export const usePhoneSmartFeatures = (props: BcPhoneInputProps): PhoneSmartFeatu
     return userPreferences[userId] || {};
   }, [enablePersonalization, userPreferences]);
 
-  const updateUserProfile = useCallback((userId: string, profile: any) => {
+  const updateUserProfile = useCallback((userId: string, profile: unknown) => {
     if (!enablePersonalization) return;
     
-    setUserPreferences((prev: any) => ({
-      ...prev,
-      [userId]: { ...prev[userId], ...profile },
+    setUserPreferences((prev: unknown) => ({
+      ...(prev as Record<string, unknown>),
+      [userId]: { 
+        ...((prev as Record<string, unknown>)[userId] as Record<string, unknown>), 
+        ...(profile as Record<string, unknown>) 
+      },
     }));
   }, [enablePersonalization]);
 
   const getPersonalizedSettings = useCallback((userId: string) => {
     if (!enablePersonalization) return {};
     
-    const profile = getUserProfile(userId);
+    const profile = getUserProfile(userId) as { 
+      preferredCountry?: string; 
+      preferredFormat?: string; 
+      favoriteNumbers?: string[]; 
+      customRules?: unknown[] 
+    };
     return {
       preferredCountry: profile.preferredCountry || 'TR',
       preferredFormat: profile.preferredFormat || 'standard',
@@ -424,7 +457,7 @@ export const usePhoneSmartFeatures = (props: BcPhoneInputProps): PhoneSmartFeatu
     };
   }, [enablePersonalization, getUserProfile]);
 
-  const adaptToUser = useCallback((userId: string, behavior: any) => {
+  const adaptToUser = useCallback((userId: string, behavior: unknown) => {
     if (!enablePersonalization) return;
     
     learnFromUser(userId, behavior);
@@ -432,11 +465,12 @@ export const usePhoneSmartFeatures = (props: BcPhoneInputProps): PhoneSmartFeatu
   }, [enablePersonalization, learnFromUser, updatePreferences]);
 
   // Contextual Help
-  const getHelpForContext = useCallback((context: any) => {
+  const getHelpForContext = useCallback((context: unknown) => {
     if (!enableContextualHelp) return '';
     
-    if (context?.country) {
-      return `Help for ${context.country} phone numbers`;
+    const contextData = context as { country?: string };
+    if (contextData?.country) {
+      return `Help for ${contextData.country} phone numbers`;
     }
     return 'General phone number help';
   }, [enableContextualHelp]);
@@ -543,12 +577,13 @@ export const usePhoneSmartFeatures = (props: BcPhoneInputProps): PhoneSmartFeatu
   }, [enableProgressiveDisclosure]);
 
   // Adaptive UI
-  const adaptToDevice = useCallback((deviceInfo: any) => {
+  const adaptToDevice = useCallback((deviceInfo: unknown) => {
     if (!enableAdaptiveUI) return {};
     
-    const adaptations: any = {};
+    const adaptations = {} as Record<string, unknown>;
+    const deviceData = deviceInfo as { isMobile?: boolean };
     
-    if (deviceInfo.isMobile) {
+    if (deviceData.isMobile) {
       adaptations.size = 'large';
       adaptations.showCountrySelect = true;
       adaptations.enableTouchOptimization = true;
@@ -561,16 +596,17 @@ export const usePhoneSmartFeatures = (props: BcPhoneInputProps): PhoneSmartFeatu
     return adaptations;
   }, [enableAdaptiveUI]);
 
-  const adaptUIToUser = useCallback((userInfo: any) => {
+  const adaptUIToUser = useCallback((userInfo: unknown) => {
     if (!enableAdaptiveUI) return {};
     
-    const adaptations: any = {};
+    const adaptations = {} as Record<string, unknown>;
+    const userData = userInfo as { experienceLevel?: string };
     
-    if (userInfo.experienceLevel === 'beginner') {
+    if (userData.experienceLevel === 'beginner') {
       adaptations.showHelp = true;
       adaptations.enableProgressiveDisclosure = true;
       adaptations.simplifyUI = true;
-    } else if (userInfo.experienceLevel === 'advanced') {
+    } else if (userData.experienceLevel === 'advanced') {
       adaptations.showAdvancedFeatures = true;
       adaptations.enableKeyboardShortcuts = true;
       adaptations.enableCustomization = true;
@@ -579,12 +615,13 @@ export const usePhoneSmartFeatures = (props: BcPhoneInputProps): PhoneSmartFeatu
     return adaptations;
   }, [enableAdaptiveUI]);
 
-  const adaptToContext = useCallback((context: any) => {
+  const adaptToContext = useCallback((context: unknown) => {
     if (!enableAdaptiveUI) return {};
     
-    const adaptations: any = {};
+    const adaptations = {} as Record<string, unknown>;
+    const contextData = context as { isBusiness?: boolean };
     
-    if (context.isBusiness) {
+    if (contextData.isBusiness) {
       adaptations.showBusinessFeatures = true;
       adaptations.enableValidation = true;
       adaptations.showCountrySelect = true;
@@ -597,12 +634,13 @@ export const usePhoneSmartFeatures = (props: BcPhoneInputProps): PhoneSmartFeatu
     return adaptations;
   }, [enableAdaptiveUI]);
 
-  const adaptToPerformance = useCallback((performance: any) => {
+  const adaptToPerformance = useCallback((performance: unknown) => {
     if (!enableAdaptiveUI) return {};
     
-    const adaptations: any = {};
+    const adaptations = {} as Record<string, unknown>;
+    const performanceData = performance as { isSlow?: boolean };
     
-    if (performance.isSlow) {
+    if (performanceData.isSlow) {
       adaptations.disableAdvancedFeatures = true;
       adaptations.enableLazyLoading = true;
       adaptations.reduceAnimations = true;

@@ -1,6 +1,6 @@
 import React from "react";
 
-export const ClearButton = ({ onClick, disabled, ...rest }: { onClick: () => void; disabled?: boolean; [key: string]: any }) => (
+export const ClearButton = ({ onClick, disabled, ...rest }: { onClick: () => void; disabled?: boolean; [key: string]: unknown }) => (
   <button
     type="button"
     tabIndex={0}

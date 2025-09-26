@@ -33,15 +33,15 @@ export interface CodeGenerationState {
 }
 
 export interface CodeGenerationActions {
-  generateComponent: (name: string, props: any[], config: any) => string;
-  generateHook: (name: string, options: any[], config: any) => string;
-  generateStory: (componentName: string, stories: any[], config: any) => string;
-  generateTest: (componentName: string, tests: any[], config: any) => string;
-  generateTypes: (componentName: string, types: any[], config: any) => string;
-  generateDocumentation: (componentName: string, docs: any, config: any) => string;
-  generateTemplate: (templateName: string, config: any) => string;
-  generateSnippet: (snippetName: string, config: any) => string;
-  getGeneratedCode: (id?: string) => any;
+  generateComponent: (name: string, props: unknown[], config: unknown) => string;
+  generateHook: (name: string, options: unknown[], config: unknown) => string;
+  generateStory: (componentName: string, stories: unknown[], config: unknown) => string;
+  generateTest: (componentName: string, tests: unknown[], config: unknown) => string;
+  generateTypes: (componentName: string, types: unknown[], config: unknown) => string;
+  generateDocumentation: (componentName: string, docs: unknown, config: unknown) => string;
+  generateTemplate: (templateName: string, config: unknown) => string;
+  generateSnippet: (snippetName: string, config: unknown) => string;
+  getGeneratedCode: (id?: string) => unknown;
   clearGeneratedCode: () => void;
   exportCode: (format: string) => string;
   importCode: (code: string) => void;
@@ -75,18 +75,24 @@ export function useCodeGeneration(options: CodeGenerationOptions = {}) {
   });
 
   // Generate Component
-  const generateComponent = useCallback((name: string, props: any[], config: any): string => {
+  const generateComponent = useCallback((name: string, props: unknown[], config: unknown): string => {
     if (!enableCodeGeneration || !enableComponentGeneration) return '';
 
     const componentCode = `
 import React from 'react';
 
 export interface ${name}Props {
-  ${props.map(prop => `${prop.name}${prop.optional ? '?' : ''}: ${prop.type};`).join('\n  ')}
+    ${props.map((prop: unknown) => {
+      const propObj = prop as Record<string, unknown>;
+      return `${String(propObj.name)}${propObj.optional ? '?' : ''}: ${String(propObj.type)};`;
+    }).join('\n  ')}
 }
 
 export const ${name}: React.FC<${name}Props> = ({
-  ${props.map(prop => prop.name).join(',\n  ')}
+  ${props.map((prop: unknown) => {
+    const propObj = prop as Record<string, unknown>;
+    return String(propObj.name);
+  }).join(',\n  ')}
 }) => {
   return (
     <div>
@@ -115,14 +121,17 @@ ${name}.displayName = '${name}';
   }, [enableCodeGeneration, enableComponentGeneration, codeStyle]);
 
   // Generate Hook
-  const generateHook = useCallback((name: string, options: any[], config: any): string => {
+  const generateHook = useCallback((name: string, options: unknown[], config: unknown): string => {
     if (!enableCodeGeneration || !enableHookGeneration) return '';
 
     const hookCode = `
 import { useState, useCallback, useMemo } from 'react';
 
 export interface ${name}Options {
-  ${options.map(option => `${option.name}${option.optional ? '?' : ''}: ${option.type};`).join('\n  ')}
+  ${options.map((option: unknown) => {
+    const optionObj = option as Record<string, unknown>;
+    return `${String(optionObj.name)}${optionObj.optional ? '?' : ''}: ${String(optionObj.type)};`;
+  }).join('\n  ')}
 }
 
 export interface ${name}State {
@@ -166,7 +175,7 @@ export function ${name}(options: ${name}Options = {}) {
   }, [enableCodeGeneration, enableHookGeneration, codeStyle]);
 
   // Generate Story
-  const generateStory = useCallback((componentName: string, stories: any[], config: any): string => {
+  const generateStory = useCallback((componentName: string, stories: unknown[], config: unknown): string => {
     if (!enableCodeGeneration || !enableStoryGeneration) return '';
 
     const storyCode = `
@@ -188,12 +197,16 @@ const meta: Meta<typeof ${componentName}> = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-${stories.map(story => `
-export const ${story.name}: Story = {
+${stories.map((story: unknown) => {
+  const storyObj = story as Record<string, unknown>;
+  const argsObj = storyObj.args as Record<string, unknown> || {};
+  return `
+export const ${String(storyObj.name)}: Story = {
   args: {
-    ${Object.entries(story.args || {}).map(([key, value]) => `${key}: ${JSON.stringify(value)}`).join(',\n    ')}
+    ${Object.entries(argsObj).map(([key, value]) => `${key}: ${JSON.stringify(value)}`).join(',\n    ')}
   },
-};`).join('\n')}
+};`;
+}).join('\n')}
 `;
 
     const id = `story-${Date.now()}`;
@@ -213,7 +226,7 @@ export const ${story.name}: Story = {
   }, [enableCodeGeneration, enableStoryGeneration, codeStyle]);
 
   // Generate Test
-  const generateTest = useCallback((componentName: string, tests: any[], config: any): string => {
+  const generateTest = useCallback((componentName: string, tests: unknown[], config: unknown): string => {
     if (!enableCodeGeneration || !enableTestGeneration) return '';
 
     const testCode = `
@@ -221,11 +234,19 @@ import { render, screen } from '@testing-library/react';
 import { ${componentName} } from './${componentName}';
 
 describe('${componentName}', () => {
-  ${tests.map((test: any) => `
-  it('${test.description}', () => {
-    render(<${componentName} ${Object.entries(test.props || {}).map(([key, value]) => `${key}={${JSON.stringify(value)}}`).join(' ')} />);
-    ${test.assertions?.map((assertion: any) => `expect(${assertion.target}).${assertion.matcher}(${assertion.expected ? JSON.stringify(assertion.expected) : ''});`).join('\n    ') || '// Add assertions here'}
-  });`).join('\n')}
+  ${tests.map((test: unknown) => {
+    const testObj = test as Record<string, unknown>;
+    const propsObj = testObj.props as Record<string, unknown> || {};
+    const assertions = testObj.assertions as Array<Record<string, unknown>> || [];
+    
+    return `
+  it('${String(testObj.description)}', () => {
+    render(<${componentName} ${Object.entries(propsObj).map(([key, value]) => `${key}={${JSON.stringify(value)}}`).join(' ')} />);
+    ${assertions.map((assertion: Record<string, unknown>) => 
+      `expect(${String(assertion.target)}).${String(assertion.matcher)}(${assertion.expected ? JSON.stringify(assertion.expected) : ''});`
+    ).join('\n    ') || '// Add assertions here'}
+  });`;
+  }).join('\n')}
 });
 `;
 
@@ -246,12 +267,15 @@ describe('${componentName}', () => {
   }, [enableCodeGeneration, enableTestGeneration, codeStyle]);
 
   // Generate Types
-  const generateTypes = useCallback((componentName: string, types: any[], config: any): string => {
+  const generateTypes = useCallback((componentName: string, types: unknown[], config: unknown): string => {
     if (!enableCodeGeneration || !enableTypeGeneration) return '';
 
     const typeCode = `
 export interface ${componentName}Props {
-  ${types.map(type => `${type.name}${type.optional ? '?' : ''}: ${type.type};`).join('\n  ')}
+  ${types.map((type: unknown) => {
+    const typeObj = type as Record<string, unknown>;
+    return `${String(typeObj.name)}${typeObj.optional ? '?' : ''}: ${String(typeObj.type)};`;
+  }).join('\n  ')}
 }
 
 export interface ${componentName}State {
@@ -284,22 +308,27 @@ export type ${componentName}Variant = 'primary' | 'secondary' | 'tertiary';
   }, [enableCodeGeneration, enableTypeGeneration, codeStyle]);
 
   // Generate Documentation
-  const generateDocumentation = useCallback((componentName: string, docs: any, config: any): string => {
+  const generateDocumentation = useCallback((componentName: string, docs: unknown, config: unknown): string => {
     if (!enableCodeGeneration || !enableDocumentationGeneration) return '';
+
+    const docsObj = docs as Record<string, unknown>;
+    const props = docsObj.props as Array<Record<string, unknown>> || [];
+    const examples = docsObj.examples as Array<Record<string, unknown>> || [];
+    const methods = docsObj.methods as Array<Record<string, unknown>> || [];
 
     const docCode = `
 # ${componentName}
 
-${docs?.description || `A description of the ${componentName} component.`}
+${String(docsObj.description || `A description of the ${componentName} component.`)}
 
 ## Props
 
-${docs?.props?.map((prop: any) => `
-### ${prop.name}
-- **Type:** \`${prop.type}\`
+${props.map((prop: Record<string, unknown>) => `
+### ${String(prop.name)}
+- **Type:** \`${String(prop.type)}\`
 - **Required:** ${prop.required ? 'Yes' : 'No'}
-- **Default:** \`${prop.default || 'undefined'}\`
-- **Description:** ${prop.description || 'No description provided.'}
+- **Default:** \`${String(prop.default || 'undefined')}\`
+- **Description:** ${String(prop.description || 'No description provided.')}
 `).join('\n') || 'No props documented.'}
 
 ## Examples
@@ -310,7 +339,8 @@ import { ${componentName} } from './${componentName}';
 function Example() {
   return (
     <${componentName}
-      ${docs?.examples?.[0]?.props?.map((prop: any) => `${prop.name}="${prop.value}"`).join('\n      ') || ''}
+      ${examples[0]?.props ? (examples[0].props as Array<Record<string, unknown>>).map((prop: Record<string, unknown>) => 
+        `${String(prop.name)}="${String(prop.value)}"`).join('\n      ') : ''}
     />
   );
 }
@@ -318,12 +348,16 @@ function Example() {
 
 ## API
 
-${docs?.methods?.map((method: any) => `
-### ${method.name}
-- **Parameters:** ${method.parameters?.map((param: any) => `\`${param.name}: ${param.type}\``).join(', ') || 'None'}
-- **Returns:** \`${method.returns || 'void'}\`
-- **Description:** ${method.description || 'No description provided.'}
-`).join('\n') || 'No methods documented.'}
+${methods.map((method: Record<string, unknown>) => {
+  const parameters = method.parameters as Array<Record<string, unknown>> || [];
+  return `
+### ${String(method.name)}
+- **Parameters:** ${parameters.map((param: Record<string, unknown>) => 
+    `\`${String(param.name)}: ${String(param.type)}\``).join(', ') || 'None'}
+- **Returns:** \`${String(method.returns || 'void')}\`
+- **Description:** ${String(method.description || 'No description provided.')}
+`;
+}).join('\n') || 'No methods documented.'}
 `;
 
     const id = `docs-${Date.now()}`;
@@ -343,10 +377,11 @@ ${docs?.methods?.map((method: any) => `
   }, [enableCodeGeneration, enableDocumentationGeneration]);
 
   // Generate Template
-  const generateTemplate = useCallback((templateName: string, config: any): string => {
+  const generateTemplate = useCallback((templateName: string, config: unknown): string => {
     if (!enableCodeGeneration || !enableTemplateGeneration) return '';
 
-    const templateCode = config.template || `// Template: ${templateName}`;
+    const configObj = config as Record<string, unknown>;
+    const templateCode = String(configObj.template || `// Template: ${templateName}`);
     
     setState(prev => ({
       ...prev,
@@ -360,10 +395,11 @@ ${docs?.methods?.map((method: any) => `
   }, [enableCodeGeneration, enableTemplateGeneration]);
 
   // Generate Snippet
-  const generateSnippet = useCallback((snippetName: string, config: any): string => {
+  const generateSnippet = useCallback((snippetName: string, config: unknown): string => {
     if (!enableCodeGeneration || !enableSnippetGeneration) return '';
 
-    const snippetCode = config.snippet || `// Snippet: ${snippetName}`;
+    const configObj = config as Record<string, unknown>;
+    const snippetCode = String(configObj.snippet || `// Snippet: ${snippetName}`);
     
     setState(prev => ({
       ...prev,

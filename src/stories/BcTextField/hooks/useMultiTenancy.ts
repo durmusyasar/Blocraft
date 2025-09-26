@@ -18,17 +18,17 @@ export interface MultiTenancyOptions {
   enableTenantEncryption?: boolean;
   enableTenantReporting?: boolean;
   currentTenant?: string;
-  tenantConfig?: Record<string, any>;
-  tenantPolicies?: Record<string, any>;
-  tenantLimits?: Record<string, any>;
+  tenantConfig?: Record<string, unknown>;
+  tenantPolicies?: Record<string, unknown>;
+  tenantLimits?: Record<string, unknown>;
   tenantFeatures?: Record<string, string[]>;
-  tenantThemes?: Record<string, any>;
-  tenantBranding?: Record<string, any>;
-  tenantLocalization?: Record<string, any>;
+  tenantThemes?: Record<string, unknown>;
+  tenantBranding?: Record<string, unknown>;
+  tenantLocalization?: Record<string, unknown>;
   tenantPermissions?: Record<string, string[]>;
   tenantRoles?: Record<string, string[]>;
-  tenantData?: Record<string, any>;
-  tenantCache?: Record<string, any>;
+  tenantData?: Record<string, unknown>;
+  tenantCache?: Record<string, unknown>;
   tenantSecurity?: {
     enableEncryption: boolean;
     encryptionKey: string;
@@ -66,7 +66,7 @@ export interface MultiTenancyOptions {
     customMetrics: string[];
   };
   tenantErrorHandling?: {
-    onError: (error: Error, context: any) => void;
+    onError: (error: Error, context: unknown) => void;
     fallbackBehavior: "disable" | "ignore" | "retry" | "replace";
     maxRetries: number;
     retryDelay: number;
@@ -97,17 +97,17 @@ export interface MultiTenancyState {
   isMultiTenancyEnabled: boolean;
   currentTenant: string;
   availableTenants: string[];
-  tenantConfig: Record<string, any>;
-  tenantPolicies: Record<string, any>;
-  tenantLimits: Record<string, any>;
+  tenantConfig: Record<string, unknown>;
+  tenantPolicies: Record<string, unknown>;
+  tenantLimits: Record<string, unknown>;
   tenantFeatures: Record<string, string[]>;
-  tenantThemes: Record<string, any>;
-  tenantBranding: Record<string, any>;
-  tenantLocalization: Record<string, any>;
+  tenantThemes: Record<string, unknown>;
+  tenantBranding: Record<string, unknown>;
+  tenantLocalization: Record<string, unknown>;
   tenantPermissions: Record<string, string[]>;
   tenantRoles: Record<string, string[]>;
-  tenantData: Record<string, any>;
-  tenantCache: Record<string, any>;
+  tenantData: Record<string, unknown>;
+  tenantCache: Record<string, unknown>;
   tenantHistory: Array<{
     id: string;
     tenant: string;
@@ -128,13 +128,13 @@ export interface MultiTenancyState {
     id: string;
     error: Error;
     timestamp: number;
-    context: any;
+    context: unknown;
   }>;
   tenantAnalytics: {
     usage: Record<string, number>;
     performance: Record<string, number[]>;
     errors: Record<string, number>;
-    userBehavior: Record<string, any>;
+    userBehavior: Record<string, unknown>;
   };
   tenantDebugging: {
     logs: Array<{
@@ -142,13 +142,13 @@ export interface MultiTenancyState {
       level: string;
       message: string;
       timestamp: number;
-      context: any;
+      context: unknown;
     }>;
     traces: Array<{
       id: string;
-      trace: any;
+      trace: unknown;
       timestamp: number;
-      context?: any;
+      context?: unknown;
     }>;
   };
   tenantSecurity: {
@@ -169,43 +169,43 @@ export interface MultiTenancyState {
 
 export interface MultiTenancyActions {
   switchTenant: (tenantId: string) => Promise<void>;
-  createTenant: (tenantId: string, config: any) => void;
-  updateTenant: (tenantId: string, config: any) => void;
+  createTenant: (tenantId: string, config: unknown) => void;
+  updateTenant: (tenantId: string, config: unknown) => void;
   deleteTenant: (tenantId: string) => void;
-  getTenant: (tenantId: string) => any;
+  getTenant: (tenantId: string) => unknown;
   getCurrentTenant: () => string;
   getAvailableTenants: () => string[];
-  getTenantConfig: (tenantId: string) => any;
-  updateTenantConfig: (tenantId: string, config: any) => void;
-  getTenantPolicies: (tenantId: string) => any;
-  updateTenantPolicies: (tenantId: string, policies: any) => void;
-  getTenantLimits: (tenantId: string) => any;
-  updateTenantLimits: (tenantId: string, limits: any) => void;
+  getTenantConfig: (tenantId: string) => unknown;
+  updateTenantConfig: (tenantId: string, config: unknown) => void;
+  getTenantPolicies: (tenantId: string) => unknown;
+  updateTenantPolicies: (tenantId: string, policies: unknown) => void;
+  getTenantLimits: (tenantId: string) => unknown;
+  updateTenantLimits: (tenantId: string, limits: unknown) => void;
   getTenantFeatures: (tenantId: string) => string[];
   updateTenantFeatures: (tenantId: string, features: string[]) => void;
-  getTenantTheme: (tenantId: string) => any;
-  updateTenantTheme: (tenantId: string, theme: any) => void;
-  getTenantBranding: (tenantId: string) => any;
-  updateTenantBranding: (tenantId: string, branding: any) => void;
-  getTenantLocalization: (tenantId: string) => any;
-  updateTenantLocalization: (tenantId: string, localization: any) => void;
+  getTenantTheme: (tenantId: string) => unknown;
+  updateTenantTheme: (tenantId: string, theme: unknown) => void;
+  getTenantBranding: (tenantId: string) => unknown;
+  updateTenantBranding: (tenantId: string, branding: unknown) => void;
+  getTenantLocalization: (tenantId: string) => unknown;
+  updateTenantLocalization: (tenantId: string, localization: unknown) => void;
   getTenantPermissions: (tenantId: string) => string[];
   updateTenantPermissions: (tenantId: string, permissions: string[]) => void;
   getTenantRoles: (tenantId: string) => string[];
   updateTenantRoles: (tenantId: string, roles: string[]) => void;
-  getTenantData: (tenantId: string) => any;
-  updateTenantData: (tenantId: string, data: any) => void;
-  getTenantCache: (tenantId: string) => any;
+  getTenantData: (tenantId: string) => unknown;
+  updateTenantData: (tenantId: string, data: unknown) => void;
+  getTenantCache: (tenantId: string) => unknown;
   clearTenantCache: (tenantId?: string) => void;
-  getTenantHistory: () => any[];
+  getTenantHistory: () => unknown[];
   clearTenantHistory: () => void;
-  getTenantMetrics: () => any;
+  getTenantMetrics: () => unknown;
   clearTenantMetrics: () => void;
-  getTenantAnalytics: () => any;
+  getTenantAnalytics: () => unknown;
   clearTenantAnalytics: () => void;
-  getTenantLogs: (tenantId?: string) => any[];
+  getTenantLogs: (tenantId?: string) => unknown[];
   clearTenantLogs: () => void;
-  getTenantTraces: (tenantId?: string) => any[];
+  getTenantTraces: (tenantId?: string) => unknown[];
   clearTenantTraces: () => void;
   exportTenantData: (tenantId: string) => string;
   importTenantData: (tenantId: string, data: string) => void;
@@ -285,7 +285,7 @@ export function useMultiTenancy(options: MultiTenancyOptions = {}) {
       customMetrics: [],
     },
     tenantErrorHandling = {
-      onError: (error: Error, context: any) => {
+      onError: (error: Error, context: unknown) => {
         console.error("Tenant error:", error, context);
       },
       fallbackBehavior: "disable",
@@ -360,7 +360,7 @@ export function useMultiTenancy(options: MultiTenancyOptions = {}) {
 
   // Log tenant event
   const logTenantEvent = useCallback(
-    (level: string, message: string, context?: any) => {
+    (level: string, message: string, context?: unknown) => {
       if (!enableTenantLogging) return;
 
       const log = {
@@ -394,7 +394,7 @@ export function useMultiTenancy(options: MultiTenancyOptions = {}) {
 
   // Helper functions
   const applyTenantConfiguration = useCallback(
-    (tenantId: string, config: any) => {
+    (tenantId: string, config: unknown) => {
       // Apply tenant configuration to the application
       document.documentElement.setAttribute("data-tenant", tenantId);
 
@@ -581,7 +581,7 @@ export function useMultiTenancy(options: MultiTenancyOptions = {}) {
 
   // Create tenant
   const createTenant = useCallback(
-    (tenantId: string, config: any) => {
+    (tenantId: string, config: unknown) => {
       if (!enableMultiTenancy) return;
 
       setState((prev) => ({
@@ -599,7 +599,7 @@ export function useMultiTenancy(options: MultiTenancyOptions = {}) {
 
   // Update tenant
   const updateTenant = useCallback(
-    (tenantId: string, config: any) => {
+    (tenantId: string, config: unknown) => {
       if (!enableMultiTenancy) return;
 
       setState((prev) => ({
@@ -673,7 +673,7 @@ export function useMultiTenancy(options: MultiTenancyOptions = {}) {
   );
 
   // Update tenant config
-  const updateTenantConfig = useCallback((tenantId: string, config: any) => {
+  const updateTenantConfig = useCallback((tenantId: string, config: unknown) => {
     setState((prev) => ({
       ...prev,
       tenantConfig: { ...prev.tenantConfig, [tenantId]: config },
@@ -690,7 +690,7 @@ export function useMultiTenancy(options: MultiTenancyOptions = {}) {
 
   // Update tenant policies
   const updateTenantPolicies = useCallback(
-    (tenantId: string, policies: any) => {
+    (tenantId: string, policies: unknown) => {
       setState((prev) => ({
         ...prev,
         tenantPolicies: { ...prev.tenantPolicies, [tenantId]: policies },
@@ -708,7 +708,7 @@ export function useMultiTenancy(options: MultiTenancyOptions = {}) {
   );
 
   // Update tenant limits
-  const updateTenantLimits = useCallback((tenantId: string, limits: any) => {
+  const updateTenantLimits = useCallback((tenantId: string, limits: unknown) => {
     setState((prev) => ({
       ...prev,
       tenantLimits: { ...prev.tenantLimits, [tenantId]: limits },
@@ -743,7 +743,7 @@ export function useMultiTenancy(options: MultiTenancyOptions = {}) {
   );
 
   // Update tenant theme
-  const updateTenantTheme = useCallback((tenantId: string, theme: any) => {
+  const updateTenantTheme = useCallback((tenantId: string, theme: unknown) => {
     setState((prev) => ({
       ...prev,
       tenantThemes: { ...prev.tenantThemes, [tenantId]: theme },
@@ -760,7 +760,7 @@ export function useMultiTenancy(options: MultiTenancyOptions = {}) {
 
   // Update tenant branding
   const updateTenantBranding = useCallback(
-    (tenantId: string, branding: any) => {
+    (tenantId: string, branding: unknown) => {
       setState((prev) => ({
         ...prev,
         tenantBranding: { ...prev.tenantBranding, [tenantId]: branding },
@@ -779,7 +779,7 @@ export function useMultiTenancy(options: MultiTenancyOptions = {}) {
 
   // Update tenant localization
   const updateTenantLocalization = useCallback(
-    (tenantId: string, localization: any) => {
+    (tenantId: string, localization: unknown) => {
       setState((prev) => ({
         ...prev,
         tenantLocalization: {
@@ -838,7 +838,7 @@ export function useMultiTenancy(options: MultiTenancyOptions = {}) {
   );
 
   // Update tenant data
-  const updateTenantData = useCallback((tenantId: string, data: any) => {
+  const updateTenantData = useCallback((tenantId: string, data: unknown) => {
     setState((prev) => ({
       ...prev,
       tenantData: { ...prev.tenantData, [tenantId]: data },
@@ -937,7 +937,7 @@ export function useMultiTenancy(options: MultiTenancyOptions = {}) {
     (tenantId?: string) => {
       if (tenantId) {
         return state.tenantDebugging.logs.filter(
-          (log) => log.context?.tenantId === tenantId
+          (log) => (log.context as Record<string, unknown>)?.tenantId === tenantId
         );
       }
       return state.tenantDebugging.logs;
@@ -966,7 +966,7 @@ export function useMultiTenancy(options: MultiTenancyOptions = {}) {
     (tenantId?: string) => {
       if (tenantId) {
         return state.tenantDebugging.traces.filter(
-          (trace) => trace.context?.tenantId === tenantId
+          (trace) => (trace.context as Record<string, unknown>)?.tenantId === tenantId
         );
       }
       return state.tenantDebugging.traces;

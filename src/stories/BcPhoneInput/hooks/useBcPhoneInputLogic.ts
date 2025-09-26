@@ -69,7 +69,7 @@ export const useBcPhoneInputLogic = (options: BcPhoneInputOptions = {}) => {
   }, [enablePerformanceTracking]);
 
   // Performance tracking functions
-  const trackPerformance = useCallback((action: string, data?: any) => {
+  const trackPerformance = useCallback((action: string, data?: unknown) => {
     if (!enablePerformanceTracking) return;
     
     console.log(`Performance tracking - ${action}:`, data);

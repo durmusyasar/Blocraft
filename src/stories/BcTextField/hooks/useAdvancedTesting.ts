@@ -86,26 +86,26 @@ export interface AdvancedTestingState {
 }
 
 export interface AdvancedTestingActions {
-  createTestSuite: (name: string, type: string, tests: any[]) => string;
+  createTestSuite: (name: string, type: string, tests: unknown[]) => string;
   runTestSuite: (suiteId: string) => Promise<void>;
   runTest: (suiteId: string, testId: string) => Promise<void>;
   runAllTests: () => Promise<void>;
-  runVisualRegressionTest: (componentId: string, options?: any) => Promise<void>;
-  runE2ETest: (testName: string, script: string, options?: any) => Promise<void>;
-  runPerformanceTest: (componentId: string, options?: any) => Promise<void>;
-  runAccessibilityTest: (componentId: string, options?: any) => Promise<void>;
+  runVisualRegressionTest: (componentId: string, options?: unknown) => Promise<void>;
+  runE2ETest: (testName: string, script: string, options?: unknown) => Promise<void>;
+  runPerformanceTest: (componentId: string, options?: unknown) => Promise<void>;
+  runAccessibilityTest: (componentId: string, options?: unknown) => Promise<void>;
   runCrossBrowserTest: (testId: string, browsers: string[]) => Promise<void>;
   runMobileTest: (testId: string, devices: string[]) => Promise<void>;
-  runLoadTest: (endpoint: string, options?: any) => Promise<void>;
-  runSecurityTest: (componentId: string, options?: any) => Promise<void>;
-  runAPITest: (endpoint: string, method: string, options?: any) => Promise<void>;
-  runIntegrationTest: (componentId: string, options?: any) => Promise<void>;
-  runUnitTest: (componentId: string, options?: any) => Promise<void>;
-  runSnapshotTest: (componentId: string, options?: any) => Promise<void>;
-  getTestSuite: (suiteId: string) => any;
-  getTestSuites: (filter?: any) => any[];
-  getTestResults: (filter?: any) => any[];
-  getTestMetrics: () => any;
+  runLoadTest: (endpoint: string, options?: unknown) => Promise<void>;
+  runSecurityTest: (componentId: string, options?: unknown) => Promise<void>;
+  runAPITest: (endpoint: string, method: string, options?: unknown) => Promise<void>;
+  runIntegrationTest: (componentId: string, options?: unknown) => Promise<void>;
+  runUnitTest: (componentId: string, options?: unknown) => Promise<void>;
+  runSnapshotTest: (componentId: string, options?: unknown) => Promise<void>;
+  getTestSuite: (suiteId: string) => unknown;
+  getTestSuites: (filter?: unknown) => unknown[];
+  getTestResults: (filter?: unknown) => unknown[];
+  getTestMetrics: () => unknown;
   clearTestResults: () => void;
   exportTestResults: () => string;
   importTestResults: (data: string) => void;
@@ -178,7 +178,7 @@ export function useAdvancedTesting(options: AdvancedTestingOptions = {}) {
   });
 
   // Create Test Suite
-  const createTestSuite = useCallback((name: string, type: string, tests: any[]): string => {
+  const createTestSuite = useCallback((name: string, type: string, tests: unknown[]): string => {
     if (!enableAdvancedTesting) return '';
 
     const suiteId = `suite-${Date.now()}`;
@@ -189,7 +189,7 @@ export function useAdvancedTesting(options: AdvancedTestingOptions = {}) {
       status: 'pending' as 'pending' | 'running' | 'passed' | 'failed' | 'skipped',
       tests: tests.map((test, index) => ({
         id: `test-${Date.now()}-${index}`,
-        name: test.name,
+        name: (test as { name: string }).name,
         status: 'pending' as 'pending' | 'running' | 'passed' | 'failed' | 'skipped',
         duration: 0,
       })),
@@ -346,7 +346,7 @@ export function useAdvancedTesting(options: AdvancedTestingOptions = {}) {
   }, [enableAdvancedTesting, state.testSuites, runTestSuite]);
 
   // Run Visual Regression Test
-  const runVisualRegressionTest = useCallback(async (componentId: string, options: any = {}): Promise<void> => {
+  const runVisualRegressionTest = useCallback(async (componentId: string, options: unknown = {}): Promise<void> => {
     if (!enableAdvancedTesting || !enableVisualRegressionTesting) return;
 
     // Simulate visual regression test
@@ -354,7 +354,7 @@ export function useAdvancedTesting(options: AdvancedTestingOptions = {}) {
   }, [enableAdvancedTesting, enableVisualRegressionTesting]);
 
   // Run E2E Test
-  const runE2ETest = useCallback(async (testName: string, script: string, options: any = {}): Promise<void> => {
+  const runE2ETest = useCallback(async (testName: string, script: string, options: unknown = {}): Promise<void> => {
     if (!enableAdvancedTesting || !enableE2ETesting) return;
 
     // Simulate E2E test
@@ -362,7 +362,7 @@ export function useAdvancedTesting(options: AdvancedTestingOptions = {}) {
   }, [enableAdvancedTesting, enableE2ETesting]);
 
   // Run Performance Test
-  const runPerformanceTest = useCallback(async (componentId: string, options: any = {}): Promise<void> => {
+  const runPerformanceTest = useCallback(async (componentId: string, options: unknown = {}): Promise<void> => {
     if (!enableAdvancedTesting || !enablePerformanceTesting) return;
 
     // Simulate performance test
@@ -370,7 +370,7 @@ export function useAdvancedTesting(options: AdvancedTestingOptions = {}) {
   }, [enableAdvancedTesting, enablePerformanceTesting]);
 
   // Run Accessibility Test
-  const runAccessibilityTest = useCallback(async (componentId: string, options: any = {}): Promise<void> => {
+  const runAccessibilityTest = useCallback(async (componentId: string, options: unknown = {}): Promise<void> => {
     if (!enableAdvancedTesting || !enableAccessibilityTesting) return;
 
     // Simulate accessibility test
@@ -394,7 +394,7 @@ export function useAdvancedTesting(options: AdvancedTestingOptions = {}) {
   }, [enableAdvancedTesting, enableMobileTesting]);
 
   // Run Load Test
-  const runLoadTest = useCallback(async (endpoint: string, options: any = {}): Promise<void> => {
+  const runLoadTest = useCallback(async (endpoint: string, options: unknown = {}): Promise<void> => {
     if (!enableAdvancedTesting || !enableLoadTesting) return;
 
     // Simulate load test
@@ -402,7 +402,7 @@ export function useAdvancedTesting(options: AdvancedTestingOptions = {}) {
   }, [enableAdvancedTesting, enableLoadTesting]);
 
   // Run Security Test
-  const runSecurityTest = useCallback(async (componentId: string, options: any = {}): Promise<void> => {
+  const runSecurityTest = useCallback(async (componentId: string, options: unknown = {}): Promise<void> => {
     if (!enableAdvancedTesting || !enableSecurityTesting) return;
 
     // Simulate security test
@@ -410,7 +410,7 @@ export function useAdvancedTesting(options: AdvancedTestingOptions = {}) {
   }, [enableAdvancedTesting, enableSecurityTesting]);
 
   // Run API Test
-  const runAPITest = useCallback(async (endpoint: string, method: string, options: any = {}): Promise<void> => {
+  const runAPITest = useCallback(async (endpoint: string, method: string, options: unknown = {}): Promise<void> => {
     if (!enableAdvancedTesting || !enableAPITesting) return;
 
     // Simulate API test
@@ -418,7 +418,7 @@ export function useAdvancedTesting(options: AdvancedTestingOptions = {}) {
   }, [enableAdvancedTesting, enableAPITesting]);
 
   // Run Integration Test
-  const runIntegrationTest = useCallback(async (componentId: string, options: any = {}): Promise<void> => {
+  const runIntegrationTest = useCallback(async (componentId: string, options: unknown = {}): Promise<void> => {
     if (!enableAdvancedTesting || !enableIntegrationTesting) return;
 
     // Simulate integration test
@@ -426,7 +426,7 @@ export function useAdvancedTesting(options: AdvancedTestingOptions = {}) {
   }, [enableAdvancedTesting, enableIntegrationTesting]);
 
   // Run Unit Test
-  const runUnitTest = useCallback(async (componentId: string, options: any = {}): Promise<void> => {
+  const runUnitTest = useCallback(async (componentId: string, options: unknown = {}): Promise<void> => {
     if (!enableAdvancedTesting || !enableUnitTesting) return;
 
     // Simulate unit test
@@ -434,7 +434,7 @@ export function useAdvancedTesting(options: AdvancedTestingOptions = {}) {
   }, [enableAdvancedTesting, enableUnitTesting]);
 
   // Run Snapshot Test
-  const runSnapshotTest = useCallback(async (componentId: string, options: any = {}): Promise<void> => {
+  const runSnapshotTest = useCallback(async (componentId: string, options: unknown = {}): Promise<void> => {
     if (!enableAdvancedTesting || !enableSnapshotTesting) return;
 
     // Simulate snapshot test
@@ -447,20 +447,20 @@ export function useAdvancedTesting(options: AdvancedTestingOptions = {}) {
   }, [state.testSuites]);
 
   // Get Test Suites
-  const getTestSuites = useCallback((filter?: any) => {
+  const getTestSuites = useCallback((filter?: unknown) => {
     if (filter) {
       return state.testSuites.filter(suite =>
-        Object.keys(filter).every(key => suite[key as keyof typeof suite] === filter[key])
+        Object.keys(filter).every(key => suite[key as keyof typeof suite] === (filter as Record<string, unknown>)[key])
       );
     }
     return state.testSuites;
   }, [state.testSuites]);
 
   // Get Test Results
-  const getTestResults = useCallback((filter?: any) => {
+  const getTestResults = useCallback((filter?: unknown) => {
     if (filter) {
       return state.testResults.filter(result =>
-        Object.keys(filter).every(key => result[key as keyof typeof result] === filter[key])
+        Object.keys(filter).every(key => result[key as keyof typeof result] === (filter as Record<string, unknown>)[key])
       );
     }
     return state.testResults;

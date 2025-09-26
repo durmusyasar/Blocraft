@@ -4,8 +4,8 @@ export interface DisclosureContext {
   fieldName?: string;
   fieldType?: string;
   fieldValue?: string;
-  userContext?: Record<string, any>;
-  formContext?: Record<string, any>;
+  userContext?: Record<string, unknown>;
+  formContext?: Record<string, unknown>;
   locale?: string;
   userLevel?: 'beginner' | 'intermediate' | 'advanced';
   deviceType?: 'desktop' | 'tablet' | 'mobile';
@@ -25,7 +25,7 @@ export interface DisclosureRule {
   context: string[];
   conditions?: (context: DisclosureContext) => boolean;
   customFunction?: (context: DisclosureContext) => boolean;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 }
 
 export interface DisclosureContent {
@@ -40,7 +40,7 @@ export interface DisclosureContent {
   context: string[];
   conditions?: (context: DisclosureContext) => boolean;
   customFunction?: (context: DisclosureContext) => string;
-  metadata?: Record<string, any>;
+  metadata?: Record<string, unknown>;
 }
 
 export interface UseProgressiveDisclosureProps {

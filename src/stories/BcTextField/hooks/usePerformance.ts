@@ -29,7 +29,7 @@ export interface PerformanceOptions {
   retryDelay?: number;
   enableProfiling?: boolean;
   enableDebugging?: boolean;
-  customMetrics?: Record<string, any>;
+  customMetrics?: Record<string, unknown>;
 }
 
 export interface PerformanceState {
@@ -49,7 +49,7 @@ export interface PerformanceState {
   isOptimized: boolean;
   isProfiling: boolean;
   isDebugging: boolean;
-  customMetrics: Record<string, any>;
+  customMetrics: Record<string, unknown>;
 }
 
 export interface PerformanceActions {
@@ -68,7 +68,7 @@ export interface PerformanceActions {
   startDebugging: () => void;
   stopDebugging: () => void;
   clearMetrics: () => void;
-  updateCustomMetric: (key: string, value: any) => void;
+  updateCustomMetric: (key: string, value: unknown) => void;
   reset: () => void;
 }
 
@@ -128,7 +128,7 @@ export function usePerformance(options: PerformanceOptions = {}) {
   const renderTimes = useRef<number[]>([]);
   const debounceTimers = useRef<Map<string, NodeJS.Timeout>>(new Map());
   const throttleTimers = useRef<Map<string, NodeJS.Timeout>>(new Map());
-  const cache = useRef<Map<string, any>>(new Map());
+  const cache = useRef<Map<string, unknown>>(new Map());
 
   // Track render performance
   const trackRender = useCallback((componentName: string, renderTime: number) => {
@@ -161,7 +161,7 @@ export function usePerformance(options: PerformanceOptions = {}) {
     if (!enableMemoryTracking) return;
 
     if ('memory' in performance) {
-      const memory = (performance as any).memory;
+      const memory = (performance as Record<string, unknown>).memory as Record<string, number>;
       const memoryUsage = (memory.usedJSHeapSize / memory.totalJSHeapSize) * 100;
       
       // Use memoryThreshold
@@ -375,7 +375,7 @@ export function usePerformance(options: PerformanceOptions = {}) {
   }, [cacheSize]);
 
   // Update custom metric
-  const updateCustomMetric = useCallback((key: string, value: any) => {
+  const updateCustomMetric = useCallback((key: string, value: unknown) => {
     if (!enableMetricsCollection) return;
 
     setState(prev => ({

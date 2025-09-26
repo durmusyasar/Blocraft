@@ -49,12 +49,18 @@ export const useAutoCountryDetection = ({
 
       for (const api of apis) {
         try {
+          const controller = new AbortController();
+          const timeoutId = setTimeout(() => controller.abort(), 3000); // 3 saniye timeout
+          
           const response = await fetch(api, {
             method: 'GET',
             headers: {
               'Accept': 'application/json',
             },
+            signal: controller.signal,
           });
+          
+          clearTimeout(timeoutId);
 
           if (!response.ok) continue;
 
@@ -78,7 +84,11 @@ export const useAutoCountryDetection = ({
             }
           }
         } catch (apiError) {
-          console.warn(`IP detection API failed: ${api}`, apiError);
+          if (apiError instanceof Error && apiError.name === 'AbortError') {
+            console.warn(`IP detection API aborted: ${api}`);
+          } else {
+            console.warn(`IP detection API failed: ${api}`, apiError);
+          }
           continue;
         }
       }
@@ -103,9 +113,15 @@ export const useAutoCountryDetection = ({
             const { latitude, longitude } = position.coords;
             
             // Reverse geocoding API
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 saniye timeout
+            
             const response = await fetch(
-              `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${latitude}&longitude=${longitude}&localityLanguage=en`
+              `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${latitude}&longitude=${longitude}&localityLanguage=en`,
+              { signal: controller.signal }
             );
+            
+            clearTimeout(timeoutId);
             
             if (!response.ok) {
               resolve(null);
@@ -125,7 +141,11 @@ export const useAutoCountryDetection = ({
             
             resolve(null);
           } catch (error) {
-            console.warn('Reverse geocoding failed:', error);
+            if (error instanceof Error && error.name === 'AbortError') {
+              console.warn('Reverse geocoding request was aborted');
+            } else {
+              console.warn('Reverse geocoding failed:', error);
+            }
             resolve(null);
           }
         },

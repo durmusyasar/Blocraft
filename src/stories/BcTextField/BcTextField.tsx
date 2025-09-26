@@ -116,7 +116,7 @@ export interface BcTextFieldProps
   monitoring?: {
     onChange?: (value: string) => void;
     onError?: (error: Error) => void;
-    onPerformance?: (metrics: any) => void;
+    onPerformance?: (metrics: Record<string, unknown>) => void;
   };
   renderCustomIcon?: (status: string) => React.ReactNode;
   renderHelperText?: (helperText: React.ReactNode) => React.ReactNode;
@@ -211,12 +211,12 @@ export interface BcTextFieldProps
     enabled: boolean;
     priority: number;
     dependencies?: string[];
-    customValidator?: (value: string, context?: any) => Promise<boolean>;
+    customValidator?: (value: string, context?: Record<string, unknown>) => Promise<boolean>;
   }>;
   validationContext?: {
     fieldName?: string;
-    formData?: Record<string, any>;
-    userContext?: Record<string, any>;
+    formData?: Record<string, unknown>;
+    userContext?: Record<string, unknown>;
     locale?: string;
   };
   /** Business Rules */
@@ -235,22 +235,22 @@ export interface BcTextFieldProps
     conditions: Array<{
       field: string;
       operator: 'equals' | 'not_equals' | 'contains' | 'not_contains' | 'greater_than' | 'less_than' | 'in' | 'not_in' | 'regex' | 'custom';
-      value: any;
-      customFunction?: (value: any, context: any) => boolean;
+      value: unknown;
+      customFunction?: (value: unknown, context: Record<string, unknown>) => boolean;
     }>;
     actions: Array<{
       type: 'validation' | 'transformation' | 'notification' | 'calculation' | 'custom';
       field?: string;
-      value?: any;
+      value?: unknown;
       message?: string;
-      customFunction?: (value: any, context: any) => any;
+      customFunction?: (value: unknown, context: Record<string, unknown>) => unknown;
     }>;
-    metadata?: Record<string, any>;
+    metadata?: Record<string, unknown>;
   }>;
   businessContext?: {
-    formData: Record<string, any>;
-    userContext: Record<string, any>;
-    systemContext: Record<string, any>;
+    formData: Record<string, unknown>;
+    userContext: Record<string, unknown>;
+    systemContext: Record<string, unknown>;
     locale: string;
   };
   /** Cross Field Validation */
@@ -261,7 +261,7 @@ export interface BcTextFieldProps
     name: string;
     description: string;
     fields: string[];
-    condition: (values: Record<string, any>) => boolean;
+    condition: (values: Record<string, unknown>) => boolean;
     message: string;
     severity: 'error' | 'warning' | 'info';
     enabled: boolean;
@@ -269,8 +269,8 @@ export interface BcTextFieldProps
     dependencies?: string[];
   }>;
   crossFieldContext?: {
-    formData: Record<string, any>;
-    fieldValues: Record<string, any>;
+    formData: Record<string, unknown>;
+    fieldValues: Record<string, unknown>;
     fieldErrors: Record<string, string[]>;
     fieldWarnings: Record<string, string[]>;
     fieldInfo: Record<string, string[]>;
@@ -289,14 +289,14 @@ export interface BcTextFieldProps
     context: string[];
     priority: number;
     enabled: boolean;
-    conditions?: (context: any) => boolean;
-    customFunction?: (context: any) => string;
+    conditions?: (context: Record<string, unknown>) => boolean;
+    customFunction?: (context: Record<string, unknown>) => string;
   }>;
   placeholderContext?: {
     fieldName?: string;
     fieldType?: string;
-    userContext?: Record<string, any>;
-    formContext?: Record<string, any>;
+    userContext?: Record<string, unknown>;
+    formContext?: Record<string, unknown>;
     locale?: string;
     timeOfDay?: 'morning' | 'afternoon' | 'evening' | 'night';
     dayOfWeek?: 'monday' | 'tuesday' | 'wednesday' | 'thursday' | 'friday' | 'saturday' | 'sunday';
@@ -316,16 +316,16 @@ export interface BcTextFieldProps
     priority: number;
     enabled: boolean;
     context: string[];
-    conditions?: (context: any) => boolean;
-    customFunction?: (context: any) => string;
-    metadata?: Record<string, any>;
+    conditions?: (context: Record<string, unknown>) => boolean;
+    customFunction?: (context: Record<string, unknown>) => string;
+    metadata?: Record<string, unknown>;
   }>;
   helpContext?: {
     fieldName?: string;
     fieldType?: string;
     fieldValue?: string;
-    userContext?: Record<string, any>;
-    formContext?: Record<string, any>;
+    userContext?: Record<string, unknown>;
+    formContext?: Record<string, unknown>;
     locale?: string;
     userLevel?: 'beginner' | 'intermediate' | 'advanced';
     deviceType?: 'desktop' | 'tablet' | 'mobile';
@@ -346,9 +346,9 @@ export interface BcTextFieldProps
     priority: number;
     enabled: boolean;
     context: string[];
-    conditions?: (context: any) => boolean;
-    customFunction?: (context: any) => boolean;
-    metadata?: Record<string, any>;
+    conditions?: (context: Record<string, unknown>) => boolean;
+    customFunction?: (context: Record<string, unknown>) => boolean;
+    metadata?: Record<string, unknown>;
   }>;
   customDisclosureContent?: Array<{
     id: string;
@@ -360,16 +360,16 @@ export interface BcTextFieldProps
     priority: number;
     enabled: boolean;
     context: string[];
-    conditions?: (context: any) => boolean;
-    customFunction?: (context: any) => string;
-    metadata?: Record<string, any>;
+    conditions?: (context: Record<string, unknown>) => boolean;
+    customFunction?: (context: Record<string, unknown>) => string;
+    metadata?: Record<string, unknown>;
   }>;
   disclosureContext?: {
     fieldName?: string;
     fieldType?: string;
     fieldValue?: string;
-    userContext?: Record<string, any>;
-    formContext?: Record<string, any>;
+    userContext?: Record<string, unknown>;
+    formContext?: Record<string, unknown>;
     locale?: string;
     userLevel?: 'beginner' | 'intermediate' | 'advanced';
     deviceType?: 'desktop' | 'tablet' | 'mobile';
@@ -432,8 +432,8 @@ export interface BcTextFieldProps
   testTimeout?: number;
   testRetries?: number;
   testDelay?: number;
-  mockData?: Record<string, any>;
-  testConfig?: Record<string, any>;
+  mockData?: Record<string, unknown>;
+  testConfig?: Record<string, unknown>;
   customTestHelpers?: Record<string, Function>;
   customTestUtilities?: Record<string, Function>;
   customTestValidators?: Record<string, Function>;
@@ -457,13 +457,13 @@ export interface BcTextFieldProps
   integrationTimeout?: number;
   integrationRetries?: number;
   integrationDelay?: number;
-  customIntegrations?: Record<string, any>;
-  integrationConfig?: Record<string, any>;
+  customIntegrations?: Record<string, unknown>;
+  integrationConfig?: Record<string, unknown>;
   apiEndpoints?: Record<string, string>;
   storageKeys?: Record<string, string>;
   eventTypes?: string[];
   dataFormats?: string[];
-  validationRules?: Record<string, any>;
+  validationRules?: Record<string, unknown>;
   stateKeys?: string[];
   themeKeys?: string[];
   i18nKeys?: string[];
@@ -653,6 +653,13 @@ const BcTextFieldInner = forwardRef<HTMLInputElement, BcTextFieldProps>(
       enableMemoization = true,
       // Monitoring
       enableMonitoring = false,
+      enableRealTimeMonitoring,
+      enableAnalytics,
+      enableErrorReporting,
+      enablePerformanceMonitoring,
+      enableUserBehaviorTracking,
+      enableSecurityMonitoring,
+      enableCustomEvents,
       monitoringApiEndpoint,
       monitoringApiKey,
       // Testing
@@ -765,8 +772,8 @@ const BcTextFieldInner = forwardRef<HTMLInputElement, BcTextFieldProps>(
       typeof slotProps.input === "object" &&
       !Array.isArray(slotProps.input)
     ) {
-      startAdornment = (slotProps.input as any).startAdornment;
-      endAdornment = (slotProps.input as any).endAdornment;
+      startAdornment = (slotProps.input as Record<string, unknown>).startAdornment as React.ReactNode;
+      endAdornment = (slotProps.input as Record<string, unknown>).endAdornment as React.ReactNode;
     }
     // inputPrefix ve inputSuffix'i mevcut adornment'larla birleştir
     if (props.inputPrefix) {
@@ -789,7 +796,9 @@ const BcTextFieldInner = forwardRef<HTMLInputElement, BcTextFieldProps>(
 
     // Helper to ensure translations is a Record<string, string>
     const translationsCandidate = translations && typeof translations === 'object' && 'BcTextField' in translations ? translations.BcTextField : translations;
-    const translationsObj = getTranslationsObject(translationsCandidate);
+    const translationsObj = getTranslationsObject(
+      typeof translationsCandidate === 'object' && translationsCandidate ? translationsCandidate : {}
+    );
     const i18nLabel = label || getTranslation('label', locale, translationsObj, fallbackLocale);
     const i18nStatusMessage = statusMessage || getTranslation('statusMessage', locale, translationsObj, fallbackLocale);
     const i18nClearButton = clearButtonLabel || getTranslation('clearButtonLabel', locale, translationsObj, fallbackLocale) || 'Temizle';
@@ -811,10 +820,19 @@ const BcTextFieldInner = forwardRef<HTMLInputElement, BcTextFieldProps>(
       enableAsyncValidation,
       validateInput,
       validationDebounceMs,
-      monitoring: monitoringProp,
+      monitoring: monitoringProp ? {
+        enableUsageAnalytics: true,
+        enableErrorTracking: true,
+        componentId: 'BcTextField',
+        trackError: monitoringProp.onError ? (error) => {
+          monitoringProp.onError?.(new Error(error.message));
+        } : undefined,
+      } : undefined,
       keyboardNavigationAnnouncements: false,
       liveRegionRef: { current: null },
-      setScreenReaderMessage: () => {},
+      setScreenReaderMessage: () => {
+        // Empty implementation for screen reader messages
+      },
     });
 
     // Status ve mesajı validation'a göre override et
@@ -927,7 +945,7 @@ const BcTextFieldInner = forwardRef<HTMLInputElement, BcTextFieldProps>(
 
     // Style composition (memoize)
     const composedSx = useMemo(() => {
-      let sx: any = {};
+      let sx: Record<string, unknown> = {};
       if (responsiveWidth)
         sx = { ...sx, ...responsiveWidthStyles };
       if (size && sizeStyles[size])
@@ -954,7 +972,8 @@ const BcTextFieldInner = forwardRef<HTMLInputElement, BcTextFieldProps>(
       }
       // Appearance stillerinde border ve label color'ı color veya statusColor'a göre ayarla
       const colorKey = statusColor || (isPaletteColor(color) ? color : "primary");
-      const getSxForAppearance = (baseStyles: any) => getAppearanceSx(baseStyles(theme), colorKey, getColor);
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const getSxForAppearance = (baseStyles: (theme: any) => any) => getAppearanceSx(baseStyles(theme), colorKey, getColor);
       if (appearance === "premium")
         sx = {
           ...sx,
@@ -1075,7 +1094,11 @@ const BcTextFieldInner = forwardRef<HTMLInputElement, BcTextFieldProps>(
       enableRealTimeValidation: enableAdvancedRealTimeValidation,
       validationDebounceMs: smartValidationDebounceMs,
       maxConcurrentValidations,
-      customRules: advancedCustomValidationRules,
+      customRules: advancedCustomValidationRules?.map(rule => ({
+        ...rule,
+        customValidator: rule.customValidator ? (value: string, context?: unknown) => 
+          rule.customValidator!(value, context as Record<string, unknown>) : undefined
+      })),
       validationContext,
     });
 
@@ -1085,7 +1108,19 @@ const BcTextFieldInner = forwardRef<HTMLInputElement, BcTextFieldProps>(
       enableRuleLearning,
       enableRuleOptimization,
       evaluationDebounceMs: businessEvaluationDebounceMs,
-      customRules: customBusinessRules,
+      customRules: customBusinessRules?.map(rule => ({
+        ...rule,
+        conditions: rule.conditions.map(condition => ({
+          ...condition,
+          customFunction: condition.customFunction ? (value: unknown, context: unknown) =>
+            condition.customFunction!(value, context as Record<string, unknown>) : undefined
+        })),
+        actions: rule.actions.map(action => ({
+          ...action,
+          customFunction: action.customFunction ? (value: unknown, context: unknown) =>
+            action.customFunction!(value, context as Record<string, unknown>) : undefined
+        }))
+      })),
       businessContext,
     });
 
@@ -1105,7 +1140,8 @@ const BcTextFieldInner = forwardRef<HTMLInputElement, BcTextFieldProps>(
       enableTimeBasedPlaceholders,
       enablePersonalizedPlaceholders,
       enableLearning: enablePlaceholderLearning,
-      customTemplates: customPlaceholderTemplates,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      customTemplates: customPlaceholderTemplates as any,
       placeholderContext,
     });
 
@@ -1115,7 +1151,8 @@ const BcTextFieldInner = forwardRef<HTMLInputElement, BcTextFieldProps>(
       enableProgressiveHelp,
       enableLearning: enableHelpLearning,
       enablePersonalization: enableHelpPersonalization,
-      customHelpItems,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      customHelpItems: customHelpItems as any,
       helpContext,
     });
 
@@ -1124,8 +1161,10 @@ const BcTextFieldInner = forwardRef<HTMLInputElement, BcTextFieldProps>(
       enableContextualDisclosure,
       enableLearning: enableDisclosureLearning,
       enablePersonalization: enableDisclosurePersonalization,
-      customRules: customDisclosureRules,
-      customContent: customDisclosureContent,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      customRules: customDisclosureRules as any,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      customContent: customDisclosureContent as any,
       disclosureContext,
     });
 
@@ -1526,7 +1565,7 @@ const BcTextFieldInner = forwardRef<HTMLInputElement, BcTextFieldProps>(
               ...(slotProps.inputLabel || {}),
               shrink,
               sx: {
-                ...(slotProps.inputLabel && (slotProps.inputLabel as any).sx),
+                ...(slotProps.inputLabel && (slotProps.inputLabel as Record<string, unknown>).sx as Record<string, unknown>),
                 ...(hasStartAdornment && !shrink ? { left: 40 } : {}),
                 // textAlign kaldırıldı
               },

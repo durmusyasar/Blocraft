@@ -52,7 +52,7 @@ export const useVoiceSearch = ({
   const [confidence, setConfidence] = useState(0);
   const [error, setError] = useState<string | null>(null);
   
-  const recognitionRef = useRef<any>(null);
+  const recognitionRef = useRef<unknown>(null);
   const isSupported = typeof window !== 'undefined' && 'webkitSpeechRecognition' in window;
 
   // Hata mesajlarını çevir
@@ -78,8 +78,19 @@ export const useVoiceSearch = ({
     if (!isSupported || !enableVoiceSearch) return null;
 
     try {
-      const SpeechRecognition = (window as any).webkitSpeechRecognition || (window as any).SpeechRecognition;
-      const recognition = new SpeechRecognition();
+      const SpeechRecognitionConstructor = (window as unknown as { webkitSpeechRecognition?: unknown }).webkitSpeechRecognition || (window as unknown as { SpeechRecognition?: unknown }).SpeechRecognition;
+      const recognition = new (SpeechRecognitionConstructor as new () => unknown)() as {
+        continuous: boolean;
+        interimResults: boolean;
+        lang: string;
+        maxAlternatives: number;
+        start(): void;
+        stop(): void;
+        onstart: (() => void) | null;
+        onresult: ((event: unknown) => void) | null;
+        onerror: ((event: unknown) => void) | null;
+        onend: (() => void) | null;
+      };
 
       recognition.continuous = continuous;
       recognition.interimResults = interimResults;
@@ -92,13 +103,15 @@ export const useVoiceSearch = ({
         onStart?.();
       };
 
-      recognition.onresult = (event: any) => {
+      recognition.onresult = (event: unknown) => {
         let finalTranscript = '';
         let interimTranscript = '';
         let maxConfidence = 0;
 
-        for (let i = event.resultIndex; i < event.results.length; i++) {
-          const result = event.results[i];
+        const eventData = event as { resultIndex: number; results: Array<{ isFinal: boolean; [index: number]: { transcript: string; confidence?: number } }> };
+        
+        for (let i = eventData.resultIndex; i < eventData.results.length; i++) {
+          const result = eventData.results[i];
           const transcript = result[0].transcript;
           const confidence = result[0].confidence || 0;
 
@@ -129,8 +142,9 @@ export const useVoiceSearch = ({
         }
       };
 
-      recognition.onerror = (event: any) => {
-        const errorMessage = getErrorMessage(event.error);
+      recognition.onerror = (event: unknown) => {
+        const eventData = event as { error: string };
+        const errorMessage = getErrorMessage(eventData.error);
         setError(errorMessage);
         setIsListening(false);
         
@@ -156,7 +170,7 @@ export const useVoiceSearch = ({
   const stopListening = useCallback(() => {
     if (recognitionRef.current && isListening) {
       try {
-        recognitionRef.current.stop();
+        (recognitionRef.current as { stop(): void }).stop();
       } catch (err) {
         console.warn('Error stopping recognition:', err);
       }
@@ -182,7 +196,7 @@ export const useVoiceSearch = ({
       }
 
       if (recognitionRef.current) {
-        recognitionRef.current.start();
+        (recognitionRef.current as { start(): void }).start();
       }
     } catch (err) {
       const error = err instanceof Error ? err : new Error('Failed to start listening');
@@ -204,7 +218,7 @@ export const useVoiceSearch = ({
     return () => {
       if (recognitionRef.current) {
         try {
-          recognitionRef.current.stop();
+          (recognitionRef.current as { stop(): void }).stop();
         } catch (err) {
           console.warn('Error cleaning up recognition:', err);
         }

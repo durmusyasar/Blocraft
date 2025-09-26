@@ -79,7 +79,7 @@ export interface DocumentationState {
     title: string;
     description: string;
     component: string;
-    props: Record<string, any>;
+    props: Record<string, unknown>;
     code: string;
     tags: string[];
     createdAt: number;
@@ -90,23 +90,9 @@ export interface DocumentationState {
     method: string;
     path: string;
     description: string;
-    parameters: Array<{
-      name: string;
-      type: string;
-      required: boolean;
-      description: string;
-      example?: any;
-    }>;
-    responses: Array<{
-      status: number;
-      description: string;
-      example?: any;
-    }>;
-    examples: Array<{
-      title: string;
-      request: any;
-      response: any;
-    }>;
+    parameters: unknown[];
+    responses: unknown[];
+    examples: unknown[];
   }>;
   searchIndex: Array<{
     id: string;
@@ -119,35 +105,35 @@ export interface DocumentationState {
 }
 
 export interface DocumentationActions {
-  createDocumentationPage: (title: string, slug: string, type: string, content: string, options?: any) => string;
-  updateDocumentationPage: (pageId: string, updates: any) => void;
+  createDocumentationPage: (title: string, slug: string, type: string, content: string, options?: unknown) => string;
+  updateDocumentationPage: (pageId: string, updates: unknown) => void;
   deleteDocumentationPage: (pageId: string) => void;
   createCodeExample: (title: string, description: string, code: string, language: string, framework: string, tags?: string[]) => string;
-  updateCodeExample: (exampleId: string, updates: any) => void;
+  updateCodeExample: (exampleId: string, updates: unknown) => void;
   deleteCodeExample: (exampleId: string) => void;
-  createLiveDemo: (title: string, description: string, component: string, props: Record<string, any>, code: string, tags?: string[]) => string;
-  updateLiveDemo: (demoId: string, updates: any) => void;
+  createLiveDemo: (title: string, description: string, component: string, props: Record<string, unknown>, code: string, tags?: string[]) => string;
+  updateLiveDemo: (demoId: string, updates: unknown) => void;
   deleteLiveDemo: (demoId: string) => void;
-  createAPIEndpoint: (name: string, method: string, path: string, description: string, parameters: any[], responses: any[], examples?: any[]) => string;
-  updateAPIEndpoint: (endpointId: string, updates: any) => void;
+  createAPIEndpoint: (name: string, method: string, path: string, description: string, parameters: unknown[], responses: unknown[], examples?: unknown[]) => string;
+  updateAPIEndpoint: (endpointId: string, updates: unknown) => void;
   deleteAPIEndpoint: (endpointId: string) => void;
-  searchDocumentation: (query: string) => any[];
+  searchDocumentation: (query: string) => unknown[];
   buildSearchIndex: () => void;
-  getDocumentationPage: (pageId: string) => any;
-  getDocumentationPages: (filter?: any) => any[];
-  getCodeExample: (exampleId: string) => any;
-  getCodeExamples: (filter?: any) => any[];
-  getLiveDemo: (demoId: string) => any;
-  getLiveDemos: (filter?: any) => any[];
-  getAPIEndpoint: (endpointId: string) => any;
-  getAPIEndpoints: (filter?: any) => any[];
+  getDocumentationPage: (pageId: string) => unknown;
+  getDocumentationPages: (filter?: unknown) => unknown[];
+  getCodeExample: (exampleId: string) => unknown;
+  getCodeExamples: (filter?: unknown) => unknown[];
+  getLiveDemo: (demoId: string) => unknown;
+  getLiveDemos: (filter?: unknown) => unknown[];
+  getAPIEndpoint: (endpointId: string) => unknown;
+  getAPIEndpoints: (filter?: unknown) => unknown[];
   exportDocumentation: (format: string) => string;
   importDocumentation: (data: string, format: string) => void;
-  generateAPIReference: (componentName: string, props: any[], methods: any[]) => string;
-  generateChangelog: (version: string, changes: any[]) => string;
-  generateMigrationGuide: (fromVersion: string, toVersion: string, changes: any[]) => string;
-  generateTutorial: (title: string, steps: any[]) => string;
-  generateGuide: (title: string, sections: any[]) => string;
+  generateAPIReference: (componentName: string, props: unknown[], methods: unknown[]) => string;
+  generateChangelog: (version: string, changes: unknown[]) => string;
+  generateMigrationGuide: (fromVersion: string, toVersion: string, changes: unknown[]) => string;
+  generateTutorial: (title: string, steps: unknown[]) => string;
+  generateGuide: (title: string, sections: unknown[]) => string;
   reset: () => void;
 }
 
@@ -250,7 +236,7 @@ export function useDocumentation(options: DocumentationOptions = {}) {
 
 
   // Create Documentation Page
-  const createDocumentationPage = useCallback((title: string, slug: string, type: string, content: string, options: any = {}): string => {
+  const createDocumentationPage = useCallback((title: string, slug: string, type: string, content: string, options: unknown = {}): string => {
     if (!enableDocumentation) return '';
 
     const pageId = `page-${Date.now()}`;
@@ -260,11 +246,11 @@ export function useDocumentation(options: DocumentationOptions = {}) {
       slug,
       type: type as 'guide' | 'tutorial' | 'api' | 'example' | 'demo' | 'changelog' | 'migration' | 'faq',
       content,
-      language: options.language || documentationLanguage,
-      version: options.version || documentationVersion,
-      tags: options.tags || [],
+      language: ((options as Record<string, unknown>).language as string) || documentationLanguage,
+      version: ((options as Record<string, unknown>).version as string) || documentationVersion,
+      tags: ((options as Record<string, unknown>).tags as string[]) || [],
       lastUpdated: Date.now(),
-      author: options.author || 'System',
+      author: ((options as Record<string, unknown>).author as string) || 'System',
     };
 
     setState(prev => ({
@@ -281,14 +267,14 @@ export function useDocumentation(options: DocumentationOptions = {}) {
   }, [enableDocumentation, documentationLanguage, documentationVersion, enableSearchableDocumentation, buildSearchIndex]);
 
   // Update Documentation Page
-  const updateDocumentationPage = useCallback((pageId: string, updates: any) => {
+  const updateDocumentationPage = useCallback((pageId: string, updates: unknown) => {
     if (!enableDocumentation) return;
 
     setState(prev => ({
       ...prev,
       documentationPages: prev.documentationPages.map(page =>
         page.id === pageId
-          ? { ...page, ...updates, lastUpdated: Date.now() }
+          ? { ...page, ...(updates as Record<string, unknown>), lastUpdated: Date.now() }
           : page
       ),
     }));
@@ -339,14 +325,14 @@ export function useDocumentation(options: DocumentationOptions = {}) {
   }, [enableDocumentation, enableCodeExamples]);
 
   // Update Code Example
-  const updateCodeExample = useCallback((exampleId: string, updates: any) => {
+  const updateCodeExample = useCallback((exampleId: string, updates: unknown) => {
     if (!enableDocumentation || !enableCodeExamples) return;
 
     setState(prev => ({
       ...prev,
       codeExamples: prev.codeExamples.map(example =>
         example.id === exampleId
-          ? { ...example, ...updates }
+          ? { ...example, ...(updates as Record<string, unknown>) }
           : example
       ),
     }));
@@ -363,7 +349,7 @@ export function useDocumentation(options: DocumentationOptions = {}) {
   }, [enableDocumentation, enableCodeExamples]);
 
   // Create Live Demo
-  const createLiveDemo = useCallback((title: string, description: string, component: string, props: Record<string, any>, code: string, tags: string[] = []): string => {
+  const createLiveDemo = useCallback((title: string, description: string, component: string, props: Record<string, unknown>, code: string, tags: string[] = []): string => {
     if (!enableDocumentation || !enableLiveDemos) return '';
 
     const demoId = `demo-${Date.now()}`;
@@ -387,14 +373,14 @@ export function useDocumentation(options: DocumentationOptions = {}) {
   }, [enableDocumentation, enableLiveDemos]);
 
   // Update Live Demo
-  const updateLiveDemo = useCallback((demoId: string, updates: any) => {
+  const updateLiveDemo = useCallback((demoId: string, updates: unknown) => {
     if (!enableDocumentation || !enableLiveDemos) return;
 
     setState(prev => ({
       ...prev,
       liveDemos: prev.liveDemos.map(demo =>
         demo.id === demoId
-          ? { ...demo, ...updates }
+          ? { ...demo, ...(updates as Record<string, unknown>) }
           : demo
       ),
     }));
@@ -411,7 +397,7 @@ export function useDocumentation(options: DocumentationOptions = {}) {
   }, [enableDocumentation, enableLiveDemos]);
 
   // Create API Endpoint
-  const createAPIEndpoint = useCallback((name: string, method: string, path: string, description: string, parameters: any[], responses: any[], examples: any[] = []): string => {
+  const createAPIEndpoint = useCallback((name: string, method: string, path: string, description: string, parameters: unknown[], responses: unknown[], examples: unknown[] = []): string => {
     if (!enableDocumentation || !enableAPIExplorer) return '';
 
     const endpointId = `endpoint-${Date.now()}`;
@@ -435,14 +421,14 @@ export function useDocumentation(options: DocumentationOptions = {}) {
   }, [enableDocumentation, enableAPIExplorer]);
 
   // Update API Endpoint
-  const updateAPIEndpoint = useCallback((endpointId: string, updates: any) => {
+  const updateAPIEndpoint = useCallback((endpointId: string, updates: unknown) => {
     if (!enableDocumentation || !enableAPIExplorer) return;
 
     setState(prev => ({
       ...prev,
       apiEndpoints: prev.apiEndpoints.map(endpoint =>
         endpoint.id === endpointId
-          ? { ...endpoint, ...updates }
+          ? { ...endpoint, ...(updates as Record<string, unknown>) }
           : endpoint
       ),
     }));
@@ -459,7 +445,7 @@ export function useDocumentation(options: DocumentationOptions = {}) {
   }, [enableDocumentation, enableAPIExplorer]);
 
   // Search Documentation
-  const searchDocumentation = useCallback((query: string): any[] => {
+  const searchDocumentation = useCallback((query: string): unknown[] => {
     if (!enableDocumentation || !enableSearchableDocumentation) return [];
 
     const lowerQuery = query.toLowerCase();
@@ -476,10 +462,11 @@ export function useDocumentation(options: DocumentationOptions = {}) {
   }, [state.documentationPages]);
 
   // Get Documentation Pages
-  const getDocumentationPages = useCallback((filter?: any) => {
+  const getDocumentationPages = useCallback((filter?: unknown) => {
     if (filter) {
+      const filterObj = filter as Record<string, unknown>;
       return state.documentationPages.filter(page =>
-        Object.keys(filter).every(key => page[key as keyof typeof page] === filter[key])
+        Object.keys(filterObj).every(key => page[key as keyof typeof page] === filterObj[key])
       );
     }
     return state.documentationPages;
@@ -491,40 +478,43 @@ export function useDocumentation(options: DocumentationOptions = {}) {
   }, [state.codeExamples]);
 
   // Get Code Examples
-  const getCodeExamples = useCallback((filter?: any) => {
+  const getCodeExamples = useCallback((filter?: unknown) => {
     if (filter) {
+      const filterObj = filter as Record<string, unknown>;
       return state.codeExamples.filter(example =>
-        Object.keys(filter).every(key => example[key as keyof typeof example] === filter[key])
+        Object.keys(filterObj).every(key => example[key as keyof typeof example] === filterObj[key])
       );
     }
     return state.codeExamples;
   }, [state.codeExamples]);
 
   // Get Live Demo
-  const getLiveDemo = useCallback((demoId: string) => {
+  const getLiveDemo = useCallback((demoId: string): unknown => {
     return state.liveDemos.find(demo => demo.id === demoId);
   }, [state.liveDemos]);
 
   // Get Live Demos
-  const getLiveDemos = useCallback((filter?: any) => {
+  const getLiveDemos = useCallback((filter?: unknown) => {
     if (filter) {
+      const filterObj = filter as Record<string, unknown>;
       return state.liveDemos.filter(demo =>
-        Object.keys(filter).every(key => demo[key as keyof typeof demo] === filter[key])
+        Object.keys(filterObj).every(key => demo[key as keyof typeof demo] === filterObj[key])
       );
     }
     return state.liveDemos;
   }, [state.liveDemos]);
 
   // Get API Endpoint
-  const getAPIEndpoint = useCallback((endpointId: string) => {
+  const getAPIEndpoint = useCallback((endpointId: string): unknown => {
     return state.apiEndpoints.find(endpoint => endpoint.id === endpointId);
   }, [state.apiEndpoints]);
 
   // Get API Endpoints
-  const getAPIEndpoints = useCallback((filter?: any) => {
+  const getAPIEndpoints = useCallback((filter?: unknown) => {
     if (filter) {
+      const filterObj = filter as Record<string, unknown>;
       return state.apiEndpoints.filter(endpoint =>
-        Object.keys(filter).every(key => endpoint[key as keyof typeof endpoint] === filter[key])
+        Object.keys(filterObj).every(key => endpoint[key as keyof typeof endpoint] === filterObj[key])
       );
     }
     return state.apiEndpoints;
@@ -573,102 +563,102 @@ export function useDocumentation(options: DocumentationOptions = {}) {
   }, []);
 
   // Generate API Reference
-  const generateAPIReference = useCallback((componentName: string, props: any[], methods: any[]) => {
+  const generateAPIReference = useCallback((componentName: string, props: unknown[], methods: unknown[]) => {
     return `# ${componentName} API Reference
 
 ## Props
 
-${props.map(prop => `
-### ${prop.name}
-- **Type:** \`${prop.type}\`
-- **Required:** ${prop.required ? 'Yes' : 'No'}
-- **Default:** \`${prop.default || 'undefined'}\`
-- **Description:** ${prop.description}
+${props.map((prop: unknown) => `
+### ${(prop as Record<string, unknown>).name}
+- **Type:** \`${(prop as Record<string, unknown>).type}\`
+- **Required:** ${(prop as Record<string, unknown>).required ? 'Yes' : 'No'}
+- **Default:** \`${(prop as Record<string, unknown>).default || 'undefined'}\`
+- **Description:** ${(prop as Record<string, unknown>).description}
 `).join('')}
 
 ## Methods
 
-${methods.map(method => `
-### ${method.name}
-- **Parameters:** ${method.parameters?.map((p: any) => `\`${p.name}: ${p.type}\``).join(', ') || 'None'}
-- **Returns:** \`${method.returns || 'void'}\`
-- **Description:** ${method.description}
+${methods.map((method: unknown) => `
+### ${(method as Record<string, unknown>).name}
+- **Parameters:** ${((method as Record<string, unknown>).parameters as unknown[])?.map((p: unknown) => `\`${(p as Record<string, unknown>).name}: ${(p as Record<string, unknown>).type}\``).join(', ') || 'None'}
+- **Returns:** \`${(method as Record<string, unknown>).returns || 'void'}\`
+- **Description:** ${(method as Record<string, unknown>).description}
 `).join('')}
 `;
   }, []);
 
   // Generate Changelog
-  const generateChangelog = useCallback((version: string, changes: any[]) => {
+  const generateChangelog = useCallback((version: string, changes: unknown[]) => {
     return `# Changelog
 
 ## [${version}] - ${new Date().toISOString().split('T')[0]}
 
-${changes.map(change => `
-### ${change.type}
-- ${change.description}
+${changes.map((change: unknown) => `
+### ${(change as Record<string, unknown>).type}
+- ${(change as Record<string, unknown>).description}
 `).join('')}
 `;
   }, []);
 
   // Generate Migration Guide
-  const generateMigrationGuide = useCallback((fromVersion: string, toVersion: string, changes: any[]) => {
+  const generateMigrationGuide = useCallback((fromVersion: string, toVersion: string, changes: unknown[]) => {
     return `# Migration Guide: ${fromVersion} → ${toVersion}
 
 ## Breaking Changes
 
-${changes.filter(c => c.breaking).map(change => `
-### ${change.title}
-${change.description}
+${changes.filter((c: unknown) => (c as Record<string, unknown>).breaking).map((change: unknown) => `
+### ${(change as Record<string, unknown>).title}
+${(change as Record<string, unknown>).description}
 
 **Before:**
 \`\`\`tsx
-${change.before}
+${(change as Record<string, unknown>).before}
 \`\`\`
 
 **After:**
 \`\`\`tsx
-${change.after}
+${(change as Record<string, unknown>).after}
 \`\`\`
 `).join('')}
 
 ## New Features
 
-${changes.filter(c => !c.breaking).map(change => `
-### ${change.title}
-${change.description}
+${changes.filter((c: unknown) => !(c as Record<string, unknown>).breaking).map((change: unknown) => `
+### ${(change as Record<string, unknown>).title}
+${(change as Record<string, unknown>).description}
 `).join('')}
 `;
   }, []);
 
   // Generate Tutorial
-  const generateTutorial = useCallback((title: string, steps: any[]) => {
+  const generateTutorial = useCallback((title: string, steps: unknown[]) => {
     return `# ${title}
 
-${steps.map((step, index) => `
-## Step ${index + 1}: ${step.title}
+${steps.map((step: unknown, index: number) => `
+## Step ${index + 1}: ${(step as Record<string, unknown>).title}
 
-${step.description}
+${(step as Record<string, unknown>).description}
 
-${step.code ? `\`\`\`tsx\n${step.code}\n\`\`\`` : ''}
+${(step as Record<string, unknown>).code ? `\`\`\`tsx\n${(step as Record<string, unknown>).code}\n\`\`\`` : ''}
 `).join('')}
 `;
   }, []);
 
   // Generate Guide
-  const generateGuide = useCallback((title: string, sections: any[]) => {
+  const generateGuide = useCallback((title: string, sections: unknown[]) => {
     return `# ${title}
 
-${sections.map(section => `
-## ${section.title}
+${sections.map((section: unknown) => `
+## ${(section as Record<string, unknown>).title}
 
-${section.content}
+${(section as Record<string, unknown>).content}
 
-${section.examples?.map((example: any) => `
-### Example: ${example.title}
-${example.description}
+${((section as Record<string, unknown>).examples as unknown[])?.map((example: unknown) => `
+### Example: ${(example as Record<string, unknown>).title}
+${(example as Record<string, unknown>).description}
 
 \`\`\`tsx
-${example.code}
+${(example as Record<string, unknown>).code}
 \`\`\`
 `).join('') || ''}
 `).join('')}

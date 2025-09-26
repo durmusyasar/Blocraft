@@ -1,27 +1,28 @@
-export function getAppearanceSx(base: any, colorKey: string, getColor: (key: string) => string) {
+export function getAppearanceSx(base: Record<string, unknown>, colorKey: string, getColor: (key: string) => string) {
+  const baseSx = base as Record<string, unknown>;
   return {
-    ...base,
+    ...baseSx,
     "& .MuiOutlinedInput-root": {
-      ...base["& .MuiOutlinedInput-root"],
+      ...(baseSx["& .MuiOutlinedInput-root"] as Record<string, unknown>),
       borderColor: getColor(colorKey),
       "&.Mui-focused": {
-        ...base["& .MuiOutlinedInput-root"]?.["&.Mui-focused"],
+        ...((baseSx["& .MuiOutlinedInput-root"] as Record<string, unknown>)?.["&.Mui-focused"] as Record<string, unknown>),
         borderColor: getColor(colorKey),
       },
       "&.Mui-error": {
-        ...base["& .MuiOutlinedInput-root"]?.["&.Mui-error"],
+        ...((baseSx["& .MuiOutlinedInput-root"] as Record<string, unknown>)?.["&.Mui-error"] as Record<string, unknown>),
         borderColor: getColor(colorKey),
       },
     },
     "& .MuiInputLabel-root": {
-      ...base["& .MuiInputLabel-root"],
+      ...(baseSx["& .MuiInputLabel-root"] as Record<string, unknown>),
       color: getColor(colorKey),
       "&.Mui-focused": {
-        ...base["& .MuiInputLabel-root"]?.["&.Mui-focused"],
+        ...((baseSx["& .MuiInputLabel-root"] as Record<string, unknown>)?.["&.Mui-focused"] as Record<string, unknown>),
         color: getColor(colorKey),
       },
       "&.Mui-error": {
-        ...base["& .MuiInputLabel-root"]?.["&.Mui-error"],
+        ...((baseSx["& .MuiInputLabel-root"] as Record<string, unknown>)?.["&.Mui-error"] as Record<string, unknown>),
         color: getColor(colorKey),
       },
     },

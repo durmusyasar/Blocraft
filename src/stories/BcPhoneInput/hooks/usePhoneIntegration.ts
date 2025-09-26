@@ -23,7 +23,7 @@ export interface PhoneIntegrationOptions {
 
 export interface PhoneIntegrationReturn {
   form: {
-    connectToForm: (formRef: any) => void;
+    connectToForm: (formRef: unknown) => void;
     disconnectFromForm: () => void;
     validateFormField: (value: string) => Promise<boolean>;
     getFormValue: () => Promise<string>;
@@ -33,73 +33,73 @@ export interface PhoneIntegrationReturn {
     clearFormError: () => Promise<void>;
   };
   validation: {
-    connectToValidator: (validator: any) => void;
+    connectToValidator: (validator: unknown) => void;
     disconnectFromValidator: () => void;
-    validateWithExternal: (value: string, rules: any[]) => Promise<boolean>;
-    getValidationRules: () => Promise<any[]>;
-    setValidationRules: (rules: any[]) => Promise<void>;
+    validateWithExternal: (value: string, rules: unknown[]) => Promise<boolean>;
+    getValidationRules: () => Promise<unknown[]>;
+    setValidationRules: (rules: unknown[]) => Promise<void>;
     getValidationMessages: () => Promise<Record<string, string>>;
     setValidationMessages: (messages: Record<string, string>) => Promise<void>;
   };
   state: {
-    connectToState: (stateManager: any) => void;
+    connectToState: (stateManager: unknown) => void;
     disconnectFromState: () => void;
-    syncState: (state: any) => void;
-    getStateValue: (key: string) => any;
-    setStateValue: (key: string, value: any) => void;
-    subscribeToState: (key: string, callback: (value: any) => void) => void;
-    unsubscribeFromState: (key: string, callback: (value: any) => void) => void;
+    syncState: (state: unknown) => void;
+    getStateValue: (key: string) => unknown;
+    setStateValue: (key: string, value: unknown) => void;
+    subscribeToState: (key: string, callback: (value: unknown) => void) => void;
+    unsubscribeFromState: (key: string, callback: (value: unknown) => void) => void;
   };
   events: {
-    emitEvent: (event: string, data?: any) => void;
-    onEvent: (event: string, callback: (data?: any) => void) => void;
-    offEvent: (event: string, callback?: (data?: any) => void) => void;
-    connectToEventBus: (eventBus: any) => void;
+    emitEvent: (event: string, data?: unknown) => void;
+    onEvent: (event: string, callback: (data?: unknown) => void) => void;
+    offEvent: (event: string, callback?: (data?: unknown) => void) => void;
+    connectToEventBus: (eventBus: unknown) => void;
     disconnectFromEventBus: () => void;
-    getEventHistory: () => any[];
+    getEventHistory: () => unknown[];
     clearEventHistory: () => void;
   };
   data: {
-    connectToDataSource: (dataSource: any) => void;
+    connectToDataSource: (dataSource: unknown) => void;
     disconnectFromDataSource: () => void;
-    fetchData: (query: any) => Promise<any>;
-    saveData: (data: any) => Promise<boolean>;
-    updateData: (id: string, data: any) => Promise<boolean>;
+    fetchData: (query: unknown) => Promise<unknown>;
+    saveData: (data: unknown) => Promise<boolean>;
+    updateData: (id: string, data: unknown) => Promise<boolean>;
     deleteData: (id: string) => Promise<boolean>;
-    subscribeToDataChanges: (callback: (data: any) => void) => void;
-    unsubscribeFromDataChanges: (callback: (data: any) => void) => void;
+    subscribeToDataChanges: (callback: (data: unknown) => void) => void;
+    unsubscribeFromDataChanges: (callback: (data: unknown) => void) => void;
   };
   api: {
-    connectToAPI: (apiClient: any) => void;
+    connectToAPI: (apiClient: unknown) => void;
     disconnectFromAPI: () => void;
-    makeAPICall: (endpoint: string, options?: any) => Promise<any>;
+    makeAPICall: (endpoint: string, options?: unknown) => Promise<unknown>;
     validateWithAPI: (phone: string, country: string) => Promise<boolean>;
     formatWithAPI: (phone: string, country: string) => Promise<string>;
-    getCountriesFromAPI: () => Promise<any[]>;
-    setAPIConfig: (config: any) => Promise<void>;
-    getAPIConfig: () => any;
+    getCountriesFromAPI: () => Promise<unknown[]>;
+    setAPIConfig: (config: unknown) => Promise<void>;
+    getAPIConfig: () => unknown;
   };
   storage: {
-    connectToStorage: (storage: any) => void;
+    connectToStorage: (storage: unknown) => void;
     disconnectFromStorage: () => void;
-    saveToStorage: (key: string, value: any) => Promise<boolean>;
-    loadFromStorage: (key: string) => Promise<any>;
+    saveToStorage: (key: string, value: unknown) => Promise<boolean>;
+    loadFromStorage: (key: string) => Promise<unknown>;
     removeFromStorage: (key: string) => Promise<boolean>;
     clearStorage: () => Promise<boolean>;
     getStorageKeys: () => Promise<string[]>;
     getStorageSize: () => Promise<number>;
   };
   theme: {
-    connectToTheme: (themeProvider: any) => void;
+    connectToTheme: (themeProvider: unknown) => void;
     disconnectFromTheme: () => void;
-    getThemeValue: (key: string) => any;
-    setThemeValue: (key: string, value: any) => void;
-    subscribeToThemeChanges: (callback: (theme: any) => void) => void;
-    unsubscribeFromThemeChanges: (callback: (theme: any) => void) => void;
-    adaptToTheme: (theme: any) => void;
+    getThemeValue: (key: string) => unknown;
+    setThemeValue: (key: string, value: unknown) => void;
+    subscribeToThemeChanges: (callback: (theme: unknown) => void) => void;
+    unsubscribeFromThemeChanges: (callback: (theme: unknown) => void) => void;
+    adaptToTheme: (theme: unknown) => void;
   };
   i18n: {
-    connectToI18n: (i18nProvider: any) => void;
+    connectToI18n: (i18nProvider: unknown) => void;
     disconnectFromI18n: () => void;
     getTranslation: (key: string, locale?: string) => string;
     setLocale: (locale: string) => void;
@@ -110,52 +110,52 @@ export interface PhoneIntegrationReturn {
     formatDate: (date: Date, locale?: string) => string;
   };
   accessibility: {
-    connectToAccessibility: (accessibilityProvider: any) => void;
+    connectToAccessibility: (accessibilityProvider: unknown) => void;
     disconnectFromAccessibility: () => void;
     announceToScreenReader: (message: string) => void;
     setFocus: (element: HTMLElement) => void;
-    getAccessibilityInfo: () => any;
-    setAccessibilityInfo: (info: any) => void;
-    subscribeToAccessibilityChanges: (callback: (info: any) => void) => void;
-    unsubscribeFromAccessibilityChanges: (callback: (info: any) => void) => void;
+    getAccessibilityInfo: () => unknown;
+    setAccessibilityInfo: (info: unknown) => void;
+    subscribeToAccessibilityChanges: (callback: (info: unknown) => void) => void;
+    unsubscribeFromAccessibilityChanges: (callback: (info: unknown) => void) => void;
   };
   performance: {
-    connectToPerformance: (performanceProvider: any) => void;
+    connectToPerformance: (performanceProvider: unknown) => void;
     disconnectFromPerformance: () => void;
     trackPerformance: (metric: string, value: number) => void;
-    getPerformanceMetrics: () => any;
+    getPerformanceMetrics: () => unknown;
     setPerformanceThreshold: (metric: string, threshold: number) => void;
-    subscribeToPerformanceChanges: (callback: (metrics: any) => void) => void;
-    unsubscribeFromPerformanceChanges: (callback: (metrics: any) => void) => void;
+    subscribeToPerformanceChanges: (callback: (metrics: unknown) => void) => void;
+    unsubscribeFromPerformanceChanges: (callback: (metrics: unknown) => void) => void;
   };
   monitoring: {
-    connectToMonitoring: (monitoringProvider: any) => void;
+    connectToMonitoring: (monitoringProvider: unknown) => void;
     disconnectFromMonitoring: () => void;
-    trackEvent: (event: string, data?: any) => void;
-    trackError: (error: Error, context?: any) => void;
+    trackEvent: (event: string, data?: unknown) => void;
+    trackError: (error: Error, context?: unknown) => void;
     trackPerformance: (metric: string, value: number) => void;
-    getMonitoringData: () => any;
-    setMonitoringConfig: (config: any) => void;
-    getMonitoringConfig: () => any;
+    getMonitoringData: () => unknown;
+    setMonitoringConfig: (config: unknown) => void;
+    getMonitoringConfig: () => unknown;
   };
   testing: {
-    connectToTesting: (testingProvider: any) => void;
+    connectToTesting: (testingProvider: unknown) => void;
     disconnectFromTesting: () => void;
-    runTests: (testSuite: any) => Promise<any>;
-    getTestResults: () => any;
-    setTestConfig: (config: any) => void;
-    getTestConfig: () => any;
-    mockData: (data: any) => void;
+    runTests: (testSuite: unknown) => Promise<unknown>;
+    getTestResults: () => unknown;
+    setTestConfig: (config: unknown) => void;
+    getTestConfig: () => unknown;
+    mockData: (data: unknown) => void;
     clearMockData: () => void;
   };
   custom: {
-    connectToCustom: (customProvider: any) => void;
+    connectToCustom: (customProvider: unknown) => void;
     disconnectFromCustom: () => void;
-    executeCustomFunction: (functionName: string, ...args: any[]) => any;
-    getCustomData: (key: string) => any;
-    setCustomData: (key: string, value: any) => void;
-    subscribeToCustomChanges: (key: string, callback: (value: any) => void) => void;
-    unsubscribeFromCustomChanges: (key: string, callback: (value: any) => void) => void;
+    executeCustomFunction: (functionName: string, ...args: unknown[]) => unknown;
+    getCustomData: (key: string) => unknown;
+    setCustomData: (key: string, value: unknown) => void;
+    subscribeToCustomChanges: (key: string, callback: (value: unknown) => void) => void;
+    unsubscribeFromCustomChanges: (key: string, callback: (value: unknown) => void) => void;
   };
   // Utility functions
   executeWithRetry: <T>(operation: () => Promise<T>, operationName: string, customTimeout?: number, customRetries?: number, customDelay?: number) => Promise<T>;
@@ -184,9 +184,9 @@ export const usePhoneIntegration = (props: BcPhoneInputProps): PhoneIntegrationR
     integrationDelay = 1000,
   } = props;
 
-  const connectionsRef = useRef<Map<string, any>>(new Map());
+  const connectionsRef = useRef<Map<string, unknown>>(new Map());
   const subscriptionsRef = useRef<Map<string, Set<Function>>>(new Map());
-  const eventHistoryRef = useRef<any[]>([]);
+  const eventHistoryRef = useRef<unknown[]>([]);
   const timeoutRef = useRef<Map<string, NodeJS.Timeout>>(new Map());
   const retryCountRef = useRef<Map<string, number>>(new Map());
 
@@ -266,7 +266,7 @@ export const usePhoneIntegration = (props: BcPhoneInputProps): PhoneIntegrationR
   }, [integrationTimeout]);
 
   // Form Integration
-  const connectToForm = useCallback((formRef: any) => {
+  const connectToForm = useCallback((formRef: unknown) => {
     if (enableFormIntegration) {
       connectionsRef.current.set('form', formRef);
     }
@@ -280,10 +280,10 @@ export const usePhoneIntegration = (props: BcPhoneInputProps): PhoneIntegrationR
 
   const validateFormField = useCallback(async (value: string): Promise<boolean> => {
     if (enableFormIntegration) {
-      const form = connectionsRef.current.get('form');
+      const form = connectionsRef.current.get('form') as { validateField?: (field: string, value: string) => boolean };
       if (form?.validateField) {
         return executeWithRetry(
-          () => Promise.resolve(form.validateField('phone', value)),
+          () => Promise.resolve(form.validateField?.('phone', value) ?? true),
           'validateFormField'
         );
       }
@@ -293,10 +293,10 @@ export const usePhoneIntegration = (props: BcPhoneInputProps): PhoneIntegrationR
 
   const getFormValue = useCallback(async (): Promise<string> => {
     if (enableFormIntegration) {
-      const form = connectionsRef.current.get('form');
+      const form = connectionsRef.current.get('form') as { getValue?: (field: string) => string };
       if (form?.getValue) {
         return executeWithRetry(
-          () => Promise.resolve(form.getValue('phone') || ''),
+          () => Promise.resolve(form.getValue!('phone') || ''),
           'getFormValue'
         );
       }
@@ -306,10 +306,10 @@ export const usePhoneIntegration = (props: BcPhoneInputProps): PhoneIntegrationR
 
   const setFormValue = useCallback(async (value: string): Promise<void> => {
     if (enableFormIntegration) {
-      const form = connectionsRef.current.get('form');
+      const form = connectionsRef.current.get('form') as { setValue?: (field: string, value: string) => void };
       if (form?.setValue) {
         return executeWithRetry(
-          () => Promise.resolve(form.setValue('phone', value)),
+          () => Promise.resolve(form.setValue!('phone', value)),
           'setFormValue'
         );
       }
@@ -318,10 +318,10 @@ export const usePhoneIntegration = (props: BcPhoneInputProps): PhoneIntegrationR
 
   const getFormError = useCallback(async (): Promise<string | null> => {
     if (enableFormIntegration) {
-      const form = connectionsRef.current.get('form');
+      const form = connectionsRef.current.get('form') as { getError?: (field: string) => string };
       if (form?.getError) {
         return executeWithRetry(
-          () => Promise.resolve(form.getError('phone')),
+          () => Promise.resolve(form.getError!('phone')),
           'getFormError'
         );
       }
@@ -331,10 +331,10 @@ export const usePhoneIntegration = (props: BcPhoneInputProps): PhoneIntegrationR
 
   const setFormError = useCallback(async (error: string): Promise<void> => {
     if (enableFormIntegration) {
-      const form = connectionsRef.current.get('form');
+      const form = connectionsRef.current.get('form') as { setError?: (field: string, error: string) => void };
       if (form?.setError) {
         return executeWithRetry(
-          () => Promise.resolve(form.setError('phone', error)),
+          () => Promise.resolve(form.setError!('phone', error)),
           'setFormError'
         );
       }
@@ -343,10 +343,10 @@ export const usePhoneIntegration = (props: BcPhoneInputProps): PhoneIntegrationR
 
   const clearFormError = useCallback(async (): Promise<void> => {
     if (enableFormIntegration) {
-      const form = connectionsRef.current.get('form');
+      const form = connectionsRef.current.get('form') as { clearError?: (field: string) => void };
       if (form?.clearError) {
         return executeWithRetry(
-          () => Promise.resolve(form.clearError('phone')),
+          () => Promise.resolve(form.clearError!('phone')),
           'clearFormError'
         );
       }
@@ -354,7 +354,7 @@ export const usePhoneIntegration = (props: BcPhoneInputProps): PhoneIntegrationR
   }, [enableFormIntegration, executeWithRetry]);
 
   // Validation Integration
-  const connectToValidator = useCallback((validator: any) => {
+  const connectToValidator = useCallback((validator: unknown) => {
     if (enableValidationIntegration) {
       connectionsRef.current.set('validator', validator);
     }
@@ -366,12 +366,12 @@ export const usePhoneIntegration = (props: BcPhoneInputProps): PhoneIntegrationR
     }
   }, [enableValidationIntegration]);
 
-  const validateWithExternal = useCallback(async (value: string, rules: any[]): Promise<boolean> => {
+  const validateWithExternal = useCallback(async (value: string, rules: unknown[]): Promise<boolean> => {
     if (enableValidationIntegration) {
-      const validator = connectionsRef.current.get('validator');
+      const validator = connectionsRef.current.get('validator') as { validate?: (value: string, rules: unknown) => boolean };
       if (validator?.validate) {
         return executeWithRetry(
-          () => validator.validate(value, rules),
+          () => Promise.resolve(validator.validate!(value, rules)),
           'validateWithExternal'
         );
       }
@@ -379,12 +379,12 @@ export const usePhoneIntegration = (props: BcPhoneInputProps): PhoneIntegrationR
     return true;
   }, [enableValidationIntegration, executeWithRetry]);
 
-  const getValidationRules = useCallback(async (): Promise<any[]> => {
+  const getValidationRules = useCallback(async (): Promise<unknown[]> => {
     if (enableValidationIntegration) {
-      const validator = connectionsRef.current.get('validator');
+      const validator = connectionsRef.current.get('validator') as { getRules?: (field: string) => unknown[] };
       if (validator?.getRules) {
         return executeWithRetry(
-          () => Promise.resolve(validator.getRules('phone')),
+          () => Promise.resolve(validator.getRules!('phone')),
           'getValidationRules'
         );
       }
@@ -392,12 +392,12 @@ export const usePhoneIntegration = (props: BcPhoneInputProps): PhoneIntegrationR
     return [];
   }, [enableValidationIntegration, executeWithRetry]);
 
-  const setValidationRules = useCallback(async (rules: any[]): Promise<void> => {
+  const setValidationRules = useCallback(async (rules: unknown[]): Promise<void> => {
     if (enableValidationIntegration) {
-      const validator = connectionsRef.current.get('validator');
+      const validator = connectionsRef.current.get('validator') as { setRules?: (field: string, rules: unknown[]) => void };
       if (validator?.setRules) {
         return executeWithRetry(
-          () => Promise.resolve(validator.setRules('phone', rules)),
+          () => Promise.resolve(validator.setRules!('phone', rules)),
           'setValidationRules'
         );
       }
@@ -406,10 +406,10 @@ export const usePhoneIntegration = (props: BcPhoneInputProps): PhoneIntegrationR
 
   const getValidationMessages = useCallback(async (): Promise<Record<string, string>> => {
     if (enableValidationIntegration) {
-      const validator = connectionsRef.current.get('validator');
+      const validator = connectionsRef.current.get('validator') as { getMessages?: (field: string) => Record<string, string> };
       if (validator?.getMessages) {
         return executeWithRetry(
-          () => Promise.resolve(validator.getMessages('phone')),
+          () => Promise.resolve(validator.getMessages!('phone')),
           'getValidationMessages'
         );
       }
@@ -419,10 +419,10 @@ export const usePhoneIntegration = (props: BcPhoneInputProps): PhoneIntegrationR
 
   const setValidationMessages = useCallback(async (messages: Record<string, string>): Promise<void> => {
     if (enableValidationIntegration) {
-      const validator = connectionsRef.current.get('validator');
+      const validator = connectionsRef.current.get('validator') as { setMessages?: (field: string, messages: Record<string, string>) => void };
       if (validator?.setMessages) {
         return executeWithRetry(
-          () => Promise.resolve(validator.setMessages('phone', messages)),
+          () => Promise.resolve(validator.setMessages!('phone', messages)),
           'setValidationMessages'
         );
       }
@@ -430,7 +430,7 @@ export const usePhoneIntegration = (props: BcPhoneInputProps): PhoneIntegrationR
   }, [enableValidationIntegration, executeWithRetry]);
 
   // State Integration
-  const connectToState = useCallback((stateManager: any) => {
+  const connectToState = useCallback((stateManager: unknown) => {
     if (enableStateIntegration) {
       connectionsRef.current.set('state', stateManager);
     }
@@ -442,60 +442,60 @@ export const usePhoneIntegration = (props: BcPhoneInputProps): PhoneIntegrationR
     }
   }, [enableStateIntegration]);
 
-  const syncState = useCallback((state: any) => {
+  const syncState = useCallback((state: unknown) => {
     if (enableStateIntegration) {
-      const stateManager = connectionsRef.current.get('state');
+      const stateManager = connectionsRef.current.get('state') as { sync?: (key: string, state: unknown) => void };
       if (stateManager?.sync) {
         stateManager.sync('phone', state);
       }
     }
   }, [enableStateIntegration]);
 
-  const getStateValue = useCallback((key: string): any => {
+  const getStateValue = useCallback((key: string): unknown => {
     if (enableStateIntegration) {
-      const stateManager = connectionsRef.current.get('state');
+      const stateManager = connectionsRef.current.get('state') as { getValue?: (key: string) => unknown };
       if (stateManager?.getValue) {
-        return stateManager.getValue(key);
+        return stateManager.getValue!(key);
       }
     }
     return undefined;
   }, [enableStateIntegration]);
 
-  const setStateValue = useCallback((key: string, value: any) => {
+  const setStateValue = useCallback((key: string, value: unknown) => {
     if (enableStateIntegration) {
-      const stateManager = connectionsRef.current.get('state');
+      const stateManager = connectionsRef.current.get('state') as { setValue?: (key: string, value: unknown) => void };
       if (stateManager?.setValue) {
-        stateManager.setValue(key, value);
+        stateManager.setValue!(key, value);
       }
     }
   }, [enableStateIntegration]);
 
-  const subscribeToState = useCallback((key: string, callback: (value: any) => void) => {
+  const subscribeToState = useCallback((key: string, callback: (value: unknown) => void) => {
     if (enableStateIntegration) {
-      const stateManager = connectionsRef.current.get('state');
+      const stateManager = connectionsRef.current.get('state') as { subscribe?: (key: string, callback: (value: unknown) => void) => void };
       if (stateManager?.subscribe) {
-        stateManager.subscribe(key, callback);
+        stateManager.subscribe!(key, callback);
       }
     }
   }, [enableStateIntegration]);
 
-  const unsubscribeFromState = useCallback((key: string, callback: (value: any) => void) => {
+  const unsubscribeFromState = useCallback((key: string, callback: (value: unknown) => void) => {
     if (enableStateIntegration) {
-      const stateManager = connectionsRef.current.get('state');
+      const stateManager = connectionsRef.current.get('state') as { unsubscribe?: (key: string, callback: (value: unknown) => void) => void };
       if (stateManager?.unsubscribe) {
-        stateManager.unsubscribe(key, callback);
+        stateManager.unsubscribe!(key, callback);
       }
     }
   }, [enableStateIntegration]);
 
   // Event Integration
-  const emitEvent = useCallback((event: string, data?: any) => {
+  const emitEvent = useCallback((event: string, data?: unknown) => {
     if (enableEventIntegration) {
       eventHistoryRef.current.push({ event, data, timestamp: Date.now() });
       
-      const eventBus = connectionsRef.current.get('eventBus');
+      const eventBus = connectionsRef.current.get('eventBus') as { emit?: (event: string, data?: unknown) => void };
       if (eventBus?.emit) {
-        eventBus.emit(event, data);
+        eventBus.emit!(event, data);
       }
       
       const subscribers = subscriptionsRef.current.get(event);
@@ -505,7 +505,7 @@ export const usePhoneIntegration = (props: BcPhoneInputProps): PhoneIntegrationR
     }
   }, [enableEventIntegration]);
 
-  const onEvent = useCallback((event: string, callback: (data?: any) => void) => {
+  const onEvent = useCallback((event: string, callback: (data?: unknown) => void) => {
     if (enableEventIntegration) {
       if (!subscriptionsRef.current.has(event)) {
         subscriptionsRef.current.set(event, new Set());
@@ -514,7 +514,7 @@ export const usePhoneIntegration = (props: BcPhoneInputProps): PhoneIntegrationR
     }
   }, [enableEventIntegration]);
 
-  const offEvent = useCallback((event: string, callback?: (data?: any) => void) => {
+  const offEvent = useCallback((event: string, callback?: (data?: unknown) => void) => {
     if (enableEventIntegration) {
       const subscribers = subscriptionsRef.current.get(event);
       if (subscribers) {
@@ -527,7 +527,7 @@ export const usePhoneIntegration = (props: BcPhoneInputProps): PhoneIntegrationR
     }
   }, [enableEventIntegration]);
 
-  const connectToEventBus = useCallback((eventBus: any) => {
+  const connectToEventBus = useCallback((eventBus: unknown) => {
     if (enableEventIntegration) {
       connectionsRef.current.set('eventBus', eventBus);
     }
@@ -539,7 +539,7 @@ export const usePhoneIntegration = (props: BcPhoneInputProps): PhoneIntegrationR
     }
   }, [enableEventIntegration]);
 
-  const getEventHistory = useCallback((): any[] => {
+  const getEventHistory = useCallback((): unknown[] => {
     if (enableEventIntegration) {
       return [...eventHistoryRef.current];
     }
@@ -553,7 +553,7 @@ export const usePhoneIntegration = (props: BcPhoneInputProps): PhoneIntegrationR
   }, [enableEventIntegration]);
 
   // Data Integration
-  const connectToDataSource = useCallback((dataSource: any) => {
+  const connectToDataSource = useCallback((dataSource: unknown) => {
     if (enableDataIntegration) {
       connectionsRef.current.set('dataSource', dataSource);
     }
@@ -565,31 +565,31 @@ export const usePhoneIntegration = (props: BcPhoneInputProps): PhoneIntegrationR
     }
   }, [enableDataIntegration]);
 
-  const fetchData = useCallback(async (query: any): Promise<any> => {
+  const fetchData = useCallback(async (query: unknown): Promise<unknown> => {
     if (enableDataIntegration) {
-      const dataSource = connectionsRef.current.get('dataSource');
+      const dataSource = connectionsRef.current.get('dataSource') as { fetch?: (query: string) => Promise<unknown> };
       if (dataSource?.fetch) {
-        return await dataSource.fetch(query);
+        return await dataSource.fetch!(String(query));
       }
     }
     return null;
   }, [enableDataIntegration]);
 
-  const saveData = useCallback(async (data: any): Promise<boolean> => {
+  const saveData = useCallback(async (data: unknown): Promise<boolean> => {
     if (enableDataIntegration) {
-      const dataSource = connectionsRef.current.get('dataSource');
+      const dataSource = connectionsRef.current.get('dataSource') as { save?: (data: unknown) => Promise<boolean> };
       if (dataSource?.save) {
-        return await dataSource.save(data);
+        return await dataSource.save!(data);
       }
     }
     return false;
   }, [enableDataIntegration]);
 
-  const updateData = useCallback(async (id: string, data: any): Promise<boolean> => {
+  const updateData = useCallback(async (id: string, data: unknown): Promise<boolean> => {
     if (enableDataIntegration) {
-      const dataSource = connectionsRef.current.get('dataSource');
+      const dataSource = connectionsRef.current.get('dataSource') as { update?: (id: string, data: unknown) => Promise<boolean> };
       if (dataSource?.update) {
-        return await dataSource.update(id, data);
+        return await dataSource.update!(id, data);
       }
     }
     return false;
@@ -597,34 +597,34 @@ export const usePhoneIntegration = (props: BcPhoneInputProps): PhoneIntegrationR
 
   const deleteData = useCallback(async (id: string): Promise<boolean> => {
     if (enableDataIntegration) {
-      const dataSource = connectionsRef.current.get('dataSource');
+      const dataSource = connectionsRef.current.get('dataSource') as { delete?: (id: string) => Promise<boolean> };
       if (dataSource?.delete) {
-        return await dataSource.delete(id);
+        return await dataSource.delete!(id);
       }
     }
     return false;
   }, [enableDataIntegration]);
 
-  const subscribeToDataChanges = useCallback((callback: (data: any) => void) => {
+  const subscribeToDataChanges = useCallback((callback: (data: unknown) => void) => {
     if (enableDataIntegration) {
-      const dataSource = connectionsRef.current.get('dataSource');
+      const dataSource = connectionsRef.current.get('dataSource') as { subscribe?: (callback: (data: unknown) => void) => void };
       if (dataSource?.subscribe) {
-        dataSource.subscribe(callback);
+        dataSource.subscribe!(callback);
       }
     }
   }, [enableDataIntegration]);
 
-  const unsubscribeFromDataChanges = useCallback((callback: (data: any) => void) => {
+  const unsubscribeFromDataChanges = useCallback((callback: (data: unknown) => void) => {
     if (enableDataIntegration) {
-      const dataSource = connectionsRef.current.get('dataSource');
+      const dataSource = connectionsRef.current.get('dataSource') as { unsubscribe?: (callback: (data: unknown) => void) => void };
       if (dataSource?.unsubscribe) {
-        dataSource.unsubscribe(callback);
+        dataSource.unsubscribe!(callback);
       }
     }
   }, [enableDataIntegration]);
 
   // API Integration
-  const connectToAPI = useCallback((apiClient: any) => {
+  const connectToAPI = useCallback((apiClient: unknown) => {
     if (enableAPIIntegration) {
       connectionsRef.current.set('api', apiClient);
     }
@@ -636,12 +636,12 @@ export const usePhoneIntegration = (props: BcPhoneInputProps): PhoneIntegrationR
     }
   }, [enableAPIIntegration]);
 
-  const makeAPICall = useCallback(async (endpoint: string, options?: any): Promise<any> => {
+  const makeAPICall = useCallback(async (endpoint: string, options?: unknown): Promise<unknown> => {
     if (enableAPIIntegration) {
-      const api = connectionsRef.current.get('api');
+      const api = connectionsRef.current.get('api') as { call?: (endpoint: string, options: unknown) => Promise<unknown> };
       if (api?.call) {
         return executeWithRetry(
-          () => api.call(endpoint, options),
+          () => api.call!(endpoint, options),
           'makeAPICall'
         );
       }
@@ -651,10 +651,10 @@ export const usePhoneIntegration = (props: BcPhoneInputProps): PhoneIntegrationR
 
   const validateWithAPI = useCallback(async (phone: string, country: string): Promise<boolean> => {
     if (enableAPIIntegration) {
-      const api = connectionsRef.current.get('api');
+      const api = connectionsRef.current.get('api') as { validatePhone?: (phone: string, country: string) => Promise<boolean> };
       if (api?.validatePhone) {
         return executeWithRetry(
-          () => api.validatePhone(phone, country),
+          () => api.validatePhone!(phone, country),
           'validateWithAPI'
         );
       }
@@ -664,10 +664,10 @@ export const usePhoneIntegration = (props: BcPhoneInputProps): PhoneIntegrationR
 
   const formatWithAPI = useCallback(async (phone: string, country: string): Promise<string> => {
     if (enableAPIIntegration) {
-      const api = connectionsRef.current.get('api');
+      const api = connectionsRef.current.get('api') as { formatPhone?: (phone: string, country: string) => Promise<string> };
       if (api?.formatPhone) {
         return executeWithRetry(
-          () => api.formatPhone(phone, country),
+          () => api.formatPhone!(phone, country),
           'formatWithAPI'
         );
       }
@@ -675,12 +675,12 @@ export const usePhoneIntegration = (props: BcPhoneInputProps): PhoneIntegrationR
     return phone;
   }, [enableAPIIntegration, executeWithRetry]);
 
-  const getCountriesFromAPI = useCallback(async (): Promise<any[]> => {
+  const getCountriesFromAPI = useCallback(async (): Promise<unknown[]> => {
     if (enableAPIIntegration) {
-      const api = connectionsRef.current.get('api');
+      const api = connectionsRef.current.get('api') as { getCountries?: () => Promise<unknown[]> };
       if (api?.getCountries) {
         return executeWithRetry(
-          () => api.getCountries(),
+          () => api.getCountries!(),
           'getCountriesFromAPI'
         );
       }
@@ -688,30 +688,30 @@ export const usePhoneIntegration = (props: BcPhoneInputProps): PhoneIntegrationR
     return [];
   }, [enableAPIIntegration, executeWithRetry]);
 
-  const setAPIConfig = useCallback(async (config: any): Promise<void> => {
+  const setAPIConfig = useCallback(async (config: unknown): Promise<void> => {
     if (enableAPIIntegration) {
-      const api = connectionsRef.current.get('api');
+      const api = connectionsRef.current.get('api') as { setConfig?: (config: unknown) => void };
       if (api?.setConfig) {
         return executeWithRetry(
-          () => Promise.resolve(api.setConfig(config)),
+          () => Promise.resolve(api.setConfig!(config)),
           'setAPIConfig'
         );
       }
     }
   }, [enableAPIIntegration, executeWithRetry]);
 
-  const getAPIConfig = useCallback((): any => {
+  const getAPIConfig = useCallback((): unknown => {
     if (enableAPIIntegration) {
-      const api = connectionsRef.current.get('api');
+      const api = connectionsRef.current.get('api') as { getConfig?: () => unknown };
       if (api?.getConfig) {
-        return api.getConfig();
+        return api.getConfig!();
       }
     }
     return {};
   }, [enableAPIIntegration]);
 
   // Storage Integration
-  const connectToStorage = useCallback((storage: any) => {
+  const connectToStorage = useCallback((storage: unknown) => {
     if (enableStorageIntegration) {
       connectionsRef.current.set('storage', storage);
     }
@@ -723,21 +723,21 @@ export const usePhoneIntegration = (props: BcPhoneInputProps): PhoneIntegrationR
     }
   }, [enableStorageIntegration]);
 
-  const saveToStorage = useCallback(async (key: string, value: any): Promise<boolean> => {
+  const saveToStorage = useCallback(async (key: string, value: unknown): Promise<boolean> => {
     if (enableStorageIntegration) {
-      const storage = connectionsRef.current.get('storage');
+      const storage = connectionsRef.current.get('storage') as { set?: (key: string, value: unknown) => Promise<boolean> };
       if (storage?.set) {
-        return await storage.set(key, value);
+        return await storage.set!(key, value);
       }
     }
     return false;
   }, [enableStorageIntegration]);
 
-  const loadFromStorage = useCallback(async (key: string): Promise<any> => {
+  const loadFromStorage = useCallback(async (key: string): Promise<unknown> => {
     if (enableStorageIntegration) {
-      const storage = connectionsRef.current.get('storage');
+      const storage = connectionsRef.current.get('storage') as { get?: (key: string) => Promise<unknown> };
       if (storage?.get) {
-        return await storage.get(key);
+        return await storage.get!(key);
       }
     }
     return null;
@@ -745,9 +745,9 @@ export const usePhoneIntegration = (props: BcPhoneInputProps): PhoneIntegrationR
 
   const removeFromStorage = useCallback(async (key: string): Promise<boolean> => {
     if (enableStorageIntegration) {
-      const storage = connectionsRef.current.get('storage');
+      const storage = connectionsRef.current.get('storage') as { remove?: (key: string) => Promise<boolean> };
       if (storage?.remove) {
-        return await storage.remove(key);
+        return await storage.remove!(key);
       }
     }
     return false;
@@ -755,9 +755,9 @@ export const usePhoneIntegration = (props: BcPhoneInputProps): PhoneIntegrationR
 
   const clearStorage = useCallback(async (): Promise<boolean> => {
     if (enableStorageIntegration) {
-      const storage = connectionsRef.current.get('storage');
+      const storage = connectionsRef.current.get('storage') as { clear?: () => Promise<boolean> };
       if (storage?.clear) {
-        return await storage.clear();
+        return await storage.clear!();
       }
     }
     return false;
@@ -765,9 +765,9 @@ export const usePhoneIntegration = (props: BcPhoneInputProps): PhoneIntegrationR
 
   const getStorageKeys = useCallback(async (): Promise<string[]> => {
     if (enableStorageIntegration) {
-      const storage = connectionsRef.current.get('storage');
+      const storage = connectionsRef.current.get('storage') as { keys?: () => Promise<string[]> };
       if (storage?.keys) {
-        return await storage.keys();
+        return await storage.keys!();
       }
     }
     return [];
@@ -775,16 +775,16 @@ export const usePhoneIntegration = (props: BcPhoneInputProps): PhoneIntegrationR
 
   const getStorageSize = useCallback(async (): Promise<number> => {
     if (enableStorageIntegration) {
-      const storage = connectionsRef.current.get('storage');
+      const storage = connectionsRef.current.get('storage') as { size?: () => Promise<number> };
       if (storage?.size) {
-        return await storage.size();
+        return await storage.size!();
       }
     }
     return 0;
   }, [enableStorageIntegration]);
 
   // Theme Integration
-  const connectToTheme = useCallback((themeProvider: any) => {
+  const connectToTheme = useCallback((themeProvider: unknown) => {
     if (enableThemeIntegration) {
       connectionsRef.current.set('theme', themeProvider);
     }
@@ -796,54 +796,54 @@ export const usePhoneIntegration = (props: BcPhoneInputProps): PhoneIntegrationR
     }
   }, [enableThemeIntegration]);
 
-  const getThemeValue = useCallback((key: string): any => {
+  const getThemeValue = useCallback((key: string): unknown => {
     if (enableThemeIntegration) {
-      const theme = connectionsRef.current.get('theme');
+      const theme = connectionsRef.current.get('theme') as { getValue?: (key: string) => unknown };
       if (theme?.getValue) {
-        return theme.getValue(key);
+        return theme.getValue!(key);
       }
     }
     return undefined;
   }, [enableThemeIntegration]);
 
-  const setThemeValue = useCallback((key: string, value: any) => {
+  const setThemeValue = useCallback((key: string, value: unknown) => {
     if (enableThemeIntegration) {
-      const theme = connectionsRef.current.get('theme');
+      const theme = connectionsRef.current.get('theme') as { setValue?: (key: string, value: unknown) => void };
       if (theme?.setValue) {
-        theme.setValue(key, value);
+        theme.setValue!(key, value);
       }
     }
   }, [enableThemeIntegration]);
 
-  const subscribeToThemeChanges = useCallback((callback: (theme: any) => void) => {
+  const subscribeToThemeChanges = useCallback((callback: (theme: unknown) => void) => {
     if (enableThemeIntegration) {
-      const theme = connectionsRef.current.get('theme');
+      const theme = connectionsRef.current.get('theme') as { subscribe?: (callback: (theme: unknown) => void) => void };
       if (theme?.subscribe) {
-        theme.subscribe(callback);
+        theme.subscribe!(callback);
       }
     }
   }, [enableThemeIntegration]);
 
-  const unsubscribeFromThemeChanges = useCallback((callback: (theme: any) => void) => {
+  const unsubscribeFromThemeChanges = useCallback((callback: (theme: unknown) => void) => {
     if (enableThemeIntegration) {
-      const theme = connectionsRef.current.get('theme');
+      const theme = connectionsRef.current.get('theme') as { unsubscribe?: (callback: (theme: unknown) => void) => void };
       if (theme?.unsubscribe) {
-        theme.unsubscribe(callback);
+        theme.unsubscribe!(callback);
       }
     }
   }, [enableThemeIntegration]);
 
-  const adaptToTheme = useCallback((theme: any) => {
+  const adaptToTheme = useCallback((theme: unknown) => {
     if (enableThemeIntegration) {
-      const themeProvider = connectionsRef.current.get('theme');
+      const themeProvider = connectionsRef.current.get('theme') as { adapt?: (theme: unknown) => void };
       if (themeProvider?.adapt) {
-        themeProvider.adapt(theme);
+        themeProvider.adapt!(theme);
       }
     }
   }, [enableThemeIntegration]);
 
   // I18n Integration
-  const connectToI18n = useCallback((i18nProvider: any) => {
+  const connectToI18n = useCallback((i18nProvider: unknown) => {
     if (enableI18nIntegration) {
       connectionsRef.current.set('i18n', i18nProvider);
     }
@@ -857,9 +857,9 @@ export const usePhoneIntegration = (props: BcPhoneInputProps): PhoneIntegrationR
 
   const getTranslation = useCallback((key: string, locale?: string): string => {
     if (enableI18nIntegration) {
-      const i18n = connectionsRef.current.get('i18n');
+      const i18n = connectionsRef.current.get('i18n') as { translate?: (key: string, locale?: string) => string };
       if (i18n?.translate) {
-        return i18n.translate(key, locale);
+        return i18n.translate!(key, locale);
       }
     }
     return key;
@@ -867,18 +867,18 @@ export const usePhoneIntegration = (props: BcPhoneInputProps): PhoneIntegrationR
 
   const setLocale = useCallback((locale: string) => {
     if (enableI18nIntegration) {
-      const i18n = connectionsRef.current.get('i18n');
+      const i18n = connectionsRef.current.get('i18n') as { setLocale?: (locale: string) => void };
       if (i18n?.setLocale) {
-        i18n.setLocale(locale);
+        i18n.setLocale!(locale);
       }
     }
   }, [enableI18nIntegration]);
 
   const getCurrentLocale = useCallback((): string => {
     if (enableI18nIntegration) {
-      const i18n = connectionsRef.current.get('i18n');
+      const i18n = connectionsRef.current.get('i18n') as { getCurrentLocale?: () => string };
       if (i18n?.getCurrentLocale) {
-        return i18n.getCurrentLocale();
+        return i18n.getCurrentLocale!();
       }
     }
     return 'en';
@@ -886,27 +886,27 @@ export const usePhoneIntegration = (props: BcPhoneInputProps): PhoneIntegrationR
 
   const subscribeToLocaleChanges = useCallback((callback: (locale: string) => void) => {
     if (enableI18nIntegration) {
-      const i18n = connectionsRef.current.get('i18n');
+      const i18n = connectionsRef.current.get('i18n') as { subscribe?: (callback: (locale: string) => void) => void };
       if (i18n?.subscribe) {
-        i18n.subscribe(callback);
+        i18n.subscribe!(callback);
       }
     }
   }, [enableI18nIntegration]);
 
   const unsubscribeFromLocaleChanges = useCallback((callback: (locale: string) => void) => {
     if (enableI18nIntegration) {
-      const i18n = connectionsRef.current.get('i18n');
+      const i18n = connectionsRef.current.get('i18n') as { unsubscribe?: (callback: (locale: string) => void) => void };
       if (i18n?.unsubscribe) {
-        i18n.unsubscribe(callback);
+        i18n.unsubscribe!(callback);
       }
     }
   }, [enableI18nIntegration]);
 
   const formatNumber = useCallback((number: number, locale?: string): string => {
     if (enableI18nIntegration) {
-      const i18n = connectionsRef.current.get('i18n');
+      const i18n = connectionsRef.current.get('i18n') as { formatNumber?: (value: number, locale?: string) => string };
       if (i18n?.formatNumber) {
-        return i18n.formatNumber(number, locale);
+        return i18n.formatNumber!(number, locale);
       }
     }
     return number.toString();
@@ -914,16 +914,16 @@ export const usePhoneIntegration = (props: BcPhoneInputProps): PhoneIntegrationR
 
   const formatDate = useCallback((date: Date, locale?: string): string => {
     if (enableI18nIntegration) {
-      const i18n = connectionsRef.current.get('i18n');
+      const i18n = connectionsRef.current.get('i18n') as { formatDate?: (date: Date, locale?: string) => string };
       if (i18n?.formatDate) {
-        return i18n.formatDate(date, locale);
+        return i18n.formatDate!(date, locale);
       }
     }
     return date.toString();
   }, [enableI18nIntegration]);
 
   // Accessibility Integration
-  const connectToAccessibility = useCallback((accessibilityProvider: any) => {
+  const connectToAccessibility = useCallback((accessibilityProvider: unknown) => {
     if (enableAccessibilityIntegration) {
       connectionsRef.current.set('accessibility', accessibilityProvider);
     }
@@ -937,61 +937,61 @@ export const usePhoneIntegration = (props: BcPhoneInputProps): PhoneIntegrationR
 
   const announceToScreenReader = useCallback((message: string) => {
     if (enableAccessibilityIntegration) {
-      const accessibility = connectionsRef.current.get('accessibility');
+      const accessibility = connectionsRef.current.get('accessibility') as { announce?: (message: string) => void };
       if (accessibility?.announce) {
-        accessibility.announce(message);
+        accessibility.announce!(message);
       }
     }
   }, [enableAccessibilityIntegration]);
 
   const setFocus = useCallback((element: HTMLElement) => {
     if (enableAccessibilityIntegration) {
-      const accessibility = connectionsRef.current.get('accessibility');
+      const accessibility = connectionsRef.current.get('accessibility') as { setFocus?: (element: HTMLElement) => void };
       if (accessibility?.setFocus) {
-        accessibility.setFocus(element);
+        accessibility.setFocus!(element);
       }
     }
   }, [enableAccessibilityIntegration]);
 
-  const getAccessibilityInfo = useCallback((): any => {
+  const getAccessibilityInfo = useCallback((): unknown => {
     if (enableAccessibilityIntegration) {
-      const accessibility = connectionsRef.current.get('accessibility');
+      const accessibility = connectionsRef.current.get('accessibility') as { getInfo?: () => unknown };
       if (accessibility?.getInfo) {
-        return accessibility.getInfo();
+        return accessibility.getInfo!();
       }
     }
     return {};
   }, [enableAccessibilityIntegration]);
 
-  const setAccessibilityInfo = useCallback((info: any) => {
+  const setAccessibilityInfo = useCallback((info: unknown) => {
     if (enableAccessibilityIntegration) {
-      const accessibility = connectionsRef.current.get('accessibility');
+      const accessibility = connectionsRef.current.get('accessibility') as { setInfo?: (info: unknown) => void };
       if (accessibility?.setInfo) {
-        accessibility.setInfo(info);
+        accessibility.setInfo!(info);
       }
     }
   }, [enableAccessibilityIntegration]);
 
-  const subscribeToAccessibilityChanges = useCallback((callback: (info: any) => void) => {
+  const subscribeToAccessibilityChanges = useCallback((callback: (info: unknown) => void) => {
     if (enableAccessibilityIntegration) {
-      const accessibility = connectionsRef.current.get('accessibility');
+      const accessibility = connectionsRef.current.get('accessibility') as { subscribe?: (callback: (info: unknown) => void) => void };
       if (accessibility?.subscribe) {
-        accessibility.subscribe(callback);
+        accessibility.subscribe!(callback);
       }
     }
   }, [enableAccessibilityIntegration]);
 
-  const unsubscribeFromAccessibilityChanges = useCallback((callback: (info: any) => void) => {
+  const unsubscribeFromAccessibilityChanges = useCallback((callback: (info: unknown) => void) => {
     if (enableAccessibilityIntegration) {
-      const accessibility = connectionsRef.current.get('accessibility');
+      const accessibility = connectionsRef.current.get('accessibility') as { unsubscribe?: (callback: (info: unknown) => void) => void };
       if (accessibility?.unsubscribe) {
-        accessibility.unsubscribe(callback);
+        accessibility.unsubscribe!(callback);
       }
     }
   }, [enableAccessibilityIntegration]);
 
   // Performance Integration
-  const connectToPerformance = useCallback((performanceProvider: any) => {
+  const connectToPerformance = useCallback((performanceProvider: unknown) => {
     if (enablePerformanceIntegration) {
       connectionsRef.current.set('performance', performanceProvider);
     }
@@ -1005,18 +1005,18 @@ export const usePhoneIntegration = (props: BcPhoneInputProps): PhoneIntegrationR
 
   const trackPerformance = useCallback((metric: string, value: number) => {
     if (enablePerformanceIntegration) {
-      const performance = connectionsRef.current.get('performance');
+      const performance = connectionsRef.current.get('performance') as { track?: (metric: string, value: unknown) => void };
       if (performance?.track) {
-        performance.track(metric, value);
+        performance.track!(metric, value);
       }
     }
   }, [enablePerformanceIntegration]);
 
-  const getPerformanceMetrics = useCallback((): any => {
+  const getPerformanceMetrics = useCallback((): unknown => {
     if (enablePerformanceIntegration) {
-      const performance = connectionsRef.current.get('performance');
+      const performance = connectionsRef.current.get('performance') as { getMetrics?: () => unknown };
       if (performance?.getMetrics) {
-        return performance.getMetrics();
+        return performance.getMetrics!();
       }
     }
     return {};
@@ -1024,33 +1024,33 @@ export const usePhoneIntegration = (props: BcPhoneInputProps): PhoneIntegrationR
 
   const setPerformanceThreshold = useCallback((metric: string, threshold: number) => {
     if (enablePerformanceIntegration) {
-      const performance = connectionsRef.current.get('performance');
+      const performance = connectionsRef.current.get('performance') as { setThreshold?: (metric: string, threshold: number) => void };
       if (performance?.setThreshold) {
-        performance.setThreshold(metric, threshold);
+        performance.setThreshold!(metric, threshold);
       }
     }
   }, [enablePerformanceIntegration]);
 
-  const subscribeToPerformanceChanges = useCallback((callback: (metrics: any) => void) => {
+  const subscribeToPerformanceChanges = useCallback((callback: (metrics: unknown) => void) => {
     if (enablePerformanceIntegration) {
-      const performance = connectionsRef.current.get('performance');
+      const performance = connectionsRef.current.get('performance') as { subscribe?: (callback: (metrics: unknown) => void) => void };
       if (performance?.subscribe) {
-        performance.subscribe(callback);
+        performance.subscribe!(callback);
       }
     }
   }, [enablePerformanceIntegration]);
 
-  const unsubscribeFromPerformanceChanges = useCallback((callback: (metrics: any) => void) => {
+  const unsubscribeFromPerformanceChanges = useCallback((callback: (metrics: unknown) => void) => {
     if (enablePerformanceIntegration) {
-      const performance = connectionsRef.current.get('performance');
+      const performance = connectionsRef.current.get('performance') as { unsubscribe?: (callback: (metrics: unknown) => void) => void };
       if (performance?.unsubscribe) {
-        performance.unsubscribe(callback);
+        performance.unsubscribe!(callback);
       }
     }
   }, [enablePerformanceIntegration]);
 
   // Monitoring Integration
-  const connectToMonitoring = useCallback((monitoringProvider: any) => {
+  const connectToMonitoring = useCallback((monitoringProvider: unknown) => {
     if (enableMonitoringIntegration) {
       connectionsRef.current.set('monitoring', monitoringProvider);
     }
@@ -1062,64 +1062,64 @@ export const usePhoneIntegration = (props: BcPhoneInputProps): PhoneIntegrationR
     }
   }, [enableMonitoringIntegration]);
 
-  const trackEvent = useCallback((event: string, data?: any) => {
+  const trackEvent = useCallback((event: string, data?: unknown) => {
     if (enableMonitoringIntegration) {
-      const monitoring = connectionsRef.current.get('monitoring');
+      const monitoring = connectionsRef.current.get('monitoring') as { trackEvent?: (event: string, data?: unknown) => void };
       if (monitoring?.trackEvent) {
-        monitoring.trackEvent(event, data);
+        monitoring.trackEvent!(event, data);
       }
     }
   }, [enableMonitoringIntegration]);
 
-  const trackError = useCallback((error: Error, context?: any) => {
+  const trackError = useCallback((error: Error, context?: unknown) => {
     if (enableMonitoringIntegration) {
-      const monitoring = connectionsRef.current.get('monitoring');
+      const monitoring = connectionsRef.current.get('monitoring') as { trackError?: (error: Error, context?: unknown) => void };
       if (monitoring?.trackError) {
-        monitoring.trackError(error, context);
+        monitoring.trackError!(error, context);
       }
     }
   }, [enableMonitoringIntegration]);
 
   const trackPerformanceMonitoring = useCallback((metric: string, value: number) => {
     if (enableMonitoringIntegration) {
-      const monitoring = connectionsRef.current.get('monitoring');
+      const monitoring = connectionsRef.current.get('monitoring') as { trackPerformance?: (metric: string, value: number) => void };
       if (monitoring?.trackPerformance) {
-        monitoring.trackPerformance(metric, value);
+        monitoring.trackPerformance!(metric, value);
       }
     }
   }, [enableMonitoringIntegration]);
 
-  const getMonitoringData = useCallback((): any => {
+  const getMonitoringData = useCallback((): unknown => {
     if (enableMonitoringIntegration) {
-      const monitoring = connectionsRef.current.get('monitoring');
+      const monitoring = connectionsRef.current.get('monitoring') as { getData?: () => unknown };
       if (monitoring?.getData) {
-        return monitoring.getData();
+        return monitoring.getData!();
       }
     }
     return {};
   }, [enableMonitoringIntegration]);
 
-  const setMonitoringConfig = useCallback((config: any) => {
+  const setMonitoringConfig = useCallback((config: unknown) => {
     if (enableMonitoringIntegration) {
-      const monitoring = connectionsRef.current.get('monitoring');
+      const monitoring = connectionsRef.current.get('monitoring') as { setConfig?: (config: unknown) => void };
       if (monitoring?.setConfig) {
-        monitoring.setConfig(config);
+        monitoring.setConfig!(config);
       }
     }
   }, [enableMonitoringIntegration]);
 
-  const getMonitoringConfig = useCallback((): any => {
+  const getMonitoringConfig = useCallback((): unknown => {
     if (enableMonitoringIntegration) {
-      const monitoring = connectionsRef.current.get('monitoring');
+      const monitoring = connectionsRef.current.get('monitoring') as { getConfig?: () => unknown };
       if (monitoring?.getConfig) {
-        return monitoring.getConfig();
+        return monitoring.getConfig!();
       }
     }
     return {};
   }, [enableMonitoringIntegration]);
 
   // Testing Integration
-  const connectToTesting = useCallback((testingProvider: any) => {
+  const connectToTesting = useCallback((testingProvider: unknown) => {
     if (enableTestingIntegration) {
       connectionsRef.current.set('testing', testingProvider);
     }
@@ -1131,65 +1131,65 @@ export const usePhoneIntegration = (props: BcPhoneInputProps): PhoneIntegrationR
     }
   }, [enableTestingIntegration]);
 
-  const runTests = useCallback(async (testSuite: any): Promise<any> => {
+  const runTests = useCallback(async (testSuite: unknown): Promise<unknown> => {
     if (enableTestingIntegration) {
-      const testing = connectionsRef.current.get('testing');
+      const testing = connectionsRef.current.get('testing') as { runTests?: (testSuite: unknown[]) => Promise<unknown[]> };
       if (testing?.runTests) {
-        return await testing.runTests(testSuite);
+        return await testing.runTests!(testSuite as unknown[]);
       }
     }
     return null;
   }, [enableTestingIntegration]);
 
-  const getTestResults = useCallback((): any => {
+  const getTestResults = useCallback((): unknown => {
     if (enableTestingIntegration) {
-      const testing = connectionsRef.current.get('testing');
+      const testing = connectionsRef.current.get('testing') as { getResults?: () => unknown };
       if (testing?.getResults) {
-        return testing.getResults();
+        return testing.getResults!();
       }
     }
     return {};
   }, [enableTestingIntegration]);
 
-  const setTestConfig = useCallback((config: any) => {
+  const setTestConfig = useCallback((config: unknown) => {
     if (enableTestingIntegration) {
-      const testing = connectionsRef.current.get('testing');
+      const testing = connectionsRef.current.get('testing') as { setConfig?: (config: unknown) => void };
       if (testing?.setConfig) {
-        testing.setConfig(config);
+        testing.setConfig!(config);
       }
     }
   }, [enableTestingIntegration]);
 
-  const getTestConfig = useCallback((): any => {
+  const getTestConfig = useCallback((): unknown => {
     if (enableTestingIntegration) {
-      const testing = connectionsRef.current.get('testing');
+      const testing = connectionsRef.current.get('testing') as { getConfig?: () => unknown };
       if (testing?.getConfig) {
-        return testing.getConfig();
+        return testing.getConfig!();
       }
     }
     return {};
   }, [enableTestingIntegration]);
 
-  const mockData = useCallback((data: any) => {
+  const mockData = useCallback((data: unknown) => {
     if (enableTestingIntegration) {
-      const testing = connectionsRef.current.get('testing');
+      const testing = connectionsRef.current.get('testing') as { mockData?: (data: unknown) => void };
       if (testing?.mockData) {
-        testing.mockData(data);
+        testing.mockData!(data);
       }
     }
   }, [enableTestingIntegration]);
 
   const clearMockData = useCallback(() => {
     if (enableTestingIntegration) {
-      const testing = connectionsRef.current.get('testing');
+      const testing = connectionsRef.current.get('testing') as { clearMockData?: () => void };
       if (testing?.clearMockData) {
-        testing.clearMockData();
+        testing.clearMockData!();
       }
     }
   }, [enableTestingIntegration]);
 
   // Custom Integration
-  const connectToCustom = useCallback((customProvider: any) => {
+  const connectToCustom = useCallback((customProvider: unknown) => {
     if (enableCustomIntegration) {
       connectionsRef.current.set('custom', customProvider);
     }
@@ -1201,9 +1201,9 @@ export const usePhoneIntegration = (props: BcPhoneInputProps): PhoneIntegrationR
     }
   }, [enableCustomIntegration]);
 
-  const executeCustomFunction = useCallback((functionName: string, ...args: any[]): any => {
+  const executeCustomFunction = useCallback((functionName: string, ...args: unknown[]): unknown => {
     if (enableCustomIntegration) {
-      const custom = connectionsRef.current.get('custom');
+      const custom = connectionsRef.current.get('custom') as Record<string, (...args: unknown[]) => unknown>;
       if (custom?.[functionName]) {
         return custom[functionName](...args);
       }
@@ -1211,39 +1211,39 @@ export const usePhoneIntegration = (props: BcPhoneInputProps): PhoneIntegrationR
     return undefined;
   }, [enableCustomIntegration]);
 
-  const getCustomData = useCallback((key: string): any => {
+  const getCustomData = useCallback((key: string): unknown => {
     if (enableCustomIntegration) {
-      const custom = connectionsRef.current.get('custom');
+      const custom = connectionsRef.current.get('custom') as { getData?: (key: string) => unknown };
       if (custom?.getData) {
-        return custom.getData(key);
+        return custom.getData!(key);
       }
     }
     return undefined;
   }, [enableCustomIntegration]);
 
-  const setCustomData = useCallback((key: string, value: any) => {
+  const setCustomData = useCallback((key: string, value: unknown) => {
     if (enableCustomIntegration) {
-      const custom = connectionsRef.current.get('custom');
+      const custom = connectionsRef.current.get('custom') as { setData?: (key: string, value: unknown) => void };
       if (custom?.setData) {
-        custom.setData(key, value);
+        custom.setData!(key, value);
       }
     }
   }, [enableCustomIntegration]);
 
-  const subscribeToCustomChanges = useCallback((key: string, callback: (value: any) => void) => {
+  const subscribeToCustomChanges = useCallback((key: string, callback: (value: unknown) => void) => {
     if (enableCustomIntegration) {
-      const custom = connectionsRef.current.get('custom');
+      const custom = connectionsRef.current.get('custom') as { subscribe?: (key: string, callback: (value: unknown) => void) => void };
       if (custom?.subscribe) {
-        custom.subscribe(key, callback);
+        custom.subscribe!(key, callback);
       }
     }
   }, [enableCustomIntegration]);
 
-  const unsubscribeFromCustomChanges = useCallback((key: string, callback: (value: any) => void) => {
+  const unsubscribeFromCustomChanges = useCallback((key: string, callback: (value: unknown) => void) => {
     if (enableCustomIntegration) {
-      const custom = connectionsRef.current.get('custom');
+      const custom = connectionsRef.current.get('custom') as { unsubscribe?: (key: string, callback: (value: unknown) => void) => void };
       if (custom?.unsubscribe) {
-        custom.unsubscribe(key, callback);
+        custom.unsubscribe!(key, callback);
       }
     }
   }, [enableCustomIntegration]);

@@ -19,8 +19,8 @@ export interface TestingOptions {
   testTimeout?: number;
   testRetries?: number;
   testDelay?: number;
-  mockData?: Record<string, any>;
-  testConfig?: Record<string, any>;
+  mockData?: Record<string, unknown>;
+  testConfig?: Record<string, unknown>;
   customTestHelpers?: Record<string, Function>;
   customTestUtilities?: Record<string, Function>;
   customTestValidators?: Record<string, Function>;
@@ -56,28 +56,28 @@ export interface TestingState {
     level: 'info' | 'warn' | 'error' | 'debug';
     message: string;
     timestamp: number;
-    context?: any;
+    context?: Record<string, unknown>;
   }>;
   testSnapshots: Array<{
     id: string;
     name: string;
-    data: any;
+    data: unknown;
     timestamp: number;
   }>;
   testAssertions: Array<{
     id: string;
     assertion: string;
-    expected: any;
-    actual: any;
+    expected: unknown;
+    actual: unknown;
     passed: boolean;
     timestamp: number;
   }>;
-  testHelpers: Record<string, any>;
-  testUtilities: Record<string, any>;
-  testValidators: Record<string, any>;
-  customTestAssertions: Record<string, any>;
-  mockData: Record<string, any>;
-  testConfig: Record<string, any>;
+  testHelpers: Record<string, unknown>;
+  testUtilities: Record<string, unknown>;
+  testValidators: Record<string, unknown>;
+  customTestAssertions: Record<string, unknown>;
+  mockData: Record<string, unknown>;
+  testConfig: Record<string, unknown>;
 }
 
 export interface TestingActions {
@@ -90,41 +90,41 @@ export interface TestingActions {
   disableTestMode: () => void;
   enableMockMode: () => void;
   disableMockMode: () => void;
-  setMockData: (key: string, value: any) => void;
-  getMockData: (key: string) => any;
+  setMockData: (key: string, value: unknown) => void;
+  getMockData: (key: string) => unknown;
   clearMockData: () => void;
-  logTest: (level: 'info' | 'warn' | 'error' | 'debug', message: string, context?: any) => void;
-  createSnapshot: (name: string, data: any) => string;
-  compareSnapshot: (snapshotId: string, data: any) => boolean;
-  assertEqual: (actual: any, expected: any, message?: string) => boolean;
-  assertNotEqual: (actual: any, expected: any, message?: string) => boolean;
+  logTest: (level: 'info' | 'warn' | 'error' | 'debug', message: string, context?: Record<string, unknown>) => void;
+  createSnapshot: (name: string, data: unknown) => string;
+  compareSnapshot: (snapshotId: string, data: unknown) => boolean;
+  assertEqual: (actual: unknown, expected: unknown, message?: string) => boolean;
+  assertNotEqual: (actual: unknown, expected: unknown, message?: string) => boolean;
   assertTrue: (condition: boolean, message?: string) => boolean;
   assertFalse: (condition: boolean, message?: string) => boolean;
-  assertNull: (value: any, message?: string) => boolean;
-  assertNotNull: (value: any, message?: string) => boolean;
-  assertUndefined: (value: any, message?: string) => boolean;
-  assertDefined: (value: any, message?: string) => boolean;
+  assertNull: (value: unknown, message?: string) => boolean;
+  assertNotNull: (value: unknown, message?: string) => boolean;
+  assertUndefined: (value: unknown, message?: string) => boolean;
+  assertDefined: (value: unknown, message?: string) => boolean;
   assertThrows: (fn: () => void, expectedError?: string | RegExp) => boolean;
   assertDoesNotThrow: (fn: () => void) => boolean;
-  assertContains: (container: string | Array<any>, item: any, message?: string) => boolean;
-  assertNotContains: (container: string | Array<any>, item: any, message?: string) => boolean;
+  assertContains: (container: string | Array<unknown>, item: unknown, message?: string) => boolean;
+  assertNotContains: (container: string | Array<unknown>, item: unknown, message?: string) => boolean;
   assertMatch: (value: string, pattern: RegExp, message?: string) => boolean;
   assertNotMatch: (value: string, pattern: RegExp, message?: string) => boolean;
   assertGreaterThan: (actual: number, expected: number, message?: string) => boolean;
   assertLessThan: (actual: number, expected: number, message?: string) => boolean;
   assertGreaterThanOrEqual: (actual: number, expected: number, message?: string) => boolean;
   assertLessThanOrEqual: (actual: number, expected: number, message?: string) => boolean;
-  assertArrayLength: (array: Array<any>, expectedLength: number, message?: string) => boolean;
-  assertObjectKeys: (object: Record<string, any>, expectedKeys: string[], message?: string) => boolean;
-  assertType: (value: any, expectedType: string, message?: string) => boolean;
-  assertInstanceOf: (value: any, expectedClass: Function, message?: string) => boolean;
-  validateInput: (value: any, rules: any) => boolean;
-  validateOutput: (value: any, rules: any) => boolean;
+  assertArrayLength: (array: Array<unknown>, expectedLength: number, message?: string) => boolean;
+  assertObjectKeys: (object: Record<string, unknown>, expectedKeys: string[], message?: string) => boolean;
+  assertType: (value: unknown, expectedType: string, message?: string) => boolean;
+  assertInstanceOf: (value: unknown, expectedClass: Function, message?: string) => boolean;
+  validateInput: (value: unknown, rules: unknown) => boolean;
+  validateOutput: (value: unknown, rules: unknown) => boolean;
   validatePerformance: (fn: () => void, maxDuration: number) => boolean;
   validateAccessibility: (element: HTMLElement) => boolean;
-  validateMonitoring: (data: any) => boolean;
-  generateTestData: (type: string, count?: number) => any;
-  generateMockResponse: (endpoint: string, data?: any) => any;
+  validateMonitoring: (data: unknown) => boolean;
+  generateTestData: (type: string, count?: number) => unknown;
+  generateMockResponse: (endpoint: string, data?: unknown) => unknown;
   simulateUserInteraction: (element: HTMLElement, eventType: string) => void;
   simulateNetworkDelay: (ms: number) => Promise<void>;
   simulateError: (error: Error) => void;
@@ -358,7 +358,7 @@ export function useTesting(options: TestingOptions = {}) {
   }, []);
 
   // Mock data management
-  const setMockData = useCallback((key: string, value: any) => {
+  const setMockData = useCallback((key: string, value: unknown) => {
     if (!enableMockData) return;
 
     setState(prev => ({
@@ -385,7 +385,7 @@ export function useTesting(options: TestingOptions = {}) {
   }, [enableMockData]);
 
   // Test logging
-  const logTest = useCallback((level: 'info' | 'warn' | 'error' | 'debug', message: string, context?: any) => {
+  const logTest = useCallback((level: 'info' | 'warn' | 'error' | 'debug', message: string, context?: Record<string, unknown>) => {
     if (!enableTesting || !enableTestLogging) return;
 
     const log = {
@@ -402,7 +402,7 @@ export function useTesting(options: TestingOptions = {}) {
   }, [enableTesting, enableTestLogging]);
 
   // Snapshot management
-  const createSnapshot = useCallback((name: string, data: any) => {
+  const createSnapshot = useCallback((name: string, data: unknown) => {
     if (!enableTesting || !enableTestSnapshots) return '';
 
     const snapshotId = `snapshot-${Date.now()}-${Math.random()}`;
@@ -421,7 +421,7 @@ export function useTesting(options: TestingOptions = {}) {
     return snapshotId;
   }, [enableTesting, enableTestSnapshots]);
 
-  const compareSnapshot = useCallback((snapshotId: string, data: any) => {
+  const compareSnapshot = useCallback((snapshotId: string, data: unknown) => {
     if (!enableTesting || !enableTestSnapshots) return false;
 
     const snapshot = state.testSnapshots.find(s => s.id === snapshotId);
@@ -431,7 +431,7 @@ export function useTesting(options: TestingOptions = {}) {
   }, [enableTesting, enableTestSnapshots, state.testSnapshots]);
 
   // Assertions
-  const createAssertion = useCallback((assertion: string, expected: any, actual: any, passed: boolean) => {
+  const createAssertion = useCallback((assertion: string, expected: unknown, actual: unknown, passed: boolean) => {
     if (!enableTesting || !enableTestAssertions) return;
 
     const assertionRecord = {
@@ -450,13 +450,13 @@ export function useTesting(options: TestingOptions = {}) {
   }, [enableTesting, enableTestAssertions]);
 
   // Basic assertions
-  const assertEqual = useCallback((actual: any, expected: any, message?: string) => {
+  const assertEqual = useCallback((actual: unknown, expected: unknown, message?: string) => {
     const passed = actual === expected;
     createAssertion(`assertEqual: ${message || 'Values should be equal'}`, expected, actual, passed);
     return passed;
   }, [createAssertion]);
 
-  const assertNotEqual = useCallback((actual: any, expected: any, message?: string) => {
+  const assertNotEqual = useCallback((actual: unknown, expected: unknown, message?: string) => {
     const passed = actual !== expected;
     createAssertion(`assertNotEqual: ${message || 'Values should not be equal'}`, expected, actual, passed);
     return passed;
@@ -474,25 +474,25 @@ export function useTesting(options: TestingOptions = {}) {
     return passed;
   }, [createAssertion]);
 
-  const assertNull = useCallback((value: any, message?: string) => {
+  const assertNull = useCallback((value: unknown, message?: string) => {
     const passed = value === null;
     createAssertion(`assertNull: ${message || 'Value should be null'}`, null, value, passed);
     return passed;
   }, [createAssertion]);
 
-  const assertNotNull = useCallback((value: any, message?: string) => {
+  const assertNotNull = useCallback((value: unknown, message?: string) => {
     const passed = value !== null;
     createAssertion(`assertNotNull: ${message || 'Value should not be null'}`, 'not null', value, passed);
     return passed;
   }, [createAssertion]);
 
-  const assertUndefined = useCallback((value: any, message?: string) => {
+  const assertUndefined = useCallback((value: unknown, message?: string) => {
     const passed = value === undefined;
     createAssertion(`assertUndefined: ${message || 'Value should be undefined'}`, undefined, value, passed);
     return passed;
   }, [createAssertion]);
 
-  const assertDefined = useCallback((value: any, message?: string) => {
+  const assertDefined = useCallback((value: unknown, message?: string) => {
     const passed = value !== undefined;
     createAssertion(`assertDefined: ${message || 'Value should be defined'}`, 'defined', value, passed);
     return passed;
@@ -527,14 +527,22 @@ export function useTesting(options: TestingOptions = {}) {
   }, [createAssertion]);
 
   // String and array assertions
-  const assertContains = useCallback((container: string | Array<any>, item: any, message?: string) => {
-    const passed = container.includes(item);
+  const assertContains = useCallback((container: string | Array<unknown>, item: unknown, message?: string) => {
+    const passed = Array.isArray(container) 
+      ? container.includes(item as never)
+      : typeof container === 'string' && typeof item === 'string' 
+        ? container.includes(item)
+        : false;
     createAssertion(`assertContains: ${message || 'Container should contain item'}`, item, container, passed);
     return passed;
   }, [createAssertion]);
 
-  const assertNotContains = useCallback((container: string | Array<any>, item: any, message?: string) => {
-    const passed = !container.includes(item);
+  const assertNotContains = useCallback((container: string | Array<unknown>, item: unknown, message?: string) => {
+    const passed = Array.isArray(container) 
+      ? !container.includes(item as never)
+      : typeof container === 'string' && typeof item === 'string' 
+        ? !container.includes(item)
+        : true;
     createAssertion(`assertNotContains: ${message || 'Container should not contain item'}`, item, container, passed);
     return passed;
   }, [createAssertion]);
@@ -577,13 +585,13 @@ export function useTesting(options: TestingOptions = {}) {
   }, [createAssertion]);
 
   // Array and object assertions
-  const assertArrayLength = useCallback((array: Array<any>, expectedLength: number, message?: string) => {
+  const assertArrayLength = useCallback((array: Array<unknown>, expectedLength: number, message?: string) => {
     const passed = array.length === expectedLength;
     createAssertion(`assertArrayLength: ${message || 'Array should have expected length'}`, expectedLength, array.length, passed);
     return passed;
   }, [createAssertion]);
 
-  const assertObjectKeys = useCallback((object: Record<string, any>, expectedKeys: string[], message?: string) => {
+  const assertObjectKeys = useCallback((object: Record<string, unknown>, expectedKeys: string[], message?: string) => {
     const actualKeys = Object.keys(object).sort();
     const expectedKeysSorted = expectedKeys.sort();
     const passed = JSON.stringify(actualKeys) === JSON.stringify(expectedKeysSorted);
@@ -591,27 +599,27 @@ export function useTesting(options: TestingOptions = {}) {
     return passed;
   }, [createAssertion]);
 
-  const assertType = useCallback((value: any, expectedType: string, message?: string) => {
+  const assertType = useCallback((value: unknown, expectedType: string, message?: string) => {
     const actualType = typeof value;
     const passed = actualType === expectedType;
     createAssertion(`assertType: ${message || 'Value should have expected type'}`, expectedType, actualType, passed);
     return passed;
   }, [createAssertion]);
 
-  const assertInstanceOf = useCallback((value: any, expectedClass: Function, message?: string) => {
+  const assertInstanceOf = useCallback((value: unknown, expectedClass: Function, message?: string) => {
     const passed = value instanceof expectedClass;
-    createAssertion(`assertInstanceOf: ${message || 'Value should be instance of expected class'}`, expectedClass.name, value.constructor.name, passed);
+    createAssertion(`assertInstanceOf: ${message || 'Value should be instance of expected class'}`, expectedClass.name, (value as { constructor?: { name?: string } }).constructor?.name || 'unknown', passed);
     return passed;
   }, [createAssertion]);
 
   // Validation helpers
-  const validateInput = useCallback((value: any, rules: any) => {
+  const validateInput = useCallback((value: unknown, rules: unknown) => {
     if (!enableTestValidation) return true;
     // Implementation depends on validation rules format
     return true;
   }, [enableTestValidation]);
 
-  const validateOutput = useCallback((value: any, rules: any) => {
+  const validateOutput = useCallback((value: unknown, rules: unknown) => {
     if (!enableTestValidation) return true;
     // Implementation depends on validation rules format
     return true;
@@ -643,13 +651,14 @@ export function useTesting(options: TestingOptions = {}) {
     return passed;
   }, [enableTestAccessibility, createAssertion]);
 
-  const validateMonitoring = useCallback((data: any) => {
+  const validateMonitoring = useCallback((data: unknown): boolean => {
     if (!enableTestMonitoring) return true;
     // Basic monitoring data validation
-    const hasTimestamp = data.timestamp && typeof data.timestamp === 'number';
-    const hasType = data.type && typeof data.type === 'string';
+    const dataObj = data as Record<string, unknown>;
+    const hasTimestamp = dataObj.timestamp && typeof dataObj.timestamp === 'number';
+    const hasType = dataObj.type && typeof dataObj.type === 'string';
     
-    const passed = hasTimestamp && hasType;
+    const passed = Boolean(hasTimestamp && hasType);
     createAssertion(`validateMonitoring: Data should be valid monitoring data`, 'valid', 'valid', passed);
     return passed;
   }, [enableTestMonitoring, createAssertion]);
@@ -674,7 +683,7 @@ export function useTesting(options: TestingOptions = {}) {
     }
   }, [enableTesting]);
 
-  const generateMockResponse = useCallback((endpoint: string, data?: any) => {
+  const generateMockResponse = useCallback((endpoint: string, data?: unknown) => {
     if (!enableTesting || !enableMockData) return null;
 
     return {
@@ -736,18 +745,18 @@ export function useTesting(options: TestingOptions = {}) {
 
   const importTestResults = useCallback((data: string) => {
     try {
-      const imported = JSON.parse(data);
+      const imported = JSON.parse(data) as Record<string, unknown>;
       setState(prev => ({
         ...prev,
-        testResults: imported.testResults || [],
-        testMetrics: imported.testMetrics || prev.testMetrics,
-        testCoverage: imported.testCoverage || prev.testCoverage,
-        testLogs: imported.testLogs || [],
-        testSnapshots: imported.testSnapshots || [],
-        testAssertions: imported.testAssertions || [],
+        testResults: (imported.testResults as typeof prev.testResults) || [],
+        testMetrics: (imported.testMetrics as typeof prev.testMetrics) || prev.testMetrics,
+        testCoverage: (imported.testCoverage as typeof prev.testCoverage) || prev.testCoverage,
+        testLogs: (imported.testLogs as typeof prev.testLogs) || [],
+        testSnapshots: (imported.testSnapshots as typeof prev.testSnapshots) || [],
+        testAssertions: (imported.testAssertions as typeof prev.testAssertions) || [],
       }));
     } catch (error) {
-      logTest('error', 'Failed to import test results', error);
+      logTest('error', 'Failed to import test results', { error: error instanceof Error ? error.message : String(error) });
     }
   }, [logTest]);
 

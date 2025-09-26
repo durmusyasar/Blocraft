@@ -7,6 +7,7 @@
     "@emotion/styled": "^11.14.1",
     "@mui/icons-material": "^7.2.0",
     "@mui/material": "^7.2.0",
+    "@storybook/blocks": "^8.6.14",
     "@storybook/manager-api": "^8.6.14",
     "@storybook/theming": "^8.6.14",
     "@testing-library/dom": "^10.4.0",
@@ -44,11 +45,8 @@
     "extends": [
       "react-app",
       "react-app/jest",
-      "plugin:storybook/recommended",
-      "@typescript-eslint/recommended"
+      "plugin:storybook/recommended"
     ],
-    "parser": "@typescript-eslint/parser",
-    "plugins": ["@typescript-eslint"],
     "rules": {
       "@typescript-eslint/no-unused-vars": "warn",
       "@typescript-eslint/no-explicit-any": "warn",
@@ -77,8 +75,8 @@
     "@types/jest-axe": "^3.5.9",
     "@types/react-window": "^1.8.8",
     "@types/zxcvbn": "^4.4.5",
-    "@typescript-eslint/eslint-plugin": "^6.21.0",
-    "@typescript-eslint/parser": "^6.21.0",
+    "@typescript-eslint/eslint-plugin": "^8.44.0",
+    "@typescript-eslint/parser": "^8.44.0",
     "chromatic": "^13.1.2",
     "eslint-plugin-storybook": "^9.0.17",
     "jest-axe": "^10.0.0",
