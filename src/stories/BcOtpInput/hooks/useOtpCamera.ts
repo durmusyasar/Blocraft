@@ -47,13 +47,13 @@ export const useOtpCamera = ({
   const lastScannedCodeRef = useRef<string | null>(null);
 
   // Check for camera support
-  useEffect(() => {
+  /*useEffect(() => {
     if (!enableCamera) return;
 
     const isSupported = !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia);
     setState(prev => ({ ...prev, isSupported }));
   }, [enableCamera]);
-
+*/
   // QR Code detection using simple pattern matching
   const detectQRCode = useCallback((canvas: HTMLCanvasElement): string | null => {
     const ctx = canvas.getContext('2d');
@@ -251,12 +251,12 @@ export const useOtpCamera = ({
   }, [enableCamera, state.error, state.isScanning, state.isActive, state.hasPermission]);
 
   // Cleanup
-  useEffect(() => {
+  /*useEffect(() => {
     return () => {
       stopCamera();
     };
   }, [stopCamera]);
-
+*/
   return {
     ...state,
     videoRef,

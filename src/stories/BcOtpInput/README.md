@@ -1,854 +1,773 @@
-# BcOtpInput
+# BcOtpInput Component
 
-## İçindekiler / Table of Contents
-- [Türkçe](#türkçe)
-  - [Özellikler](#özellikler)
-  - [Props Tablosu](#props-tablosu)
-  - [Kullanım](#kullanım)
-  - [OTP Doğrulama](#otp-doğrulama)
-  - [Gelişmiş Özellikler](#gelişmiş-özellikler)
-  - [React Hook Form ile Kullanım](#react-hook-form-ile-kullanım)
-  - [Sıkça Sorulan Sorular (FAQ)](#sıkça-sorulan-sorular-faq)
-  - [Sorun Giderme](#sorun-giderme)
-  - [En İyi Kullanım İpuçları](#en-iyi-kullanım-ipuçları)
-  - [Lisans](#lisans)
-- [English](#english)
-  - [Features](#features)
-  - [Props Table](#props-table)
-  - [Usage](#usage)
-  - [OTP Validation](#otp-validation)
-  - [Advanced Features](#advanced-features)
-  - [React Hook Form Integration](#react-hook-form-integration)
-  - [Frequently Asked Questions (FAQ)](#frequently-asked-questions-faq)
-  - [Troubleshooting](#troubleshooting)
-  - [Best Practices](#best-practices)
-  - [License](#license)
+**BcOtpInput** is a professional, feature-rich OTP (One-Time Password) input component built on top of **BcTextField**. It provides a seamless user experience for entering verification codes with advanced features like keyboard navigation, paste support, real-time validation, and accessibility compliance.
 
----
+## 🚀 Features
 
-## Türkçe
+### Core Features
+- ✅ **Multiple Input Boxes**: Individual input fields for each character
+- ✅ **Single Character Input**: Each box accepts only one character
+- ✅ **Auto-focus Navigation**: Automatically moves focus to next input
+- ✅ **Keyboard Navigation**: Arrow keys, Tab, Home, End support
+- ✅ **Paste Support**: Automatic distribution of pasted content
+- ✅ **Real-time Validation**: Instant feedback on input validity
+- ✅ **Auto-clear**: Automatic clearing after specified delay
+- ✅ **Masking**: Password-style masking for security
+- ✅ **Responsive Design**: Adapts to different screen sizes
 
-### Özellikler
-- Material-UI tabanlı, modern ve özelleştirilebilir OTP input bileşeni
-- **BcTextField inheritance** - Tüm BcTextField özelliklerini destekler
-- **Çok haneli giriş** ve otomatik odak yönetimi
-- **Klavye navigasyonu** (ok tuşları, backspace, enter, tab)
-- **Paste desteği** ile toplu kod girişi
-- **Otomatik doğrulama** ve temizleme
-- **Maskelenmiş giriş** (şifre gibi) desteği
-- **Gelişmiş klavye kısayolları** desteği
-- **Otomatik tamamlama** özelliği
-- **Haptic feedback** mobil cihazlar için
-- **Gelişmiş izleme** ve analitik
-- **Mobil optimizasyonlar** ve responsive tasarım
-- **Gelişmiş i18n** (pluralization, interpolation)
-- **Tema uyumlu dinamik stiller**
-- **Asenkron validasyon** desteği
-- **Çoklu dil/i18n desteği** (Türkçe, İngilizce)
-- **Erişilebilirlik** (ARIA, screen reader, keyboard navigation)
-- **Error Boundary** ile hata yönetimi
+### Advanced Features
+- 🎨 **Multiple Appearances**: Premium, Soft, Glass, Minimal, Neumorph, Underline, Dark, Borderless
+- 🔧 **Customizable Shapes**: Square, Circle, Hexagon, Rounded
+- 📏 **Size Options**: Small, Medium, Large, Extra Large
+- 🎭 **Animation Support**: Focus, Success, Error, Typing animations
+- ♿ **Accessibility**: ARIA labels, screen reader support, keyboard navigation
+- 🌐 **Internationalization**: Multi-language support with i18n
+- 🔒 **Security**: Anti-keylog protection, secure input handling
+- 📊 **Analytics**: Usage tracking, performance monitoring
+- 🎯 **Performance**: Optimized rendering, debounced validation
 
-#### 🚀 **Yeni Profesyonel Özellikler**
-- **🎤 Voice Input** - Sesli OTP girişi
-- **📷 Camera Integration** - QR kod okuma
-- **📡 NFC Support** - NFC ile OTP transferi
-- **📶 Bluetooth Integration** - Bluetooth cihazlardan OTP alma
-- **🔒 Security Enhancements** - Şifreleme, rate limiting, session management
-- **♿ Enhanced Accessibility** - Screen reader, high contrast, voice commands, braille support
-- **📱 Mobile Enhancements** - Haptic feedback, touch gestures, swipe support
-- **⚡ Performance Optimizations** - Virtual scrolling, lazy loading, memoization
-- **🔗 Integration Features** - React Hook Form, Formik, Redux, Context API
-- **🎨 UI/UX Improvements** - Skeleton loading, micro-interactions, theme customization
-- **💾 Data Management** - Local storage, session storage, IndexedDB, cache
-- **📊 Monitoring & Analytics** - Error tracking, performance monitoring, user analytics
-- **🧪 Advanced Testing** - Comprehensive test utilities and mocking
+## 📦 Installation
 
-#### 🚀 **Professional Features (Yeni!)**
-- **Enhanced Accessibility** - High contrast, reduced motion, voice input, screen reader
-- **Advanced Features** - Biometric authentication, QR code generation, SMS integration
-- **Developer Experience** - Debug mode, performance metrics, error tracking
-- **Animations** - Success/error animations, focus transitions, loading states
-- **Customization** - Custom shapes, themes, colors, gradients, effects
-- **Performance** - React.memo, useCallback, useMemo optimizations
-- **Integration** - Form libraries, state management support
-
-### Props Tablosu
-| Prop | Tip | Açıklama |
-|------|-----|----------|
-| length | number | OTP hane sayısı |
-| value | string | OTP değeri |
-| onChange | function | OTP değiştiğinde çağrılır |
-| onClear | function | OTP temizlendiğinde çağrılır |
-| onComplete | function | OTP tamamlandığında çağrılır |
-| validateOtp | function | OTP doğrulama fonksiyonu |
-| mask | boolean | Maskelenmiş giriş (şifre gibi) |
-| inputType | string | Giriş tipi (number/text) |
-| autoFocus | boolean | Otomatik odaklanma |
-| autoClear | boolean | Otomatik temizleme |
-| autoValidate | boolean | Otomatik doğrulama |
-| validationDebounceMs | number | Doğrulama debounce süresi |
-| monitoring | object | İzleme fonksiyonları |
-| enableAdvancedFeatures | boolean | Gelişmiş özellikler |
-| enableKeyboardShortcuts | boolean | Klavye kısayolları |
-| enableAutoComplete | boolean | Otomatik tamamlama |
-| enableHapticFeedback | boolean | Haptic feedback |
-| enableAdvancedMonitoring | boolean | Gelişmiş izleme |
-| enableMobileOptimizations | boolean | Mobil optimizasyonlar |
-| enableAdvancedI18n | boolean | Gelişmiş i18n |
-| enableThemeAwareStyles | boolean | Tema uyumlu stiller |
-
-#### 🚀 **Professional Props (Yeni!)**
-| Prop | Tip | Açıklama |
-|------|-----|----------|
-| **Enhanced Accessibility** |
-| enableHighContrast | boolean | Yüksek kontrast modu |
-| enableReducedMotion | boolean | Azaltılmış animasyon |
-| enableVoiceInput | boolean | Sesli giriş |
-| enableScreenReaderAnnouncements | boolean | Ekran okuyucu duyuruları |
-| **Advanced Features** |
-| enableBiometric | boolean | Biyometrik kimlik doğrulama |
-| enableQRCode | boolean | QR kod üretimi |
-| enableSMS | boolean | SMS entegrasyonu |
-| phoneNumber | string | Telefon numarası |
-| qrCodeData | string | QR kod verisi |
-| **Developer Experience** |
-| enableDebug | boolean | Debug modu |
-| enableMetrics | boolean | Performans metrikleri |
-| onDebugLog | function | Debug log callback |
-| onPerformanceIssue | function | Performans sorunu callback |
-| **Animations** |
-| enableAnimations | boolean | Animasyonları etkinleştir |
-| animationDuration | number | Animasyon süresi (ms) |
-| enableSuccessAnimation | boolean | Başarı animasyonu |
-| enableErrorAnimation | boolean | Hata animasyonu |
-| enableLoadingAnimation | boolean | Yükleme animasyonu |
-| enableFocusAnimation | boolean | Odak animasyonu |
-| **Customization** |
-| inputShape | string | Input şekli (square/circle/hexagon/rounded) |
-| inputSize | string | Input boyutu (small/medium/large/xlarge) |
-| theme | string | Tema (light/dark/high-contrast/auto) |
-| enableCustomColors | boolean | Özel renkler |
-| primaryColor | string | Ana renk |
-| secondaryColor | string | İkincil renk |
-| errorColor | string | Hata rengi |
-| successColor | string | Başarı rengi |
-| warningColor | string | Uyarı rengi |
-| infoColor | string | Bilgi rengi |
-| enableGradient | boolean | Gradient efektleri |
-| enableGlow | boolean | Parlama efekti |
-| enableShadow | boolean | Gölge efekti |
-| ...rest | ... | Diğer BcTextField props |
-
-### Kullanım
-
-#### Temel Kullanım
-```tsx
-import { BcOtpInput } from "../BcOtpInput/BcOtpInput";
-
-<BcOtpInput
-  length={6}
-  label="OTP Kodu"
-  helperText="Cihazınıza gönderilen kodu girin"
-  showClearButton={true}
-  autoFocus={true}
-/>
+```bash
+npm install @mui/material @mui/system
 ```
 
-#### Gelişmiş Özelliklerle
-```tsx
-<BcOtpInput
-  length={6}
-  label="Doğrulama Kodu"
-  helperText="SMS ile gelen kodu girin"
-  inputType="number"
-  mask={false}
-  autoFocus={true}
-  autoClear={true}
-  autoValidate={true}
-  enableAdvancedFeatures={true}
-  enableKeyboardShortcuts={true}
-  enableAutoComplete={true}
-  enableHapticFeedback={true}
-  enableAdvancedMonitoring={true}
-  enableMobileOptimizations={true}
-  enableAdvancedI18n={true}
-  enableThemeAwareStyles={true}
-  validateOtp={async (otp) => {
-    // API doğrulama
-    const response = await fetch('/api/validate-otp', {
-      method: 'POST',
-      body: JSON.stringify({ otp })
-    });
-    return response.ok;
-  }}
-  onComplete={(otp) => {
-    console.log('OTP tamamlandı:', otp);
-  }}
-  monitoring={{
-    onChange: (value) => console.log('OTP değişti:', value),
-    onComplete: (otp) => console.log('OTP tamamlandı:', otp),
-    onClear: () => console.log('OTP temizlendi'),
-    onError: (error) => console.error('Hata:', error)
-  }}
-/>
-```
-
-#### 🚀 **Professional Kullanım**
+## 🎯 Basic Usage
 
 ```tsx
-import { BcOtpInput } from './BcOtpInput';
+import React, { useState } from 'react';
+import { BcOtpInput } from './components/BcOtpInput/BcOtpInput';
 
-function ProfessionalOTPExample() {
-  const [otp, setOtp] = useState('');
-  const [status, setStatus] = useState<string>();
+function MyComponent() {
+  const [otpValue, setOtpValue] = useState('');
 
-  const handleComplete = (value: string) => {
-    setStatus('success');
+  const handleOtpChange = (value: string) => {
+    setOtpValue(value);
+  };
+
+  const handleOtpComplete = (value: string) => {
     console.log('OTP completed:', value);
-  };
-
-  const handleDebugLog = (message: string, data?: any) => {
-    console.log('Debug:', message, data);
-  };
-
-  const handlePerformanceIssue = (issue: any) => {
-    console.warn('Performance Issue:', issue);
   };
 
   return (
     <BcOtpInput
-      // Basic props
       length={6}
-      value={otp}
-      onChange={setOtp}
-      onComplete={handleComplete}
-      autoFocus={true}
-      
-      // Enhanced Accessibility
-      enableHighContrast={false}
-      enableReducedMotion={false}
-      enableVoiceInput={true}
-      enableScreenReaderAnnouncements={true}
-      
-      // Advanced Features
-      enableBiometric={true}
-      enableQRCode={true}
-      enableSMS={true}
-      phoneNumber="+1234567890"
-      qrCodeData="123456"
-      
-      // Developer Experience
-      enableDebug={true}
-      enableMetrics={true}
-      onDebugLog={handleDebugLog}
-      onPerformanceIssue={handlePerformanceIssue}
-      
-      // Animations
-      enableAnimations={true}
-      animationDuration={300}
-      enableSuccessAnimation={true}
-      enableErrorAnimation={true}
-      enableLoadingAnimation={true}
-      enableFocusAnimation={true}
-      
-      // Customization
-      inputShape="rounded"
-      inputSize="medium"
-      theme="auto"
-      enableCustomColors={true}
-      primaryColor="#1976d2"
-      secondaryColor="#424242"
-      errorColor="#f44336"
-      successColor="#4caf50"
-      enableGradient={false}
-      enableGlow={true}
-      enableShadow={true}
-      
-      // Status and styling
-      status={status}
-      helperText="Complete professional OTP input with all features"
-      locale="en"
+      otpValue={otpValue}
+      onOtpChange={handleOtpChange}
+      onOtpComplete={handleOtpComplete}
+      label="Enter OTP Code"
+      helperText="Enter the 6-digit code sent to your device"
     />
   );
 }
 ```
 
-### OTP Doğrulama
+## 🎨 Appearance Examples
 
-#### Temel Doğrulama
+### Premium Style
 ```tsx
 <BcOtpInput
   length={6}
-  validateOtp={(otp) => {
-    // Basit doğrulama
-    return otp.length === 6 && /^[0-9]+$/.test(otp);
+  appearance="premium"
+  inputShape="rounded"
+  inputSize="large"
+  animationOptions={{
+    enableAnimations: true,
+    enableFocusAnimation: true,
   }}
-  autoValidate={true}
 />
 ```
 
-#### Asenkron Doğrulama
+### Glass Style
 ```tsx
 <BcOtpInput
   length={6}
-  validateOtp={async (otp) => {
-    try {
-      const response = await fetch('/api/validate-otp', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ otp })
-      });
-      return response.ok;
-    } catch (error) {
-      console.error('Doğrulama hatası:', error);
-      return false;
+  appearance="glass"
+  inputShape="circle"
+  stylingOptions={{
+    enableGlow: true,
+    enableGradient: true,
+  }}
+/>
+```
+
+### Minimal Style
+```tsx
+<BcOtpInput
+  length={6}
+  appearance="minimal"
+  inputShape="square"
+  animationOptions={{
+    enableAnimations: false,
+  }}
+/>
+```
+
+## 🔧 Advanced Configuration
+
+### With Validation
+```tsx
+<BcOtpInput
+  length={6}
+  otpValue={otpValue}
+  onOtpChange={setOtpValue}
+  validateOtp={(value) => value === '123456'}
+  validationOptions={{
+    enableAutoValidation: true,
+    validationDebounceMs: 300,
+  }}
+  onOtpComplete={(value) => {
+    if (value === '123456') {
+      console.log('Valid OTP!');
+    } else {
+      console.log('Invalid OTP!');
     }
   }}
-  autoValidate={true}
-  validationDebounceMs={500}
 />
 ```
 
-#### Özel Doğrulama Kuralları
+### With Security Features
 ```tsx
-const validateOtp = (otp) => {
-  // Uzunluk kontrolü
-  if (otp.length !== 6) return false;
-  
-  // Sadece rakam kontrolü
-  if (!/^[0-9]+$/.test(otp)) return false;
-  
-  // Tekrarlayan rakam kontrolü
-  if (/(\d)\1{2,}/.test(otp)) return false;
-  
-  // Sıralı rakam kontrolü
-  if (otp === '123456' || otp === '654321') return false;
-  
-  return true;
-};
-
 <BcOtpInput
   length={6}
-  validateOtp={validateOtp}
-  autoValidate={true}
-/>
-```
-
-### Gelişmiş Özellikler
-
-#### 1. Klavye Kısayolları
-```tsx
-<BcOtpInput
-  enableKeyboardShortcuts={true}
-  // Ok tuşları: Navigasyon
-  // Backspace: Temizle ve geri git
-  // Enter: Tamamla
-  // Tab: Sonraki input
-/>
-```
-
-#### 2. Otomatik Tamamlama
-```tsx
-<BcOtpInput
-  enableAutoComplete={true}
-  // Otomatik kod tamamlama
-  // Akıllı öneriler
-  // Geçmiş kodlar
-/>
-```
-
-#### 3. Haptic Feedback
-```tsx
-<BcOtpInput
-  enableHapticFeedback={true}
-  // Mobil cihazlarda titreşim
-  // Başarı/hata geri bildirimi
-  // Dokunma hissi
-/>
-```
-
-#### 4. Gelişmiş İzleme
-```tsx
-<BcOtpInput
-  enableAdvancedMonitoring={true}
-  monitoring={{
-    onChange: (value) => analytics.track('otp_changed', { value }),
-    onComplete: (otp) => analytics.track('otp_completed', { otp }),
-    onError: (error) => analytics.track('otp_error', { error }),
-    onPerformance: (metrics) => analytics.track('otp_performance', metrics)
+  mask={true}
+  maskCharacter="*"
+  autoClear={true}
+  clearDelay={5000}
+  securityOptions={{
+    enableAntiKeylog: true,
+    enableSecureInput: true,
+    enableScreenCapture: false,
   }}
 />
 ```
 
-#### 5. Mobil Optimizasyonlar
+### With Accessibility
 ```tsx
-<BcOtpInput
-  enableMobileOptimizations={true}
-  // Touch optimizasyonları
-  // Responsive layout
-  // Mobil klavye desteği
-/>
-```
-
-#### 6. Gelişmiş i18n
-```tsx
-<BcOtpInput
-  enableAdvancedI18n={true}
-  locale="tr"
-  fallbackLocale="en"
-  // Pluralization desteği
-  // String interpolation
-  // Gelişmiş çeviri özellikleri
-/>
-```
-
-#### 7. Tema Uyumlu Stiller
-```tsx
-<BcOtpInput
-  enableThemeAwareStyles={true}
-  appearance="premium"
-  // Dinamik tema renkleri
-  // Dark/light mode uyumluluğu
-  // Otomatik stil adaptasyonu
-/>
-```
-
-### React Hook Form ile Kullanım
-
-```tsx
-import { useForm, Controller } from "react-hook-form";
-import { BcOtpInput } from "../BcOtpInput/BcOtpInput";
-
-const MyForm = () => {
-  const { control, handleSubmit } = useForm();
-
-  const onSubmit = (data) => {
-    console.log('Form data:', data);
-  };
-
-  return (
-    <form onSubmit={handleSubmit(onSubmit)}>
-      <Controller
-        name="otp"
-        control={control}
-        rules={{
-          required: 'OTP gerekli',
-          minLength: {
-            value: 6,
-            message: 'En az 6 hane olmalı'
-          },
-          validate: (value) => {
-            if (!/^[0-9]+$/.test(value)) {
-              return 'Sadece rakam girin';
-            }
-            return true;
-          }
-        }}
-        render={({ field, fieldState }) => (
-          <BcOtpInput
-            {...field}
-            length={6}
-            label="OTP Kodu"
-            helperText="SMS ile gelen kodu girin"
-            error={!!fieldState.error}
-            helperText={fieldState.error?.message}
-          />
-        )}
-      />
-      <button type="submit">Gönder</button>
-    </form>
-  );
-};
-```
-
-### Sıkça Sorulan Sorular (FAQ)
-
-#### Q: OTP doğrulama nasıl çalışıyor?
-A: `validateOtp` prop'u ile senkron veya asenkron doğrulama yapabilirsiniz. `autoValidate={true}` ile otomatik doğrulama aktif edilir.
-
-#### Q: Klavye kısayolları nelerdir?
-A: Ok tuşları (navigasyon), Backspace (temizle ve geri git), Enter (tamamla), Tab (sonraki input).
-
-#### Q: Paste desteği nasıl çalışır?
-A: OTP kodunu kopyalayıp ilk input'a yapıştırdığınızda otomatik olarak tüm hanelere dağıtılır.
-
-#### Q: Mobil cihazlarda nasıl çalışır?
-A: Haptic feedback, touch optimizasyonları ve responsive layout ile mobil deneyim optimize edilmiştir.
-
-#### Q: Maskelenmiş giriş nasıl aktif edilir?
-A: `mask={true}` prop'u ile input'lar şifre gibi maskelenir.
-
-### Sorun Giderme
-
-#### OTP doğrulama çalışmıyor
-- `validateOtp` fonksiyonunun boolean döndürdüğünden emin olun
-- `autoValidate={true}` olduğundan emin olun
-- Asenkron doğrulamada hata yakalama yapın
-
-#### Klavye kısayolları çalışmıyor
-- `enableKeyboardShortcuts={true}` olduğundan emin olun
-- Input focus'ta olduğundan emin olun
-
-#### Paste çalışmıyor
-- Kopyalanan metnin sadece rakam/harf içerdiğinden emin olun
-- İlk input'a yapıştırdığınızdan emin olun
-
-#### Mobil optimizasyonlar çalışmıyor
-- `enableMobileOptimizations={true}` olduğundan emin olun
-- Cihazın touch desteği olduğundan emin olun
-
-### En İyi Kullanım İpuçları
-
-1. **Güvenlik**: `validateOtp` ile güçlü doğrulama kuralları uygulayın
-2. **Kullanıcı Deneyimi**: `autoFocus={true}` ile otomatik odaklanma sağlayın
-3. **Erişilebilirlik**: `enableKeyboardShortcuts={true}` ile klavye kullanıcılarını destekleyin
-4. **Performans**: `enableAdvancedMonitoring={true}` ile performansı izleyin
-5. **Mobil**: `enableMobileOptimizations={true}` ile mobil deneyimi optimize edin
-6. **Tema**: `enableThemeAwareStyles={true}` ile tema uyumluluğunu sağlayın
-7. **i18n**: `enableAdvancedI18n={true}` ile gelişmiş çeviri özelliklerini kullanın
-8. **Doğrulama**: `validationDebounceMs` ile API çağrılarını optimize edin
-
-### Lisans
-MIT
-
----
-
-## English
-
-### Features
-- Material-UI based, modern and customizable OTP input component
-- **BcTextField inheritance** - Supports all BcTextField features
-- **Multi-digit input** with automatic focus management
-- **Keyboard navigation** (arrow keys, backspace, enter, tab)
-- **Paste support** for bulk code entry
-- **Automatic validation** and clearing
-- **Masked input** (password-like) support
-- **Advanced keyboard shortcuts** support
-- **Auto complete** feature
-- **Haptic feedback** for mobile devices
-- **Advanced monitoring** and analytics
-- **Mobile optimizations** and responsive design
-- **Advanced i18n** (pluralization, interpolation)
-- **Theme-aware dynamic styles**
-- **Async validation** support
-- **Multi-language/i18n support** (Turkish, English)
-- **Accessibility** (ARIA, screen reader, keyboard navigation)
-- **Error Boundary** with error handling
-
-### Props Table
-| Prop | Type | Description |
-|------|------|-------------|
-| length | number | Number of OTP digits |
-| value | string | OTP value |
-| onChange | function | Called when OTP changes |
-| onClear | function | Called when OTP is cleared |
-| onComplete | function | Called when OTP is completed |
-| validateOtp | function | OTP validation function |
-| mask | boolean | Masked input (password-like) |
-| inputType | string | Input type (number/text) |
-| autoFocus | boolean | Auto focus |
-| autoClear | boolean | Auto clear |
-| autoValidate | boolean | Auto validation |
-| validationDebounceMs | number | Validation debounce duration |
-| monitoring | object | Monitoring callbacks |
-| enableAdvancedFeatures | boolean | Advanced features |
-| enableKeyboardShortcuts | boolean | Keyboard shortcuts |
-| enableAutoComplete | boolean | Auto complete |
-| enableHapticFeedback | boolean | Haptic feedback |
-| enableAdvancedMonitoring | boolean | Advanced monitoring |
-| enableMobileOptimizations | boolean | Mobile optimizations |
-| enableAdvancedI18n | boolean | Advanced i18n |
-| enableThemeAwareStyles | boolean | Theme-aware styles |
-| ...rest | ... | Other BcTextField props |
-
-### Usage
-
-#### Basic Usage
-```tsx
-import { BcOtpInput } from "../BcOtpInput/BcOtpInput";
-
 <BcOtpInput
   length={6}
-  label="OTP Code"
-  helperText="Enter the code sent to your device"
-  showClearButton={true}
-  autoFocus={true}
+  accessibilityOptions={{
+    enableHighContrast: true,
+    enableScreenReader: true,
+    enableKeyboardNavigation: true,
+    enableVoiceInput: true,
+  }}
+  interactionOptions={{
+    enableKeyboardNavigation: true,
+    enablePasteSupport: true,
+  }}
 />
 ```
 
-#### With Advanced Features
+### With Analytics
+```tsx
+<BcOtpInput
+  length={6}
+  analyticsOptions={{
+    enableUsageTracking: true,
+    enableErrorTracking: true,
+    enablePerformanceTracking: true,
+  }}
+  monitoring={{
+    onInputChange: (value, index, timestamp) => {
+      console.log('Input changed:', { value, index, timestamp });
+    },
+    onValidation: (isValid, value, timestamp) => {
+      console.log('Validation result:', { isValid, value, timestamp });
+    },
+    onComplete: (value, timestamp) => {
+      console.log('OTP completed:', { value, timestamp });
+    },
+  }}
+/>
+```
+
+## 📋 API Reference
+
+### Props
+
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `length` | `number` | `6` | Number of OTP input boxes |
+| `otpValue` | `string` | `''` | Current OTP value |
+| `onOtpChange` | `(value: string) => void` | - | Callback when OTP value changes |
+| `onOtpComplete` | `(value: string) => void` | - | Callback when OTP is completed |
+| `validateOtp` | `(value: string) => boolean \| string \| Promise<boolean \| string>` | - | Validation function |
+| `inputType` | `'number' \| 'text' \| 'alphanumeric'` | `'number'` | Input type restriction |
+| `inputShape` | `'square' \| 'circle' \| 'hexagon' \| 'rounded'` | `'square'` | Shape of input boxes |
+| `inputSize` | `'small' \| 'medium' \| 'large' \| 'xlarge'` | `'medium'` | Size of input boxes |
+| `mask` | `boolean` | `false` | Whether to mask input |
+| `maskCharacter` | `string` | `'*'` | Character to use for masking |
+| `autoFocus` | `boolean` | `false` | Whether to auto-focus first input |
+| `autoClear` | `boolean` | `false` | Whether to auto-clear after delay |
+| `clearDelay` | `number` | `3000` | Auto-clear delay in milliseconds |
+
+### Animation Options
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `enableAnimations` | `boolean` | `true` | Enable animations |
+| `animationDuration` | `number` | `300` | Animation duration in ms |
+| `enableSuccessAnimation` | `boolean` | `true` | Enable success animations |
+| `enableErrorAnimation` | `boolean` | `true` | Enable error animations |
+| `enableFocusAnimation` | `boolean` | `true` | Enable focus animations |
+| `enableTypingAnimation` | `boolean` | `true` | Enable typing animations |
+
+### Styling Options
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `inputShape` | `OtpInputShape` | `'square'` | Shape of input boxes |
+| `inputSize` | `OtpInputSize` | `'medium'` | Size of input boxes |
+| `enableCustomColors` | `boolean` | `false` | Enable custom colors |
+| `primaryColor` | `string` | `'#1976d2'` | Primary color |
+| `secondaryColor` | `string` | `'#424242'` | Secondary color |
+| `enableGradient` | `boolean` | `false` | Enable gradient backgrounds |
+| `enableGlow` | `boolean` | `false` | Enable glow effects |
+| `enableShadow` | `boolean` | `true` | Enable shadow effects |
+
+### Accessibility Options
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `enableHighContrast` | `boolean` | `false` | Enable high contrast mode |
+| `enableReducedMotion` | `boolean` | `false` | Enable reduced motion |
+| `enableScreenReader` | `boolean` | `true` | Enable screen reader support |
+| `enableKeyboardNavigation` | `boolean` | `true` | Enable keyboard navigation |
+| `enableVoiceInput` | `boolean` | `false` | Enable voice input |
+| `enableHapticFeedback` | `boolean` | `false` | Enable haptic feedback |
+
+### Security Options
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `enableMasking` | `boolean` | `false` | Enable input masking |
+| `maskCharacter` | `string` | `'*'` | Mask character |
+| `enableAutoClear` | `boolean` | `false` | Enable auto-clear |
+| `clearDelay` | `number` | `3000` | Clear delay in ms |
+| `enableSecureInput` | `boolean` | `false` | Enable secure input |
+| `enableAntiKeylog` | `boolean` | `false` | Enable anti-keylog protection |
+| `enableScreenCapture` | `boolean` | `true` | Enable screen capture |
+| `enableCopyPaste` | `boolean` | `true` | Enable copy/paste |
+
+### Validation Options
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `enableAutoValidation` | `boolean` | `false` | Enable auto-validation |
+| `validationDebounceMs` | `number` | `300` | Validation debounce delay |
+| `enableRealTimeValidation` | `boolean` | `true` | Enable real-time validation |
+| `enableAsyncValidation` | `boolean` | `false` | Enable async validation |
+| `validateOnBlur` | `boolean` | `true` | Validate on blur |
+| `validateOnComplete` | `boolean` | `true` | Validate on completion |
+| `customValidationRules` | `Array<(value: string) => boolean \| string>` | `[]` | Custom validation rules |
+| `enableRetryValidation` | `boolean` | `false` | Enable retry validation |
+| `maxRetryAttempts` | `number` | `3` | Maximum retry attempts |
+
+### Interaction Options
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `enableKeyboardNavigation` | `boolean` | `true` | Enable keyboard navigation |
+| `enablePasteSupport` | `boolean` | `true` | Enable paste support |
+| `enableAutoFocus` | `boolean` | `false` | Enable auto-focus |
+| `enableAutoComplete` | `boolean` | `false` | Enable auto-complete |
+| `enableSmartPaste` | `boolean` | `true` | Enable smart paste |
+| `enableBulkInput` | `boolean` | `true` | Enable bulk input |
+| `enableGestureInput` | `boolean` | `false` | Enable gesture input |
+| `enableTouchInput` | `boolean` | `true` | Enable touch input |
+| `enableMouseInput` | `boolean` | `true` | Enable mouse input |
+
+### Performance Options
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `enableVirtualization` | `boolean` | `false` | Enable virtualization |
+| `enableLazyLoading` | `boolean` | `false` | Enable lazy loading |
+| `enableMemoization` | `boolean` | `true` | Enable memoization |
+| `enableDebouncing` | `boolean` | `true` | Enable debouncing |
+| `debounceMs` | `number` | `300` | Debounce delay in ms |
+| `enableThrottling` | `boolean` | `false` | Enable throttling |
+| `throttleMs` | `number` | `100` | Throttle delay in ms |
+| `enableBatchUpdates` | `boolean` | `false` | Enable batch updates |
+| `batchSize` | `number` | `10` | Batch size |
+
+### Analytics Options
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `enableUsageTracking` | `boolean` | `false` | Enable usage tracking |
+| `enableErrorTracking` | `boolean` | `true` | Enable error tracking |
+| `enablePerformanceTracking` | `boolean` | `true` | Enable performance tracking |
+| `enableUserBehaviorTracking` | `boolean` | `false` | Enable user behavior tracking |
+| `enableAccessibilityTracking` | `boolean` | `false` | Enable accessibility tracking |
+| `customEvents` | `Array<string>` | `[]` | Custom events to track |
+| `trackingId` | `string` | `''` | Tracking ID |
+
+### Monitoring Callbacks
+
+| Callback | Type | Description |
+|----------|------|-------------|
+| `onInputChange` | `(value: string, index: number, timestamp: number) => void` | Called when input changes |
+| `onValidation` | `(isValid: boolean, value: string, timestamp: number) => void` | Called when validation occurs |
+| `onFocus` | `(index: number, timestamp: number) => void` | Called when input is focused |
+| `onBlur` | `(index: number, timestamp: number) => void` | Called when input is blurred |
+| `onComplete` | `(value: string, timestamp: number) => void` | Called when OTP is completed |
+| `onError` | `(error: string, timestamp: number) => void` | Called when error occurs |
+| `onSuccess` | `(value: string, timestamp: number) => void` | Called when validation succeeds |
+| `onRetry` | `(attempts: number, timestamp: number) => void` | Called when retry occurs |
+| `onKeyboardNavigation` | `(direction: 'left' \| 'right' \| 'up' \| 'down', timestamp: number) => void` | Called when keyboard navigation occurs |
+| `onPaste` | `(pastedValue: string, timestamp: number) => void` | Called when paste occurs |
+| `onClear` | `(timestamp: number) => void` | Called when input is cleared |
+| `onResize` | `(width: number, height: number, timestamp: number) => void` | Called when component is resized |
+| `onAccessibilityAction` | `(action: string, timestamp: number) => void` | Called when accessibility action occurs |
+| `onPerformanceMetric` | `(metric: string, value: number, timestamp: number) => void` | Called when performance metric is recorded |
+
+## 🎯 Examples
+
+### Basic OTP Input
 ```tsx
 <BcOtpInput
   length={6}
   label="Verification Code"
-  helperText="Enter the code sent via SMS"
-  inputType="number"
-  mask={false}
-  autoFocus={true}
-  autoClear={true}
-  autoValidate={true}
-  enableAdvancedFeatures={true}
-  enableKeyboardShortcuts={true}
-  enableAutoComplete={true}
-  enableHapticFeedback={true}
-  enableAdvancedMonitoring={true}
-  enableMobileOptimizations={true}
-  enableAdvancedI18n={true}
-  enableThemeAwareStyles={true}
-  validateOtp={async (otp) => {
-    // API validation
-    const response = await fetch('/api/validate-otp', {
-      method: 'POST',
-      body: JSON.stringify({ otp })
-    });
-    return response.ok;
-  }}
-  onComplete={(otp) => {
-    console.log('OTP completed:', otp);
-  }}
-  monitoring={{
-    onChange: (value) => console.log('OTP changed:', value),
-    onComplete: (otp) => console.log('OTP completed:', otp),
-    onClear: () => console.log('OTP cleared'),
-    onError: (error) => console.error('Error:', error)
-  }}
+  helperText="Enter the code sent to your phone"
 />
 ```
 
-### OTP Validation
-
-#### Basic Validation
+### With Validation
 ```tsx
 <BcOtpInput
   length={6}
-  validateOtp={(otp) => {
-    // Simple validation
-    return otp.length === 6 && /^[0-9]+$/.test(otp);
+  validateOtp={(value) => value === '123456'}
+  validationOptions={{
+    enableAutoValidation: true,
   }}
-  autoValidate={true}
-/>
-```
-
-#### Async Validation
-```tsx
-<BcOtpInput
-  length={6}
-  validateOtp={async (otp) => {
-    try {
-      const response = await fetch('/api/validate-otp', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ otp })
-      });
-      return response.ok;
-    } catch (error) {
-      console.error('Validation error:', error);
-      return false;
+  onOtpComplete={(value) => {
+    if (value === '123456') {
+      console.log('Valid!');
+    } else {
+      console.log('Invalid!');
     }
   }}
-  autoValidate={true}
-  validationDebounceMs={500}
 />
 ```
 
-#### Custom Validation Rules
+### With Custom Styling
 ```tsx
-const validateOtp = (otp) => {
-  // Length check
-  if (otp.length !== 6) return false;
-  
-  // Numeric check
-  if (!/^[0-9]+$/.test(otp)) return false;
-  
-  // Repeated digits check
-  if (/(\d)\1{2,}/.test(otp)) return false;
-  
-  // Sequential digits check
-  if (otp === '123456' || otp === '654321') return false;
-  
-  return true;
-};
-
 <BcOtpInput
   length={6}
-  validateOtp={validateOtp}
-  autoValidate={true}
-/>
-```
-
-### Advanced Features
-
-#### 1. Keyboard Shortcuts
-```tsx
-<BcOtpInput
-  enableKeyboardShortcuts={true}
-  // Arrow keys: Navigation
-  // Backspace: Clear and go back
-  // Enter: Complete
-  // Tab: Next input
-/>
-```
-
-#### 2. Auto Complete
-```tsx
-<BcOtpInput
-  enableAutoComplete={true}
-  // Automatic code completion
-  // Smart suggestions
-  // History of codes
-/>
-```
-
-#### 3. Haptic Feedback
-```tsx
-<BcOtpInput
-  enableHapticFeedback={true}
-  // Vibration on mobile devices
-  // Success/error feedback
-  // Touch sensation
-/>
-```
-
-#### 4. Advanced Monitoring
-```tsx
-<BcOtpInput
-  enableAdvancedMonitoring={true}
-  monitoring={{
-    onChange: (value) => analytics.track('otp_changed', { value }),
-    onComplete: (otp) => analytics.track('otp_completed', { otp }),
-    onError: (error) => analytics.track('otp_error', { error }),
-    onPerformance: (metrics) => analytics.track('otp_performance', metrics)
+  appearance="glass"
+  inputShape="circle"
+  inputSize="large"
+  stylingOptions={{
+    enableGradient: true,
+    enableGlow: true,
+    primaryColor: '#ff6b6b',
+    secondaryColor: '#4ecdc4',
+  }}
+  animationOptions={{
+    enableAnimations: true,
+    animationDuration: 500,
   }}
 />
 ```
 
-#### 5. Mobile Optimizations
+### With Security Features
 ```tsx
-<BcOtpInput
-  enableMobileOptimizations={true}
-  // Touch optimizations
-  // Responsive layout
-  // Mobile keyboard support
-/>
-```
-
-#### 6. Advanced i18n
-```tsx
-<BcOtpInput
-  enableAdvancedI18n={true}
-  locale="en"
-  fallbackLocale="tr"
-  // Pluralization support
-  // String interpolation
-  // Advanced translation features
-/>
-```
-
-#### 7. Theme-Aware Styles
-```tsx
-<BcOtpInput
-  enableThemeAwareStyles={true}
-  appearance="premium"
-  // Dynamic theme colors
-  // Dark/light mode compatibility
-  // Automatic style adaptation
-/>
-```
-
-### React Hook Form Integration
-
-```tsx
-import { useForm, Controller } from "react-hook-form";
-import { BcOtpInput } from "../BcOtpInput/BcOtpInput";
-
-const MyForm = () => {
-  const { control, handleSubmit } = useForm();
-
-  const onSubmit = (data) => {
-    console.log('Form data:', data);
-  };
-
-  return (
-    <form onSubmit={handleSubmit(onSubmit)}>
-      <Controller
-        name="otp"
-        control={control}
-        rules={{
-          required: 'OTP is required',
-          minLength: {
-            value: 6,
-            message: 'Must be at least 6 digits'
-          },
-          validate: (value) => {
-            if (!/^[0-9]+$/.test(value)) {
-              return 'Only numbers allowed';
-            }
-            return true;
-          }
-        }}
-        render={({ field, fieldState }) => (
           <BcOtpInput
-            {...field}
             length={6}
-            label="OTP Code"
-            helperText="Enter the code sent to your device"
-            error={!!fieldState.error}
-            helperText={fieldState.error?.message}
-          />
-        )}
-      />
-      <button type="submit">Submit</button>
-    </form>
-  );
-};
+  mask={true}
+  autoClear={true}
+  clearDelay={5000}
+  securityOptions={{
+    enableAntiKeylog: true,
+    enableSecureInput: true,
+    enableScreenCapture: false,
+  }}
+/>
 ```
 
-### Frequently Asked Questions (FAQ)
+### With Accessibility
+```tsx
+<BcOtpInput
+  length={6}
+  accessibilityOptions={{
+    enableHighContrast: true,
+    enableScreenReader: true,
+    enableKeyboardNavigation: true,
+  }}
+  interactionOptions={{
+    enableKeyboardNavigation: true,
+    enablePasteSupport: true,
+  }}
+/>
+```
 
-#### Q: How does OTP validation work?
-A: Use the `validateOtp` prop for synchronous or asynchronous validation. Set `autoValidate={true}` to enable automatic validation.
+### With Analytics
+```tsx
+<BcOtpInput
+  length={6}
+  analyticsOptions={{
+    enableUsageTracking: true,
+    enableErrorTracking: true,
+    enablePerformanceTracking: true,
+  }}
+  monitoring={{
+    onInputChange: (value, index, timestamp) => {
+      analytics.track('otp_input_change', { value, index, timestamp });
+    },
+    onValidation: (isValid, value, timestamp) => {
+      analytics.track('otp_validation', { isValid, value, timestamp });
+    },
+    onComplete: (value, timestamp) => {
+      analytics.track('otp_complete', { value, timestamp });
+    },
+  }}
+/>
+```
 
-#### Q: What are the keyboard shortcuts?
-A: Arrow keys (navigation), Backspace (clear and go back), Enter (complete), Tab (next input).
+## 🎨 Styling
 
-#### Q: How does paste support work?
-A: Copy the OTP code and paste it into the first input, it will automatically distribute to all digits.
+### Custom CSS Classes
+```css
+.bc-otp-input {
+  /* Container styles */
+}
 
-#### Q: How does it work on mobile devices?
-A: Optimized for mobile with haptic feedback, touch optimizations, and responsive layout.
+.bc-otp-input .otp-container {
+  /* Input container styles */
+}
 
-#### Q: How to enable masked input?
-A: Use `mask={true}` prop to mask inputs like passwords.
+.bc-otp-input .otp-input {
+  /* Individual input styles */
+}
 
-### Troubleshooting
+.bc-otp-input .otp-input:focus {
+  /* Focus styles */
+}
 
-#### OTP validation not working
-- Ensure `validateOtp` function returns a boolean
-- Ensure `autoValidate={true}`
-- Add error handling for async validation
+.bc-otp-input .otp-input:disabled {
+  /* Disabled styles */
+}
 
-#### Keyboard shortcuts not working
-- Ensure `enableKeyboardShortcuts={true}`
-- Ensure the input is focused
+.bc-otp-input .otp-input.error {
+  /* Error styles */
+}
 
-#### Paste not working
-- Ensure copied text contains only numbers/letters
-- Ensure you're pasting into the first input
+.bc-otp-input .otp-input.success {
+  /* Success styles */
+}
+```
 
-#### Mobile optimizations not working
-- Ensure `enableMobileOptimizations={true}`
-- Ensure device has touch support
+### Theme Integration
+```tsx
+import { createTheme } from '@mui/material/styles';
 
-### Best Practices
+const theme = createTheme({
+  components: {
+    MuiBcOtpInput: {
+      styleOverrides: {
+        root: {
+          '& .otp-input': {
+            borderRadius: '8px',
+            border: '2px solid #e0e0e0',
+            '&:focus': {
+              borderColor: '#1976d2',
+              boxShadow: '0 0 0 2px rgba(25, 118, 210, 0.2)',
+            },
+          },
+        },
+      },
+    },
+  },
+});
+```
 
-1. **Security**: Apply strong validation rules with `validateOtp`
-2. **User Experience**: Use `autoFocus={true}` for automatic focusing
-3. **Accessibility**: Use `enableKeyboardShortcuts={true}` to support keyboard users
-4. **Performance**: Use `enableAdvancedMonitoring={true}` to monitor performance
-5. **Mobile**: Use `enableMobileOptimizations={true}` to optimize mobile experience
-6. **Theme**: Use `enableThemeAwareStyles={true}` to ensure theme compatibility
-7. **i18n**: Use `enableAdvancedI18n={true}` to use advanced translation features
-8. **Validation**: Use `validationDebounceMs` to optimize API calls
+## ♿ Accessibility
 
-### License
-MIT
+### ARIA Labels
+The component automatically provides proper ARIA labels for screen readers:
+
+```tsx
+<BcOtpInput
+  length={6}
+  label="Verification Code"
+  helperText="Enter the 6-digit code sent to your device"
+  // Automatically generates:
+  // - aria-label for each input
+  // - aria-describedby for helper text
+  // - aria-invalid for error states
+  // - aria-busy for loading states
+/>
+```
+
+### Keyboard Navigation
+- **Tab**: Move between inputs
+- **Arrow Keys**: Navigate between inputs
+- **Home**: Go to first input
+- **End**: Go to last input
+- **Backspace**: Clear current input and move to previous
+- **Delete**: Clear current input and move to next
+
+### Screen Reader Support
+```tsx
+<BcOtpInput
+  length={6}
+  accessibilityOptions={{
+    enableScreenReader: true,
+    enableHighContrast: true,
+  }}
+  // Provides:
+  // - Proper ARIA labels
+  // - Live regions for status updates
+  // - High contrast mode
+  // - Screen reader announcements
+/>
+```
+
+## 🌐 Internationalization
+
+### Basic i18n Support
+```tsx
+<BcOtpInput
+  length={6}
+  locale="tr"
+  fallbackLocale="en"
+  translations={{
+    tr: {
+      label: "Doğrulama Kodu",
+      helperText: "Cihazınıza gönderilen 6 haneli kodu girin",
+      error: "Geçersiz kod",
+      success: "Kod doğrulandı",
+    },
+    en: {
+      label: "Verification Code",
+      helperText: "Enter the 6-digit code sent to your device",
+      error: "Invalid code",
+      success: "Code verified",
+    },
+  }}
+/>
+```
+
+### RTL Support
+```tsx
+<BcOtpInput
+  length={6}
+  locale="ar"
+  enableRTL={true}
+  // Automatically handles:
+  // - Right-to-left text direction
+  // - RTL keyboard navigation
+  // - RTL layout adjustments
+/>
+```
+
+## 🔒 Security
+
+### Anti-Keylog Protection
+```tsx
+<BcOtpInput
+  length={6}
+  securityOptions={{
+    enableAntiKeylog: true,
+    enableSecureInput: true,
+    enableScreenCapture: false,
+  }}
+  // Provides:
+  // - Random input delays
+  // - Secure input handling
+  // - Screen capture protection
+/>
+```
+
+### Input Masking
+```tsx
+<BcOtpInput
+  length={6}
+  mask={true}
+  maskCharacter="*"
+  // Masks input for security
+/>
+```
+
+### Auto-clear
+```tsx
+<BcOtpInput
+  length={6}
+  autoClear={true}
+  clearDelay={5000}
+  // Automatically clears input after 5 seconds
+/>
+```
+
+## 📊 Performance
+
+### Optimization Features
+- **Memoization**: Prevents unnecessary re-renders
+- **Debouncing**: Reduces validation calls
+- **Virtualization**: Handles large numbers of inputs
+- **Lazy Loading**: Loads components on demand
+- **Batch Updates**: Groups multiple updates
+
+### Performance Monitoring
+```tsx
+<BcOtpInput
+  length={6}
+  performanceOptions={{
+    enablePerformanceTracking: true,
+    enableMemoization: true,
+    enableDebouncing: true,
+    debounceMs: 300,
+  }}
+  monitoring={{
+    onPerformanceMetric: (metric, value, timestamp) => {
+      console.log(`${metric}: ${value}ms at ${timestamp}`);
+    },
+  }}
+/>
+```
+
+## 🧪 Testing
+
+### Unit Tests
+```tsx
+import { render, screen, fireEvent } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { BcOtpInput } from './BcOtpInput';
+
+test('should handle input changes', async () => {
+  const handleChange = jest.fn();
+  render(<BcOtpInput length={6} onOtpChange={handleChange} />);
+  
+  const inputs = screen.getAllByRole('textbox');
+  await userEvent.type(inputs[0], '1');
+  
+  expect(handleChange).toHaveBeenCalledWith('1');
+});
+```
+
+### Integration Tests
+```tsx
+test('should validate input with custom validator', async () => {
+  const validateOtp = jest.fn().mockReturnValue(true);
+  render(<BcOtpInput length={6} validateOtp={validateOtp} />);
+  
+  const inputs = screen.getAllByRole('textbox');
+  
+  for (let i = 0; i < inputs.length; i++) {
+    await userEvent.type(inputs[i], (i + 1).toString());
+  }
+  
+  expect(validateOtp).toHaveBeenCalledWith('123456');
+});
+```
+
+### Accessibility Tests
+```tsx
+test('should have proper ARIA labels', () => {
+  render(<BcOtpInput length={6} />);
+  
+  const inputs = screen.getAllByRole('textbox');
+  inputs.forEach((input, index) => {
+    expect(input).toHaveAttribute('aria-label', `OTP digit ${index + 1}`);
+  });
+});
+```
+
+## 🐛 Troubleshooting
+
+### Common Issues
+
+#### Input not focusing
+```tsx
+// Ensure autoFocus is enabled
+<BcOtpInput
+  length={6}
+  autoFocus={true}
+  interactionOptions={{
+    enableKeyboardNavigation: true,
+  }}
+/>
+```
+
+#### Validation not working
+```tsx
+// Enable auto-validation
+<BcOtpInput
+  length={6}
+  validateOtp={(value) => value === '123456'}
+  validationOptions={{
+    enableAutoValidation: true,
+    validationDebounceMs: 300,
+  }}
+/>
+```
+
+#### Styling not applying
+```tsx
+// Check theme integration
+import { ThemeProvider } from '@mui/material/styles';
+
+<ThemeProvider theme={theme}>
+  <BcOtpInput
+    length={6}
+    appearance="premium"
+    stylingOptions={{
+      enableCustomColors: true,
+      primaryColor: '#1976d2',
+    }}
+  />
+</ThemeProvider>
+```
+
+#### Accessibility issues
+```tsx
+// Enable accessibility features
+          <BcOtpInput
+            length={6}
+  accessibilityOptions={{
+    enableScreenReader: true,
+    enableHighContrast: true,
+    enableKeyboardNavigation: true,
+  }}
+/>
+```
+
+## 📝 Changelog
+
+### Version 1.0.0
+- Initial release
+- Basic OTP input functionality
+- Multiple appearances and shapes
+- Keyboard navigation
+- Paste support
+- Validation system
+- Accessibility support
+- i18n support
+- Security features
+- Performance optimizations
+- Analytics integration
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create a feature branch
+3. Make your changes
+4. Add tests
+5. Submit a pull request
+
+## 📄 License
+
+This project is licensed under the MIT License.
+
+## 🙏 Acknowledgments
+
+- Built on top of Material-UI
+- Inspired by modern OTP input designs
+- Accessibility guidelines from WCAG 2.1
+- Performance best practices from React documentation
+
+---
+
+**BcOtpInput** - Professional OTP Input Component for React Applications

@@ -52,6 +52,7 @@ export const useOtpMobile = ({
   const touchStartRef = useRef<{ x: number; y: number; time: number } | null>(null);
   const touchEndRef = useRef<{ x: number; y: number; time: number } | null>(null);
   const gestureTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const lastTapRef = useRef<{ time: number; x: number; y: number } | null>(null);
 
   // Detect mobile device and capabilities
   useEffect(() => {
@@ -96,6 +97,16 @@ export const useOtpMobile = ({
     };
   }, [enableMobileOptimizations]);
 
+  // Cleanup effect for timeouts
+  useEffect(() => {
+    return () => {
+      if (gestureTimeoutRef.current) {
+        clearTimeout(gestureTimeoutRef.current);
+        gestureTimeoutRef.current = null;
+      }
+    };
+  }, []);
+
   // Haptic feedback
   const triggerHapticFeedback = useCallback((type: HapticFeedbackType) => {
     if (!enableMobileOptimizations || !enableHapticFeedback || !state.isHapticSupported) return;
@@ -124,6 +135,12 @@ export const useOtpMobile = ({
       y: touch.clientY,
       time: Date.now(),
     };
+
+    // Clear any existing gesture timeout
+    if (gestureTimeoutRef.current) {
+      clearTimeout(gestureTimeoutRef.current);
+      gestureTimeoutRef.current = null;
+    }
   }, [enableMobileOptimizations, enableTouchGestures]);
 
   const handleTouchEnd = useCallback((e: React.TouchEvent) => {
@@ -147,14 +164,50 @@ export const useOtpMobile = ({
     let gesture: TouchGesture | null = null;
 
     if (deltaTime < 200 && distance < 10) {
-      // Single tap
-      gesture = 'tap';
-    } else if (deltaTime < 200 && distance < 10) {
-      // Double tap (simplified)
-      gesture = 'double-tap';
+      // Check for double tap
+      const now = Date.now();
+      if (lastTapRef.current) {
+        const timeSinceLastTap = now - lastTapRef.current.time;
+        const distanceFromLastTap = Math.sqrt(
+          Math.pow(end.x - lastTapRef.current.x, 2) + 
+          Math.pow(end.y - lastTapRef.current.y, 2)
+        );
+        
+        if (timeSinceLastTap < 300 && distanceFromLastTap < 50) {
+          // Double tap detected
+          gesture = 'double-tap';
+          lastTapRef.current = null; // Reset after double tap
+        } else {
+          // Single tap
+          gesture = 'tap';
+          lastTapRef.current = { time: now, x: end.x, y: end.y };
+          
+          // Set timeout to clear last tap if no double tap occurs
+          gestureTimeoutRef.current = setTimeout(() => {
+            lastTapRef.current = null;
+            gestureTimeoutRef.current = null;
+          }, 300);
+        }
+      } else {
+        // First tap
+        gesture = 'tap';
+        lastTapRef.current = { time: now, x: end.x, y: end.y };
+        
+        // Set timeout to clear last tap if no double tap occurs
+        gestureTimeoutRef.current = setTimeout(() => {
+          lastTapRef.current = null;
+          gestureTimeoutRef.current = null;
+        }, 300);
+      }
     } else if (deltaTime > 500 && distance < 10) {
       // Long press
       gesture = 'long-press';
+      // Clear any pending tap timeout
+      if (gestureTimeoutRef.current) {
+        clearTimeout(gestureTimeoutRef.current);
+        gestureTimeoutRef.current = null;
+      }
+      lastTapRef.current = null;
     } else if (distance > 50) {
       // Swipe gesture
       if (enableSwipeSupport) {
@@ -171,6 +224,13 @@ export const useOtpMobile = ({
           onSwipeGesture?.(direction);
         }
       }
+      
+      // Clear any pending tap timeout on swipe
+      if (gestureTimeoutRef.current) {
+        clearTimeout(gestureTimeoutRef.current);
+        gestureTimeoutRef.current = null;
+      }
+      lastTapRef.current = null;
     }
 
     if (gesture) {

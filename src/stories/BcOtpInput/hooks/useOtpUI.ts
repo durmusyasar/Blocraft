@@ -15,7 +15,7 @@ export interface UseOtpUIProps {
   enableErrorEffects?: boolean;
   animationDuration?: number;
   theme?: 'light' | 'dark' | 'auto' | 'custom';
-  customTheme?: Record<string, any>;
+  customTheme?: Record<string, unknown>;
 }
 
 export type UIInteraction = 'hover' | 'focus' | 'click' | 'success' | 'error' | 'loading' | 'complete';

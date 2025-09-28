@@ -3,7 +3,7 @@ import { useCallback, useState, useEffect, useRef } from 'react';
 export interface UseOtpDebugProps {
   enableDebug?: boolean;
   componentName?: string;
-  onDebugLog?: (message: string, data?: any) => void;
+  onDebugLog?: (message: string, data?: unknown) => void;
   onPerformanceMetric?: (metric: string, value: number) => void;
 }
 
@@ -89,7 +89,7 @@ export const useOtpDebug = ({
     };
   }, [enableDebug, componentName, onDebugLog]);
 
-  const logInteraction = useCallback((interaction: string, data?: any) => {
+  const logInteraction = useCallback((interaction: string, data?: unknown) => {
     if (!enableDebug) return;
 
     setDebugInfo(prev => ({
@@ -100,7 +100,7 @@ export const useOtpDebug = ({
     onDebugLog?.(`${componentName} interaction: ${interaction}`, data);
   }, [enableDebug, componentName, onDebugLog]);
 
-  const logValidation = useCallback((result: boolean, data?: any) => {
+  const logValidation = useCallback((result: boolean, data?: unknown) => {
     if (!enableDebug) return;
 
     setDebugInfo(prev => ({
@@ -111,7 +111,7 @@ export const useOtpDebug = ({
     onDebugLog?.(`${componentName} validation: ${result ? 'success' : 'failed'}`, data);
   }, [enableDebug, componentName, onDebugLog]);
 
-  const logError = useCallback((error: string, data?: any) => {
+  const logError = useCallback((error: string, data?: unknown) => {
     if (!enableDebug) return;
 
     const errorEntry = {

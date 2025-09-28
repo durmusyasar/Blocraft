@@ -1,5 +1,39 @@
 import { useCallback, useState, useEffect } from 'react';
 
+// Bluetooth API Type Definitions
+interface Bluetooth {
+  requestDevice(options: BluetoothRequestDeviceOptions): Promise<BluetoothDevice>;
+}
+
+interface BluetoothRequestDeviceOptions {
+  acceptAllDevices?: boolean;
+  optionalServices?: string[];
+}
+
+interface BluetoothDevice {
+  name?: string;
+  gatt?: BluetoothRemoteGATTServer;
+  addEventListener(type: string, listener: EventListener): void;
+  removeEventListener(type: string, listener: EventListener): void;
+}
+
+interface BluetoothRemoteGATTServer {
+  connect(): Promise<BluetoothRemoteGATTServer>;
+  disconnect(): void;
+  getPrimaryService(service: string): Promise<BluetoothRemoteGATTService>;
+}
+
+interface BluetoothRemoteGATTService {
+  getCharacteristic(characteristic: string): Promise<BluetoothCharacteristic>;
+}
+
+interface BluetoothCharacteristic {
+  value?: DataView;
+  startNotifications(): Promise<BluetoothCharacteristic>;
+  addEventListener(type: string, listener: EventListener): void;
+  removeEventListener(type: string, listener: EventListener): void;
+}
+
 export interface UseOtpBluetoothProps {
   enableBluetooth?: boolean;
   onBluetoothMessage?: (message: string) => void;
@@ -54,7 +88,7 @@ export const useOtpBluetooth = ({
     try {
       setState(prev => ({ ...prev, isScanning: true, error: null }));
 
-      const device = await (navigator as any).bluetooth.requestDevice({
+      const device = await (navigator as Navigator & { bluetooth: Bluetooth }).bluetooth.requestDevice({
         acceptAllDevices: true,
         optionalServices: [serviceUUID],
       });
@@ -79,14 +113,14 @@ export const useOtpBluetooth = ({
   }, [enableBluetooth, state.isSupported, state.isScanning, serviceUUID, onBluetoothError]);
 
   // Connect to Bluetooth device
-  const connectToDevice = useCallback(async (device?: any) => {
+  const connectToDevice = useCallback(async (device?: BluetoothDevice) => {
     if (!enableBluetooth || !state.isSupported || state.isConnecting) return;
 
     try {
       setState(prev => ({ ...prev, isConnecting: true, error: null }));
 
       const targetDevice = device || await scanForDevices();
-      if (!targetDevice) return;
+      if (!targetDevice || !targetDevice.gatt) return;
 
       const server = await targetDevice.gatt.connect();
       const service = await server.getPrimaryService(serviceUUID);
@@ -94,13 +128,15 @@ export const useOtpBluetooth = ({
 
       // Listen for notifications
       await characteristic.startNotifications();
-      characteristic.addEventListener('characteristicvaluechanged', (event: any) => {
-        const value = event.target.value;
-        const message = new TextDecoder().decode(value);
-        
-        setState(prev => ({ ...prev, lastMessage: message }));
-        onBluetoothMessage?.(message);
-        onBluetoothSuccess?.();
+      characteristic.addEventListener('characteristicvaluechanged', (event: Event) => {
+        const target = event.target as unknown as BluetoothCharacteristic;
+        const value = target.value;
+        if (value) {
+          const message = new TextDecoder().decode(value);
+          setState(prev => ({ ...prev, lastMessage: message }));
+          onBluetoothMessage?.(message);
+          onBluetoothSuccess?.();
+        }
       });
 
       setState(prev => ({ 

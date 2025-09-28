@@ -43,7 +43,7 @@ export interface PerformanceIssue {
   type: 'slow_render' | 'slow_validation' | 'high_error_rate' | 'accessibility_issue';
   severity: 'low' | 'medium' | 'high';
   message: string;
-  data: any;
+  data: Record<string, unknown>;
 }
 
 export const useOtpMetrics = ({

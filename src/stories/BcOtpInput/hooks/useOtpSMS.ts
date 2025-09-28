@@ -1,5 +1,22 @@
 import { useCallback, useState, useEffect } from 'react';
 
+// WebOTP API Type Definitions
+interface CredentialRequestOptions {
+  otp: {
+    transport: string[];
+  };
+}
+
+interface OTPCredential extends Credential {
+  code: string;
+}
+
+declare global {
+  interface CredentialsContainer {
+    get(options: CredentialRequestOptions): Promise<OTPCredential | null>;
+  }
+}
+
 export interface UseOtpSMSProps {
   enableSMS?: boolean;
   phoneNumber?: string;
@@ -60,9 +77,9 @@ export const useOtpSMS = ({
 
     try {
       // Listen for incoming SMS with OTP
-      const otpCredential = await (navigator.credentials as any).get({
+      const otpCredential = await navigator.credentials.get({
         otp: { transport: ['sms'] }
-      });
+      }) as OTPCredential | null;
 
       if (otpCredential?.code) {
         onSMSReceived?.(otpCredential.code);

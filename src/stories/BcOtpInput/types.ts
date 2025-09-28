@@ -19,7 +19,7 @@ export interface OtpMonitoringCallbacks {
   onComplete?: (value: string) => void;
   onClear?: () => void;
   onError?: (error: Error) => void;
-  onPerformance?: (metrics: any) => void;
+  onPerformance?: (metrics: Record<string, unknown>) => void;
 }
 
 export interface OtpValidationResult {

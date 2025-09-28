@@ -25,7 +25,7 @@ export interface AnalyticsEvent {
   timestamp: number;
   sessionId: string;
   userId?: string;
-  properties?: Record<string, any>;
+  properties?: Record<string, unknown>;
 }
 
 export interface AnalyticsState {
@@ -55,7 +55,7 @@ export interface UserInteraction {
   element: string;
   timestamp: number;
   duration?: number;
-  properties?: Record<string, any>;
+  properties?: Record<string, unknown>;
 }
 
 export interface ABTest {
@@ -209,7 +209,7 @@ export const useOtpAnalytics = ({
     action: string,
     label?: string,
     value?: number,
-    properties?: Record<string, any>
+    properties?: Record<string, unknown>
   ) => {
     if (!enableAnalytics) return;
 
@@ -245,7 +245,7 @@ export const useOtpAnalytics = ({
     type: UserInteraction['type'],
     element: string,
     duration?: number,
-    properties?: Record<string, any>
+    properties?: Record<string, unknown>
   ) => {
     if (!enableAnalytics || !enableUserAnalytics) return;
 
@@ -269,7 +269,7 @@ export const useOtpAnalytics = ({
   const trackError = useCallback((
     error: Error,
     context?: string,
-    properties?: Record<string, any>
+    properties?: Record<string, unknown>
   ) => {
     if (!enableAnalytics || !enableErrorTracking) return;
 

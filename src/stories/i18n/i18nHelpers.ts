@@ -80,7 +80,7 @@ export function getTranslation(
   locale: string,
   customTranslations?: Record<string, string>,
   fallbackLocale: string = 'en',
-  params?: Record<string, any>
+  params?: Record<string, string | number | boolean>
 ) {
   let translation: string;
 
@@ -102,7 +102,7 @@ export function getTranslation(
   // Apply interpolation if params are provided
   if (params && typeof translation === 'string') {
     return translation.replace(/\{\{(\w+)\}\}/g, (match, paramKey) => {
-      return params[paramKey] || match;
+      return String(params[paramKey] || match);
     });
   }
 

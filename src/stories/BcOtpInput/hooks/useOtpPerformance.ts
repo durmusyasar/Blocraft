@@ -1,4 +1,4 @@
-import { useCallback, useState, useEffect, useRef, useMemo } from 'react';
+import { useCallback, useState, useEffect, useRef } from 'react';
 
 export interface UseOtpPerformanceProps {
   enablePerformanceOptimizations?: boolean;
@@ -18,7 +18,7 @@ export interface PerformanceIssue {
   severity: 'low' | 'medium' | 'high' | 'critical';
   message: string;
   timestamp: number;
-  data?: any;
+  data?: Record<string, unknown>;
 }
 
 export interface PerformanceMetric {
@@ -77,17 +77,19 @@ export const useOtpPerformance = ({
     // Monitor memory usage
     const updateMemoryUsage = () => {
       if ('memory' in performance) {
-        const memory = (performance as any).memory;
-        const memoryUsage = memory.usedJSHeapSize / 1024 / 1024; // MB
-        
-        setState(prev => ({ ...prev, memoryUsage }));
-        
-        onPerformanceMetric?.({
-          name: 'memory_usage',
-          value: memoryUsage,
-          unit: 'MB',
-          timestamp: Date.now(),
-        });
+        const memory = (performance as Performance & { memory?: { usedJSHeapSize: number } }).memory;
+        if (memory) {
+          const memoryUsage = memory.usedJSHeapSize / 1024 / 1024; // MB
+          
+          setState(prev => ({ ...prev, memoryUsage }));
+          
+          onPerformanceMetric?.({
+            name: 'memory_usage',
+            value: memoryUsage,
+            unit: 'MB',
+            timestamp: Date.now(),
+          });
+        }
       }
     };
 
@@ -134,7 +136,7 @@ export const useOtpPerformance = ({
   }, [enableLazyLoading, lazyLoadingThreshold]);
 
   // Debounced function
-  const debounce = useCallback(<T extends (...args: any[]) => any>(
+  const debounce = useCallback(<T extends (...args: unknown[]) => unknown>(
     func: T,
     delay: number = debounceMs
   ): T => {
@@ -152,7 +154,7 @@ export const useOtpPerformance = ({
   }, [enableDebouncing, debounceMs]);
 
   // Memoized value
-  const memoize = useCallback(<T>(value: T, deps: any[]): T => {
+  const memoize = useCallback(<T>(value: T, deps: unknown[]): T => {
     if (!enableMemoization) return value;
     
     // This is a simplified memoization

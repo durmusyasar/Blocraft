@@ -45,8 +45,7 @@ export const useOtpValidation = ({
       setIsValidating(false);
     }
   }, [validateOtp, autoValidate, monitoring]);
-
-  useEffect(() => {
+/*> {
     if (value.length === 0) {
       setValidationResult(null);
       return;
@@ -60,7 +59,7 @@ export const useOtpValidation = ({
       return () => clearTimeout(timeout);
     }
   }, [value, autoValidate, validateOtp, validationDebounceMs, validate]);
-
+*/
   return {
     isValidating,
     validationResult,

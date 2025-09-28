@@ -1,5 +1,37 @@
 import { useCallback, useState, useEffect } from 'react';
 
+// NFC API Type Definitions
+interface NDEFReader {
+  scan(): Promise<void>;
+  addEventListener(type: string, listener: EventListener): void;
+  removeEventListener(type: string, listener: EventListener): void;
+}
+
+interface NDEFWriter {
+  write(record: NDEFRecord): Promise<void>;
+}
+
+interface NDEFReadingEvent extends Event {
+  message: NDEFMessage;
+}
+
+interface NDEFMessage {
+  records: NDEFRecord[];
+}
+
+interface NDEFRecord {
+  data?: ArrayBuffer | Uint8Array;
+  recordType: string;
+  mediaType?: string;
+}
+
+declare global {
+  interface Window {
+    NDEFReader: new () => NDEFReader;
+    NDEFWriter: new () => NDEFWriter;
+  }
+}
+
 export interface UseOtpNFCProps {
   enableNFC?: boolean;
   onNFCMessage?: (message: string) => void;
@@ -48,12 +80,13 @@ export const useOtpNFC = ({
     try {
       setState(prev => ({ ...prev, isReading: true, error: null }));
 
-      const reader = new (window as any).NDEFReader();
+      const reader = new window.NDEFReader();
       
       await reader.scan();
       
-      reader.addEventListener('reading', (event: any) => {
-        const message = event.message;
+      reader.addEventListener('reading', (event: Event) => {
+        const ndefEvent = event as unknown as NDEFReadingEvent;
+        const message = ndefEvent.message;
         const record = message.records[0];
         
         if (record && record.data) {
@@ -64,8 +97,9 @@ export const useOtpNFC = ({
         }
       });
 
-      reader.addEventListener('readingerror', (event: any) => {
-        const error = new Error(`NFC reading error: ${event.error}`);
+      reader.addEventListener('readingerror', (event: Event) => {
+        const errorEvent = event as Event & { error?: string };
+        const error = new Error(`NFC reading error: ${errorEvent.error || 'Unknown error'}`);
         setState(prev => ({ ...prev, error: error.message }));
         onNFCError?.(error);
       });
@@ -93,7 +127,7 @@ export const useOtpNFC = ({
     try {
       setState(prev => ({ ...prev, isWriting: true, error: null }));
 
-      const writer = new (window as any).NDEFWriter();
+      const writer = new window.NDEFWriter();
       
       const record = {
         recordType: 'text',

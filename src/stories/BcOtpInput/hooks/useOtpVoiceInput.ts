@@ -89,7 +89,7 @@ export const useOtpVoiceInput = ({
   useEffect(() => {
     if (!enableVoiceInput) return;
 
-    const SpeechRecognition = window.SpeechRecognition || (window as any).webkitSpeechRecognition;
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     
     if (SpeechRecognition) {
       setState(prev => ({ ...prev, isSupported: true, isAvailable: true }));
@@ -102,7 +102,7 @@ export const useOtpVoiceInput = ({
   const initializeRecognition = useCallback(() => {
     if (!enableVoiceInput || !state.isSupported) return;
 
-    const SpeechRecognition = window.SpeechRecognition || (window as any).webkitSpeechRecognition;
+    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
     const recognition = new SpeechRecognition();
 
     recognition.continuous = continuous;

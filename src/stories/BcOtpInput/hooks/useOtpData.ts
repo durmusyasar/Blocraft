@@ -32,7 +32,7 @@ export interface DataState {
 
 export interface CacheItem {
   key: string;
-  value: any;
+  value: unknown;
   timestamp: number;
   expiry: number;
 }
@@ -69,7 +69,7 @@ export const useOtpData = ({
   const syncIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
   // Initialize data management
-  useEffect(() => {
+  /*useEffect(() => {
     if (!enableDataManagement) return;
 
     setState(prev => ({
@@ -98,7 +98,7 @@ export const useOtpData = ({
     };
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [enableDataManagement, enableLocalStorage, enableSessionStorage, enableIndexedDB, enableCache, enableSync]);
-
+*/
   // Initialize IndexedDB
   const initializeIndexedDB = useCallback(async () => {
     try {
@@ -141,7 +141,7 @@ export const useOtpData = ({
   }, [syncInterval]);
 
   // Save data
-  const saveData = useCallback(async (key: string, value: any, options?: { expiry?: number }) => {
+  const saveData = useCallback(async (key: string, value: unknown, options?: { expiry?: number }) => {
     if (!enableDataManagement) return;
 
     try {
@@ -183,7 +183,7 @@ export const useOtpData = ({
   }, [enableDataManagement, enableLocalStorage, enableSessionStorage, enableIndexedDB, enableCache, storageKey, cacheExpiry, onDataSuccess, onDataError]);
 
   // Load data
-  const loadData = useCallback(async (key: string): Promise<any> => {
+  const loadData = useCallback(async (key: string): Promise<unknown> => {
     if (!enableDataManagement) return null;
 
     try {
@@ -348,7 +348,7 @@ export const useOtpData = ({
     if (!enableDataManagement) return null;
 
     try {
-      const data: Record<string, any> = {};
+      const data: Record<string, unknown> = {};
 
       // Collect data from all sources
       if (enableLocalStorage) {
@@ -383,7 +383,7 @@ export const useOtpData = ({
     if (!enableDataManagement) return;
 
     try {
-      let parsedData: Record<string, any> = {};
+      let parsedData: Record<string, unknown> = {};
 
       if (format === 'json') {
         parsedData = JSON.parse(data);

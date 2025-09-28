@@ -6,7 +6,7 @@ export interface UseOtpMonitoringProps {
     onComplete?: (value: string) => void;
     onClear?: () => void;
     onError?: (error: Error) => void;
-    onPerformance?: (metrics: any) => void;
+    onPerformance?: (metrics: Record<string, unknown>) => void;
   };
   enableAdvancedMonitoring?: boolean;
   value: string;
@@ -19,7 +19,7 @@ export const useOtpMonitoring = ({
   value,
   length,
 }: UseOtpMonitoringProps) => {
-  const trackEvent = useCallback((eventName: string, data?: any) => {
+  const trackEvent = useCallback((eventName: string, data?: Record<string, unknown>) => {
     if (!monitoring || !enableAdvancedMonitoring) return;
 
     try {
@@ -59,7 +59,7 @@ export const useOtpMonitoring = ({
     trackEvent('otp_error', { error: error.message });
   }, [trackEvent]);
 
-  const trackPerformance = useCallback((metrics: any) => {
+  const trackPerformance = useCallback((metrics: Record<string, unknown>) => {
     trackEvent('otp_performance', metrics);
   }, [trackEvent]);
 
